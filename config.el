@@ -59,7 +59,33 @@
 
 ;;journal template copied from here: https://org-roam.discourse.group/t/dailies-capture-templates-best-practices/1043
     (setq org-roam-dailies-capture-templates
-          (let ((head "#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today\n* Journal\n** What did you achieve today?\n** What are you grateful for?\n** What worried you today?\n** What else is on your mind?"))
+          (let ((head "#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today
+* Morgenroutine
+ - [ ] start tracking
+ - [ ] Medis genommen
+ - [ ] Duschen
+ - [ ] Uhr angezogen
+ - [ ] Ziele gesetzt
+ - [ ] gegessen
+ - [ ] Anki
+ - [ ] Zähne geputzt
+* Abendroutine
+- [ ] [[file:../20210528211654-daily_tracking_tabelle.org][Wie oft]] [[file:../20210528194323-tap_impulsivity.org][Impuls unterdrückt]]?
+- [ ] Emails durchgegangen
+- [ ] Notizen durchgegangen
+- [ ] Inbox geleert
+- [ ] Gewohnheiten/Beeminder gecheckt
+- [ ] Tasks Reviewed
+- [ ] Timetracking durchgesehen
+- [ ] Journal Fragen gestellt
+- [ ] gegessen!
+- [ ] Abgespült!
+- [ ] Zähne geputzt!
+* Journal
+** What did you achieve today?
+** What are you grateful for?
+** What worried you today?
+** What else is on your mind?"))
             `(("j" "journal" entry
                #'org-roam-capture--get-point
                "* %<%H:%M> %?"
@@ -71,8 +97,7 @@
                "[ ] %(princ as/agenda-captured-link)"
                :file-name "daily/%<%Y-%m-%d>"
                :head ,head
-               :olp ("Do Today")
-               :immediate-finish t)
+               :olp ("Do Today"))
               ("m" "maybe do today" item
                #'org-roam-capture--get-point
                "[ ] %(princ as/agenda-captured-link)"
@@ -87,20 +112,23 @@
 (server-start)
 
 
-
 (after! org-roam
         (map! :leader
         :prefix "a"
         :desc "org-roam" "l" #'org-roam
         :desc "org-roam-insert" "i" #'org-roam-insert
-        :desc "org-roam-switch-to-buffer" "b" #'org-roam-switch-to-buffer
+        :desc "org-roam-switch-to-buffer" "u" #'org-roam-switch-to-buffer
         :desc "org-roam-find-file" "f" #'org-roam-find-file
         :desc "org-roam-show-graph" "g" #'org-roam-server-mode
         :desc "org-roam-capture" "c" #'org-roam-capture
-        :desc "org-roam-tag-add" "t" #'org-roam-tag-add
-        :desc "org-roam-dailies-today" "d" #'org-roam-dailies-today
-        :desc "org-roam-alias-add" "a" #'org-roam-alias-add
-        :desc "org-roam-tag-delete" "ö" #'org-roam-tag-delete))
+        :desc "org-roam-dailies-capture-today" "t" #'org-roam-dailies-capture-today
+        :desc "org-roam-tag-add" "at" #'org-roam-tag-add
+        :desc "org-roam-dailies-find-today" "d" #'org-roam-dailies-find-today
+        :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
+        :desc "org-roam-tag-delete" "ö" #'org-roam-tag-delete
+        :desc "org-roam-buffer-activate" "r" #'org-roam-buffer-activate
+        :desc "org-roam-backlinks-mode" "bl" #'org-roam-backlinks-mode)
+        )
 
 ;;org-roam server creates an interactive graph from the org-roam files in the browser.
 (use-package org-roam-server
@@ -171,6 +199,7 @@ before we send our 'ok' to the SessionManager."
 
 (add-hook 'after-init-hook 'org-roam-mode)
 (add-hook 'after-init-hook 'org-zotxt-mode)
+
 (global-wakatime-mode)
 
 ;;
