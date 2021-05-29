@@ -1,2 +1,2 @@
 # emacs-config
-EmacsConfiguration
+My Emacs configuration.
