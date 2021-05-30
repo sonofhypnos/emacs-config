@@ -81,7 +81,9 @@
 - [ ] gegessen!
 - [ ] Abgespült!
 - [ ] Zähne geputzt!
+* Inbox
 * Journal
+* Evening Journal
 ** What did you achieve today?
 ** What are you grateful for?
 ** What worried you today?
