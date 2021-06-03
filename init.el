@@ -147,7 +147,8 @@
        ;;nim               ; python + lisp at the speed of c
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org + roam + deft + latex-mode-hook)               ; organize your plain life in plain text
+       (org + deft + noter + latex-mode-hook)               ; organize your plain life in plain text
+       pdf-tools
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
@@ -176,7 +177,7 @@
 
        :app
        ;;calendar
-       ;;emms
+       ;;emms~/.emacs.d/.local/straight/build-27.1/org-mode/org-version.elc is out-of-date
        everywhere        ; *leave* Emacs!? You must be joking
        ;;irc               ; how neckbeards socialize
        ;;(rss +org)        ; emacs as an RSS reader

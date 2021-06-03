@@ -4,22 +4,31 @@
 (package! wakatime-mode)
 
 (package! org-ref)
+(package! org-noter)
+
 
 (package! org-mind-map)
 
 (package! org-roam-bibtex)
 (package! org-roam-server)
 
+(package! org-roam
+  :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))
+;; (package! org-roam-bibtex
+;;   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! mathpix.el
+  :recipe (:host github :repo "jethrokuan/mathpix.el"))
+(package! anki-editor)
+
+;;(package! pdf-tools)
 (package! zotxt)
-(package! company-org-roam
-  :recipe(:host github :repo "jethrokuan/company-org-roam"))
 
 ;; To install a package with Doom you must declare them here and run 'doom sync'
 ;; on the command line, then restart Emacs for the changes to take effect -- or
 ;; use 'M-x doom/reload'.
 
 
-;; To install SOME-PACKAGE from MELPA, ELPA or emacsmirror:
+;; To install SOME-PACKAGE from MELPA , ELPA or emacsmirror:
 ;(package! some-package)
 
 ;; To install a package directly from a remote git repo, you must specify a
