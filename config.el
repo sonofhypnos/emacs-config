@@ -61,7 +61,6 @@
 ;;  (org-display-inline-images))
 
 (use-package! anki-editor
- :after org
  :bind (:map org-mode-map
              ("<f12>" . anki-editor-cloze-region-auto-incr)
              ("<f11>" . anki-editor-cloze-region-dont-incr)
@@ -94,29 +93,59 @@
    (anki-editor-reset-cloze-number))
  ;; Initialize
  (anki-editor-reset-cloze-number)
- )
 
-
-;; Org-capture templates
-(setq org-my-anki-file "~/org-roam/anki-cards.org")
+(setq org-my-anki-file "~/org-roam/anki-stuff.org")
+:demand
+:config
 (add-to-list 'org-capture-templates
              '("a" "Anki basic"
                entry
                (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: Mega\n:END:\n** Front\n%?\n** Back\n%x\n"))
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
 (add-to-list 'org-capture-templates
              '("A" "Anki cloze"
                entry
                (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: Mega\n:END:\n** Text\n%x\n** Extra\n"))
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%x\n** Extra\n"))
+(add-to-list 'org-capture-templates
+             '("A" "Anki type"
+               entry
+               (file+headline org-my-anki-file "Dispatch Shelf")
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: \n:ANKI_DECK: .main\n:END:\n** Text\n%x\n** Extra\n"))
+
+ (defun make-orgcapture-frame ()
+     "Create a new frame and run org-capture."
+     (interactive)
+     (make-frame '((name . "org-capture") (window-system . x) ))
+     (select-frame-by-name "org-capture")
+     (org-capture)
+     (delete-other-windows)
+     )
+ )
+
+;;(use-package org-protocol
+;;  :demand
+;;  :config
+;;  (add-to-list 'org-capture-templates
+;;               '("p" "Protocol" entry (file "")
+;;                 "* TODO %?[[%:link][%:description]] %U\n%i\n" :prepend t))
+;;  (add-to-list 'org-capture-templates
+;;               '("L" "Protocol Link" entry (file "")
+;;                 "* TODO %?[[%:link][%:description]] %U\n" :prepend t)))
+;;
+;;
+;;
+;; Org-capture templates
 
 ;; Allow Emacs to access content from clipboard.
-(setq select-enable-clipboard t
-      select-enable-primary t)
+;;(defvar select-enable-clipboard t
+;;      select-enable-primary t)
 
-;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;; ORG-ROAM
-;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORG-ROAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;journal template copied from here: https://org-roam.discourse.group/t/dailies-capture-templates-best-practices/1043
     (setq org-roam-dailies-capture-templates
@@ -144,8 +173,6 @@
     "\n - [ ] Timetracking Reviewed"
     "\n - [ ] ask Journal Questions"
     "\n - [ ] do Anki"
-    "\n - [ ] do dishes"
-    "\n - [ ] gegessen!"
     "\n - [ ] Zähne geputzt!"
     "\n* Inbox"
     "\n* Journal"
@@ -440,7 +467,6 @@ before we send our 'ok' to the SessionManager."
 
 ;;Custom Shortcuts
 ;;(map! :i "ö" #'evil-normal-state)
-(map! :i "JK" #'evil-normal-state)
 
 (map! :leader :desc "execute emacs command" "SPC" #'execute-extended-command)
 (map! :leader :desc "projectile find file" ":" #'projectile-find-file)
