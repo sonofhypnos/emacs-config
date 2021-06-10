@@ -29,7 +29,7 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org-roam/")
+(setq org-directory "~/Dropbox/org-roam/")
 
 
 
@@ -94,7 +94,7 @@
  ;; Initialize
  (anki-editor-reset-cloze-number)
 
-(setq org-my-anki-file "~/org-roam/anki-stuff.org")
+(setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
 :demand
 :config
 (add-to-list 'org-capture-templates
@@ -113,6 +113,20 @@
                (file+headline org-my-anki-file "Dispatch Shelf")
                "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: \n:ANKI_DECK: .main\n:END:\n** Text\n%x\n** Extra\n"))
 
+;;(add-to-list 'org-capture-templates
+;;             '("l" "Link" entry (file+headline (concat org-directory "links.org") "Links")
+;;               "* %a %^g\n %?\n %T\n %i"
+;;             :immediate-finish t))
+(add-to-list 'org-capture-templates
+             '("l" "Link" entry (file+headline (concat org-directory "links.org") "Links")
+                 "* %? [[%:link][% \"%:description\"]]\n\n%T\n%i"
+             :immediate-finish t))
+  (add-to-list 'org-capture-templates
+               '("L" "Protocol Link" entry
+                 (file+headline +org-capture-notes-file "Inbox")
+                 "* %? [[%:link][% \"%:description\"]]\n"
+                 :prepend t
+                 :kill-buffer t))
  (defun make-orgcapture-frame ()
      "Create a new frame and run org-capture."
      (interactive)
@@ -212,17 +226,16 @@
 
 
 
+(add-to-list 'load-path "~/emacs/lisp/org/org-protocol.el")
 
-(server-start)
-(add-to-list 'load-path "~/path/to/org/protocol/")
+
 
 ;; Variable for later use
 (setq
-   org_notes (concat (getenv "HOME") "/org-roam")
    zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
-   org-directory org_notes
-   deft-directory org_notes
-   org-roam-directory org_notes
+   org-directory org-directory
+   deft-directory org-directory
+   org-roam-directory org-directory
    )
 
 
@@ -392,7 +405,7 @@
 (use-package! org-noter
     :after org
     :config (setq org-noter-default-notes-file-names '("org-noter.org")
-                  org-noter-notes-search-path '("~/org-roam/")
+                  org-noter-notes-search-path '(org-directory)
                   org-noter-separate-notes-from-heading t))
 ;;(use-package! org-noter
 ;;  :after (:any org pdf-view)
@@ -405,7 +418,7 @@
 ;;   ;; I want to see the whole file
 ;;   org-noter-hide-other nil
 ;;   ;; Everything is relative to the main notes file
-;;   org-noter-notes-search-path (list org_notes)
+;;   org-noter-notes-search-path (list org-directory)
 ;;   )
 ;;  )
 ;;;; Actually start using templates
@@ -416,12 +429,6 @@
 ;;                 (file+headline +org-capture-notes-file "Inbox") ; target
 ;;                 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?"
 ;;                 :prepend t ; properties
-;;                 :kill-buffer t))
-;;  (add-to-list 'org-capture-templates
-;;               '("L" "Protocol Link" entry
-;;                 (file+headline +org-capture-notes-file "Inbox")
-;;                 "* %? [[%:link][% \"%:description\"]]\n"
-;;                 :prepend t
 ;;                 :kill-buffer t))
 ;;)
 
