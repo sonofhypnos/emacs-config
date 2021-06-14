@@ -11,8 +11,6 @@
 
 (package! org-roam-bibtex)
 (package! org-roam-server)
-(package! s)
-(package! org-protocol-capture-html)
 
 (package! org-roam
   :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))

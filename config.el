@@ -30,6 +30,7 @@
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
 (setq org-directory "~/Dropbox/org-roam/")
+(setq org-roam-directory org-directory)
 
 
 
@@ -106,25 +107,37 @@
              '("A" "Anki cloze"
                entry
                (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%x\n** Extra\n"))
+               "* %<%H:%M>   \n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%x%?\n** Extra\n%f\n"))
 (add-to-list 'org-capture-templates
-             '("A" "Anki type"
+             '("S" "Anki type"
                entry
                (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: \n:ANKI_DECK: .main\n:END:\n** Text\n%x\n** Extra\n"))
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: \n:ANKI_DECK: .main\n:END:\n** Text\n%x%?\n** Extra\n"))
 
+(add-to-list 'org-capture-templates
+             '("l" "Link" entry (file+headline "~/Dropbox/org-roam/20210510194711-read_and_take_notes.org" "Links")
+               "* [[%:link][%:description]]\n %?\n \n %i\n%T"
+             :immediate-finish t))
 ;;(add-to-list 'org-capture-templates
 ;;             '("l" "Link" entry (file+headline (concat org-directory "links.org") "Links")
-;;               "* %a %^g\n %?\n %T\n %i"
+;;                 "* [[%:link][% \"%:description\"]] %?\n\n %T\n%i"
 ;;             :immediate-finish t))
-(add-to-list 'org-capture-templates
-             '("l" "Link" entry (file+headline (concat org-directory "links.org") "Links")
-                 "* %? [[%:link][% \"%:description\"]]\n\n%T\n%i"
-             :immediate-finish t))
+;;(setq org-capture-templates
+;;      '(("s" "Simple" entry (file+headline "~/test" "Simple Notes")
+;;         "%[~/.emacs.d/.org-popup]" :immediate-finish t :prepend t)
+;;        ("a" "Titled" entry (file+headline "~/test" "Titled Notes")
+;;         "%[~/.emacs.d/.org-popup]" :immediate-finish t :prepend t)))
+             
   (add-to-list 'org-capture-templates
                '("L" "Protocol Link" entry
                  (file+headline +org-capture-notes-file "Inbox")
-                 "* %? [[%:link][% \"%:description\"]]\n"
+                 "* [[%:link][% \"%:description\"]] \n \n %? \n%i \n %T"
+                 :prepend t
+                 :kill-buffer t))
+  (add-to-list 'org-capture-templates
+               '("S" "Todo Protocoll" entry
+                 (file+headline +org-capture-notes-file "Inbox")
+                 "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
                  :prepend t
                  :kill-buffer t))
  (defun make-orgcapture-frame ()
@@ -169,6 +182,7 @@
     "\n* Morgenroutine"
     "\n - [ ] start Focusmate Session"
     "\n - [ ] start tracking"
+    "\n - [ ] [[file:../20210611091036-sleeptime_table.org][check Bedtime yesterday"
     "\n - [ ] Medis genommen"
     "\n - [ ] Duschen"
     "\n - [ ] Uhr angezogen"
@@ -178,7 +192,8 @@
     "\n - [ ] Zähne geputzt"
     "\n* Evening Routine"
     "\n - [ ] start Focusmate Session"
-    "\n - [ ] [[file:../20210528211654-daily_tracking_tabelle.org][Wie oft]] [[file:../20210528194323-tap_impulsivity.org][Impuls unterdrückt]]?"
+    "\n - [ ] [[file:../20210528211654-daily_tracking_tabelle.org][Wie oft]] Impuls unterdrückt?"
+    "\n - [ ] put reminder for tomorrows Session on your Pillow"
     "\n - [ ] go through Emails"
     "\n - [ ] go through notes"
     "\n - [ ] go through to-do inbox"
@@ -186,8 +201,9 @@
     "\n - [ ] Tasks Reviewed"
     "\n - [ ] Timetracking Reviewed"
     "\n - [ ] ask Journal Questions"
-    "\n - [ ] do Anki"
-    "\n - [ ] Zähne geputzt!"
+    "\n - [ ] determine bedtime"
+    "\n - [ ] review Anki"
+    "\n - [ ] Brush Teeth!"
     "\n* Inbox"
     "\n* Journal"
     "\n* Evening Journal"
