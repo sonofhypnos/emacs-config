@@ -11,6 +11,13 @@
 
 (package! org-roam-bibtex)
 (package! org-roam-server)
+(package! md-roam
+  :recipe (:host github
+  :repo "nobiot/md-roam"))
+(package! org-noter-pdftools)
+(package! org-download
+  :recipe (:host github
+  :repo "abo-abo/org-download"))
 
 (package! org-roam
   :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))

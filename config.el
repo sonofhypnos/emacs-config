@@ -61,7 +61,7 @@
 ;;  (insert (concat "[[" file "]]"))
 ;;  (org-display-inline-images))
 
-(use-package! anki-editor
+(use-package anki-editor
  :bind (:map org-mode-map
              ("<f12>" . anki-editor-cloze-region-auto-incr)
              ("<f11>" . anki-editor-cloze-region-dont-incr)
@@ -107,7 +107,7 @@
              '("A" "Anki cloze"
                entry
                (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   \n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%x%?\n** Extra\n%f\n"))
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%x%?\n** Extra\n%f\n"))
 (add-to-list 'org-capture-templates
              '("S" "Anki type"
                entry
@@ -143,7 +143,7 @@
  (defun make-orgcapture-frame ()
      "Create a new frame and run org-capture."
      (interactive)
-     (make-frame '((name . "org-capture") (window-system . x) ))
+     (make-frame '((name . "org-capture") ))
      (select-frame-by-name "org-capture")
      (org-capture)
      (delete-other-windows)
@@ -273,6 +273,7 @@
         :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
         :desc "org-roam-tag-delete" "ö" #'org-roam-tag-delete
         :desc "org-roam-buffer-activate" "r" #'org-roam-buffer-activate
+        :desc "org-roam-buffer-deactivate" "z" #'org-roam-buffer-deactivate
         :desc "org-roam-backlinks-mode" "bl" #'org-roam-backlinks-mode)
 ;;  (add-hook 'find-file-hook
 ;;    (defun +org-roam-open-buffer-maybe-h ()
@@ -347,7 +348,7 @@
 ;;  )
 
 ;;org-roam server creates an interactive graph from the org-roam files in the browser.
-(use-package! org-roam-server
+(use-package org-roam-server
   :config
   (setq org-roam-server-host "127.0.0.1"
         org-roam-server-port 8080
@@ -387,7 +388,7 @@
   )
  )
 
-(use-package! org-ref
+(use-package org-ref
     :config
     (setq
          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
@@ -418,36 +419,78 @@
 
            :unnarrowed t))))
 
-(use-package! org-noter
-    :after org
-    :config (setq org-noter-default-notes-file-names '("org-noter.org")
-                  org-noter-notes-search-path '(org-directory)
-                  org-noter-separate-notes-from-heading t))
-;;(use-package! org-noter
-;;  :after (:any org pdf-view)
-;;  :config
-;;  (setq
-;;   ;; The WM can handle splits
-;;   org-noter-notes-window-location 'other-frame
-;;   ;; Please stop opening frames
-;;   org-noter-always-create-frame nil
-;;   ;; I want to see the whole file
-;;   org-noter-hide-other nil
-;;   ;; Everything is relative to the main notes file
-;;   org-noter-notes-search-path (list org-directory)
-;;   )
-;;  )
-;;;; Actually start using templates
-;;(after! org-capture
-;;  ;; Firefox and Chrome
-;;  (add-to-list 'org-capture-templates
-;;               '("P" "Protocol" entry ; key, name, type
-;;                 (file+headline +org-capture-notes-file "Inbox") ; target
-;;                 "* %^{Title}\nSource: %u, %c\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n\n%?"
-;;                 :prepend t ; properties
-;;                 :kill-buffer t))
-;;)
 
+;;(use-package! org-noter
+;;    :after org
+;;    :config (setq org-noter-default-notes-file-names '("org-noter.org")
+;;                  org-noter-notes-search-path '(org-directory)
+;;                  org-noter-separate-notes-from-heading t))
+(use-package org-noter
+  :after (:any org pdf-view)
+  :config
+  (setq
+   ;; The WM can handle splits
+   org-noter-notes-window-location 'other-frame
+   ;; Please stop opening frames
+   org-noter-always-create-frame nil
+   ;; I want to see the whole file
+   org-noter-hide-other nil
+   ;; Everything is relative to the main notes file
+   org-noter-notes-search-path (list org-directory)
+   )
+  (require 'org-noter-pdftools))
+
+(use-package org-pdftools
+  :hook (org-mode . org-pdftools-setup-link))
+
+(use-package org-noter-pdftools
+  :after org-noter
+  :config
+  ;; Add a function to ensure precise note is inserted
+  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                   (not org-noter-insert-note-no-questions)
+                                                 org-noter-insert-note-no-questions))
+           (org-pdftools-use-isearch-link t)
+           (org-pdftools-use-freestyle-annot t))
+       (org-noter-insert-note (org-noter--get-precise-info)))))
+
+  ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+  (defun org-noter-set-start-location (&optional arg)
+    "When opening a session with this document, go to the current location.
+With a prefix ARG, remove start location."
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((inhibit-read-only t)
+           (ast (org-noter--parse-root))
+           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+       (with-current-buffer (org-noter--session-notes-buffer session)
+         (org-with-wide-buffer
+          (goto-char (org-element-property :begin ast))
+          (if arg
+              (org-entry-delete nil org-noter-property-note-location)
+            (org-entry-put nil org-noter-property-note-location
+                           (org-noter--pretty-print-location location))))))))
+  (with-eval-after-load 'pdf-annot
+    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+
+
+
+(require 'org-download)
+(use-package org-download
+  :init
+  (map! :leader
+        :prefix "j"
+        :desc "org-screenshot" "j" #'org-download-screenshot)
+  )
+;; org-download
+;; Drag-and-drop to `dired`
+(add-hook 'dired-mode-hook 'org-download-enable)
+
+
+(setq org-image-actual-width nil)
 
 ;;from emacs wiki to use emacs on startup as Gnome Application.
 ;;; save & shutdown when we get an "end of session" signal on dbus
