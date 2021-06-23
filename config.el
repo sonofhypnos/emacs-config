@@ -37,6 +37,27 @@
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 
+
+
+
+
+
+
+
+
+
+
+
+(use-package elpy
+  :ensure t
+  :defer t
+  :init
+  (advice-add 'python-mode :before 'elpy-enable))
+
+
+
+
+
 ;;(defun get-newest-file-from-dir  (path)
 ;;      "Get latest file (including directory) in PATH."
 ;;      (car (directory-files path 'full nil #'file-newer-than-file-p)))
@@ -107,12 +128,12 @@
              '("A" "Anki cloze"
                entry
                (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%x%?\n** Extra\n%f\n"))
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
 (add-to-list 'org-capture-templates
-             '("S" "Anki type"
+             '("T" "Anki type"
                entry
                (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: \n:ANKI_DECK: .main\n:END:\n** Text\n%x%?\n** Extra\n"))
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
 
 (add-to-list 'org-capture-templates
              '("l" "Link" entry (file+headline "~/Dropbox/org-roam/20210510194711-read_and_take_notes.org" "Links")
@@ -194,7 +215,6 @@
     "\n - [ ] start Focusmate Session"
     "\n - [ ] [[file:../20210528211654-daily_tracking_tabelle.org][Wie oft]] Impuls unterdrückt?"
     "\n - [ ] put reminder for tomorrows Session on your Pillow"
-    "\n - [ ] go through Emails"
     "\n - [ ] go through notes"
     "\n - [ ] go through to-do inbox"
     "\n - [ ] check Habits/Beeminder"
@@ -482,8 +502,8 @@ With a prefix ARG, remove start location."
 (use-package org-download
   :init
   (map! :leader
-        :prefix "j"
-        :desc "org-screenshot" "j" #'org-download-screenshot)
+        :prefix "d"
+        :desc "org-screenshot" "d" #'org-download-screenshot)
   )
 ;; org-download
 ;; Drag-and-drop to `dired`

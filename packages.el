@@ -7,7 +7,15 @@
 (package! org-noter)
 
 
+
+(package! elpy)
 (package! org-mind-map)
+(package! real-auto-save
+  :recipe (:host github
+  :repo "ChillarAnand/real-auto-save"))
+(package! emacs-todoist
+  :recipe (:host github
+  :repo "abrochard/emacs-todoist"))
 
 (package! org-roam-bibtex)
 (package! org-roam-server)
