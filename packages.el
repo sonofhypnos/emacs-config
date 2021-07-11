@@ -5,8 +5,9 @@
 
 (package! org-ref)
 (package! org-noter)
-
-
+(package! org-habit-plus
+  :recipe (:host github
+            :repo "myshevchuk/org-habit-plus"))
 
 (package! elpy)
 (package! org-mind-map)
