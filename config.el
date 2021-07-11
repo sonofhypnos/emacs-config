@@ -556,7 +556,6 @@
 
 
 
-(require 'org-download)
 (use-package org-download
   :init
   (map! :leader
