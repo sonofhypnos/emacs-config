@@ -295,6 +295,39 @@
         :desc "org-roam-buffer-activate" "r" #'org-roam-buffer-activate
         :desc "org-roam-buffer-deactivate" "z" #'org-roam-buffer-deactivate
         :desc "org-roam-backlinks-mode" "bl" #'org-roam-backlinks-mode)
+(add-to-list 'org-roam-capture-templates
+             '("r" "reading" plain
+               (function org-roam-capture--get-point) "* %? \n\n* related"
+               :file-name "project/%<%y-%m-%d %h:%m%:s>"
+               :head "#+title: ${title}\n#+created: %<%y-%m-%d %h:%m:%s>\n#+tags: reading\n"
+               :unnarrowed t))
+(add-to-list 'org-roam-capture-templates
+             '("d" "project" plain
+               (function org-roam-capture--get-point) "* %?\n\n* related"
+               :file-name "project/%<%y-%m-%d%h%m%s>"
+               :head "#+title: ${title}\n#+created: %<%y-%m-%d %h:%m:%s>\n"
+               :unnarrowed t))
+
+  (setq org-roam-capture-ref-templates ; copied from jethros dots
+        '(("e" "ref" plain (function org-roam--capture-get-point)
+           "%?\n* related"
+           :file-name "lit/${slug}"
+           :head "#+setupfile:./hugo_setup.org
+#+roam_key: ${ref}
+#+hugo_slug: ${slug}
+#+roam_tags: website
+#+title: ${title}
+
+- source :: ${ref}
+* thoughts
+** "
+           :unnarrowed t
+           )))
+
+  (setq org-roam-link-title-format "r:%s")
+  (require 'org-roam-protocol)
+
+)
 ;;  (add-hook 'find-file-hook
 ;;    (defun +org-roam-open-buffer-maybe-h ()
 ;;      (and +org-roam-open-buffer-on-find-file
@@ -303,7 +336,6 @@
 ;;           (not (eq 'visible (org-roam-buffer--visibility)))
 ;;           (with-current-buffer (window-buffer)
 ;;             (org-roam-buffer--get-create)))))
-        )
 
 ;;(use-package! org-roam
 ;;  :init
