@@ -203,7 +203,7 @@
     "\n* Morgenroutine"
     "\n - [ ] start Focusmate Session"
     "\n - [ ] start tracking"
-    "\n - [ ] [[file:../20210611091036-sleeptime_table.org][check Bedtime yesterday"
+    "\n - [ ] check Bedtime yesterday"
     "\n - [ ] Medis genommen"
     "\n - [ ] Duschen"
     "\n - [ ] Uhr angezogen"
@@ -213,7 +213,7 @@
     "\n - [ ] Zähne geputzt"
     "\n* Evening Routine"
     "\n - [ ] start Focusmate Session"
-    "\n - [ ] [[file:../20210528211654-daily_tracking_tabelle.org][Wie oft]] Impuls unterdrückt?"
+    "\n - [ ] Impuls unterdrückt?"
     "\n - [ ] put reminder for tomorrows Session on your Pillow"
     "\n - [ ] go through notes"
     "\n - [ ] go through to-do inbox"
@@ -298,14 +298,20 @@
 (add-to-list 'org-roam-capture-templates
              '("r" "reading" plain
                (function org-roam-capture--get-point) "* %? \n\n* related"
-               :file-name "project/%<%y-%m-%d %h:%m%:s>"
-               :head "#+title: ${title}\n#+created: %<%y-%m-%d %h:%m:%s>\n#+tags: reading\n"
+               :file-name "project/%<%y-%m-%d %h%m%s>"
+               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M:%S>\n#+tags: reading\n"
                :unnarrowed t))
 (add-to-list 'org-roam-capture-templates
              '("d" "project" plain
                (function org-roam-capture--get-point) "* %?\n\n* related"
                :file-name "project/%<%y-%m-%d%h%m%s>"
-               :head "#+title: ${title}\n#+created: %<%y-%m-%d %h:%m:%s>\n"
+               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M:%S>\n"
+               :unnarrowed t))
+(add-to-list 'org-roam-capture-templates
+             '("r" "reference/tag" plain
+               (function org-roam-capture--get-point) "* %?"
+               :file-name "project/%<%y-%m-%d%h%m%s>"
+               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M:%S>\n"
                :unnarrowed t))
 
   (setq org-roam-capture-ref-templates ; copied from jethros dots
