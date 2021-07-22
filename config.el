@@ -45,6 +45,40 @@
 
 ;anki support and org-roam templates
 (use-package anki-editor
+
+  :init
+  (setq-default anki-editor-use-math-jax t) ; github.com/louietan/anki-editor/issues/60#issuecomment-617441799
+;;  ;; create custom key map
+;;  (progn
+;;    (defvar anki-editor-mode-map (make-sparse-keymap))
+;;    (add-to-list 'minor-mode-map-alist (cons 'anki-editor-mode
+;;                                             anki-editor-mode-map)))
+;;  :custom
+;;  (anki-editor-create-decks t)
+;;  (anki-editor-org-tags-as-anki-tags t)
+;;  :config
+  ;only works on Mac-OS
+;;  ;; The very simple Keyboard Maestro macro called by this function may be downloaded here:
+;;  ;; https://www.dropbox.com/s/or5h9v9ydnd3z9f/Anki%3A%20open%20note%20ID.kmmacros?dl=0
+;;  (defun ps/anki-editor-open-note-externally ()
+;;    "Copy note id to clipboard, switch to Anki desktop, and open note in browser."
+;;    (interactive)
+;;    (let ((note-id (org-entry-get nil "ANKI_NOTE_ID")))
+;;      (if (eq note-id nil)
+;;          (error "Note id not found")
+;;        (progn
+;;          (kill-new (concat "nid:" note-id))
+;;          (shell-command "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"496A3425-8985-4117-AE0F-ABD6DC85FB9F\"'")))))
+;;  :general
+;;  ("M-A-i" 'anki-editor-mode)
+;;  (anki-editor-mode-map
+;;   "s-c" 'anki-editor-cloze-region
+;;   "s-i" 'anki-editor-insert-note
+;;   "s-n" 'anki-editor-push-new-notes
+;;   "s-x" 'ps/anki-editor-open-note-externally
+;;   "s-a" 'anki-editor-push-notes ; push all notes
+;;   "s-h" (lambda () (interactive) (anki-editor-push-notes '(4))))) ; push notes under heading
+
  :bind (:map org-mode-map
              ("<f12>" . anki-editor-cloze-region-auto-incr)
              ("<f11>" . anki-editor-cloze-region-dont-incr)
