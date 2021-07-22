@@ -315,12 +315,76 @@
 ;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
 ;;               :unnarrowed t))
 
+; see https://github.com/org-roam/org-roam/issues/1565
+(cl-defmethod org-roam-node-filetitle ((node org-roam-node))
+  "Return the file TITLE for the node."
+  (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
+
+(cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
+  "Return the hierarchy for the node."
+  (let ((title (org-roam-node-title node))
+        (olp (org-roam-node-olp node))
+        (level (org-roam-node-level node))
+        (filetitle (org-roam-node-filetitle node)))
+    (concat
+     (if (> level 0) (concat filetitle " > "))
+     (if (> level 1) (concat (string-join olp " > ") " > "))
+     title))
+  )
+
+(setq org-roam-node-display-template "${hierarchy:*}
+${tags:20}")
+
+
+
+(cl-defmethod org-roam-node-directories ((node org-roam-node))
+  (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
+      (format "(%s)" (car (f-split dirs)))
+    ""))
+
+(cl-defmethod org-roam-node-backlinkscount ((node org-roam-node))
+  (let* ((count (caar (org-roam-db-query
+                       [:select (funcall count source)
+                                :from links
+                                :where (= dest $s1)
+                                :and (= type "id")]
+                       (org-roam-node-id node)))))
+    (format "[%d]" count)))
+
+(setq org-roam-node-display-template "${directories:9} ${title:50} ${tags:5} ${backlinkscount:5}")
+
+
+(defun org-hide-properties ()
+  "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward
+            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+      (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+        (overlay-put ov_this 'display "")
+        (overlay-put ov_this 'hidden-prop-drawer t))))
+  (put 'org-toggle-properties-hide-state 'state 'hidden))
+
+(defun org-show-properties ()
+  "Show all org-mode property drawers hidden by org-hide-properties."
+  (interactive)
+  (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+  (put 'org-toggle-properties-hide-state 'state 'shown))
+
+(defun org-toggle-properties ()
+  "Toggle visibility of property drawers."
+  (interactive)
+  (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+      (org-show-properties)
+    (org-hide-properties)))
+
 
 
   (setq org-roam-capture-ref-templates
         '(("r" "ref" plain
            "%?"
-           :if-new (file+head "${slug}.org"
+           :if-new (file+head "$lit/{slug}.org"
                               "#+title: ${title}\n")
            :unnarrowed t)))
 
@@ -329,7 +393,7 @@
 
 
 
-;;  (setq org-roam-capture-ref-templates ; copied from jethros dots
+;;  (setq org-roam-capture-ref-templates
 ;;        '(("e" "ref" plain (function org-roam--capture-get-point)
 ;;           "%?\n* related"
 ;;           :file-name "lit/${slug}"
