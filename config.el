@@ -64,7 +64,11 @@
  (defun anki-editor-cloze-region-dont-incr (&optional arg)
    "Cloze region without hint using the previous card number."
    (interactive)
-   (anki-editor-cloze-region (1- my-anki-editor-cloze-number) "")
+   (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
+                                    (progn
+                                      (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+                                      1))
+                                   (t (1- my-anki-editor-cloze-number))) "")
    (forward-sexp))
  (defun anki-editor-reset-cloze-number (&optional arg)
    "Reset cloze number to ARG or 1"
