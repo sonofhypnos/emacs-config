@@ -29,59 +29,21 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/Dropbox/org-roam/")
+(setq org-directory "~/org-roam")
 (setq org-roam-directory org-directory)
+(setq
+   zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
+   )
 
 
-
-;; This determines the style of line numbers in effect. If set to `nil', line
-;; numbers are disabled. For relative line numbers, set this to `relative'.
-
-
-
-
-
-
-
-
-
-
-
-
+;python support
 (use-package elpy
   :ensure t
   :defer t
   :init
   (advice-add 'python-mode :before 'elpy-enable))
 
-
-
-
-
-;;(defun get-newest-file-from-dir  (path)
-;;      "Get latest file (including directory) in PATH."
-;;      (car (directory-files path 'full nil #'file-newer-than-file-p)))
-;;
-;;    (defun insert-org-image ()
-;;      "Moves image from Dropbox folder to ./media, inserting org-mode link"
-;;      (interactive)
-;;      (let* ((indir (expand-file-name andre--screenshot-folder))
-;;             (infile (get-newest-file-from-dir indir))
-;;             (outdir (concat (file-name-directory (buffer-file-name)) "/media"))
-;;             (outfile (expand-file-name (file-name-nondirectory infile) outdir)))
-;;        (unless (file-directory-p outdir)
-;;          (make-directory outdir t))
-;;        (rename-file infile outfile)
-;;        (insert (concat (concat "[[./media/" (file-name-nondirectory outfile)) "]]")))
-;;      (newline)
-;;      (newline))
-
-;;(defun org-insert-clipboard-image (&optional file)
-;;  (interactive "F")
-;;  (shell-command (concat "pngpaste " file))
-;;  (insert (concat "[[" file "]]"))
-;;  (org-display-inline-images))
-
+;anki support and org-roam templates
 (use-package anki-editor
  :bind (:map org-mode-map
              ("<f12>" . anki-editor-cloze-region-auto-incr)
@@ -136,7 +98,7 @@
                "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
 
 (add-to-list 'org-capture-templates
-             '("l" "Link" entry (file+headline "~/Dropbox/org-roam/20210510194711-read_and_take_notes.org" "Links")
+             `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
                "* [[%:link][%:description]]\n %?\n \n %i\n%T"
              :immediate-finish t))
 ;;(add-to-list 'org-capture-templates
@@ -170,20 +132,6 @@
      (delete-other-windows)
      )
  )
-
-;;(use-package org-protocol
-;;  :demand
-;;  :config
-;;  (add-to-list 'org-capture-templates
-;;               '("p" "Protocol" entry (file "")
-;;                 "* TODO %?[[%:link][%:description]] %U\n%i\n" :prepend t))
-;;  (add-to-list 'org-capture-templates
-;;               '("L" "Protocol Link" entry (file "")
-;;                 "* TODO %?[[%:link][%:description]] %U\n" :prepend t)))
-;;
-;;
-;;
-;; Org-capture templates
 
 ;; Allow Emacs to access content from clipboard.
 ;;(defvar select-enable-clipboard t
@@ -267,12 +215,6 @@
 
 
 ;; Variable for later use
-(setq
-   zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
-   org-directory org-directory
-   deft-directory org-directory
-   org-roam-directory org-directory
-   )
 
 
 
@@ -298,13 +240,13 @@
 (add-to-list 'org-roam-capture-templates
              '("r" "reading" plain
                (function org-roam-capture--get-point) "* %? \n\n* related"
-               :file-name "project/%<%y-%m-%d %h%m%s>"
+               :file-name "project/${slug}"
                :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M:%S>\n#+tags: reading\n"
                :unnarrowed t))
 (add-to-list 'org-roam-capture-templates
              '("d" "project" plain
                (function org-roam-capture--get-point) "* %?\n\n* related"
-               :file-name "project/%<%y-%m-%d%h%m%s>"
+               :file-name "project/${slug}"
                :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M:%S>\n"
                :unnarrowed t))
 (add-to-list 'org-roam-capture-templates
@@ -330,80 +272,9 @@
            :unnarrowed t
            )))
 
-  (setq org-roam-link-title-format "r:%s")
+  (setq org-roam-link-title-format "%s")
   (require 'org-roam-protocol)
-
 )
-;;  (add-hook 'find-file-hook
-;;    (defun +org-roam-open-buffer-maybe-h ()
-;;      (and +org-roam-open-buffer-on-find-file
-;;           (memq 'org-roam-buffer--update-maybe post-command-hook)
-;;           (not (window-parameter nil 'window-side)) ; don't proc for popups
-;;           (not (eq 'visible (org-roam-buffer--visibility)))
-;;           (with-current-buffer (window-buffer)
-;;             (org-roam-buffer--get-create)))))
-
-;;(use-package! org-roam
-;;  :init
-;;  (map! :leader
-;;        :prefix "n"
-;;        :desc "org-roam" "l" #'org-roam-buffer-toggle
-;;        :desc "org-roam-node-insert" "i" #'org-roam-node-insert
-;;        :desc "org-roam-ref-find" "r" #'org-roam-ref-find
-;;        :desc "org-roam-show-graph" "g" #'org-roam-show-graph
-;;        :desc "org-roam-capture" "c" #'org-roam-capture
-;;        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today)
-;;  (setq org-roam-directory (file-truename "~/.org/braindump/org/")
-;;        org-roam-db-gc-threshold most-positive-fixnum
-;;        org-id-link-to-org-use-id t)
-;;  (add-to-list 'display-buffer-alist
-;;               '(("\\*org-roam\\*"
-;;                  (display-buffer-in-direction)
-;;                  (direction . right)
-;;                  (window-width . 0.33)
-;;                  (window-height . fit-window-to-buffer))))
-;;  :config
-;;  (setq org-roam-mode-sections
-;;        (list #'org-roam-backlinks-insert-section
-;;              #'org-roam-reflinks-insert-section
-;;              ;; #'org-roam-unlinked-references-insert-section
-;;              ))
-;;  (org-roam-setup)
-;;  (setq org-roam-capture-templates
-;;        '(("d" "default" plain
-;;           "%?"
-;;           :if-new (file+head "${slug}.org"
-;;                              "#+title: ${title}\n")
-;;           :immediate-finish t
-;;           :unnarrowed t)))
-;;  (setq org-roam-capture-ref-templates
-;;        '(("r" "ref" plain
-;;           "%?"
-;;           :if-new (file+head "${slug}.org"
-;;                              "#+title: ${title}\n")
-;;           :unnarrowed t)))
-;;
-;;  (add-to-list 'org-capture-templates `("c" "org-protocol-capture" entry (file+olp ,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory) "The List")
-;;                                         "* TO-READ [[%:link][%:description]] %^g"
-;;                                         :immediate-finish t))
-;;  (add-to-list 'org-agenda-custom-commands `("r" "Reading"
-;;                                             ((todo "WRITING"
-;;                                                    ((org-agenda-overriding-header "Writing")
-;;                                                     (org-agenda-files '(,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory)))))
-;;                                              (todo "READING"
-;;                                                    ((org-agenda-overriding-header "Reading")
-;;                                                     (org-agenda-files '(,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory)))))
-;;                                              (todo "TO-READ"
-;;                                                    ((org-agenda-overriding-header "To Read")
-;;                                                     (org-agenda-files '(,(expand-file-name "reading_and_writing_inbox.org" org-roam-directory))))))))
-;;  (setq org-roam-dailies-directory "daily/")
-;;  (setq org-roam-dailies-capture-templates
-;;        '(("d" "default" entry
-;;           "* %?"
-;;           :if-new (file+head "daily/%<%Y-%m-%d>.org"
-;;                              "#+title: %<%Y-%m-%d>\n"))))
-;;  ;; (set-company-backend! 'org-mode '(company-capf))
-;;  )
 
 ;;org-roam server creates an interactive graph from the org-roam files in the browser.
 (use-package org-roam-server
@@ -421,6 +292,15 @@
         org-roam-server-network-label-wrap-length 20))
 
 
+(use-package deft
+  :after org
+  :bind
+  ("C-c n d" . deft)
+  :custom
+  (deft-recursive t)
+  (deft-use-filter-string-for-filename t)
+  (deft-default-extension "org")
+  (deft-directory org-directory))
 
 
 ;;Bibliography configuration
@@ -448,14 +328,19 @@
 
 (use-package org-ref
     :config
-    (setq
-         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex
-         org-ref-default-bibliography zot_bib
+    :ensure t
+    :init
+    (setq org-ref-completion-library 'org-ref-ivy-cite
+          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
+     (setq
+         org-ref-default-bibliography (list zot_bib)
          org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
          org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-         org-ref-notes-directory org-roam-directory
+         org-ref-notes-directory (concat org-roam-directory "/lit")
          org-ref-notes-function 'orb-edit-notes
-    ))
+       )
+         )
+
 
 (setq display-line-numbers-type t)
 
@@ -476,63 +361,6 @@
 \n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
 
            :unnarrowed t))))
-
-
-;;;;(use-package! org-noter
-;;;;    :after org
-;;;;    :config (setq org-noter-default-notes-file-names '("org-noter.org")
-;;;;                  org-noter-notes-search-path '(org-directory)
-;;;;                  org-noter-separate-notes-from-heading t))
-;;(use-package org-noter
-;;  :after (:any org pdf-view)
-;;  :config
-;;  (setq
-;;   ;; The WM can handle splits
-;;   org-noter-notes-window-location 'other-frame
-;;   ;; Please stop opening frames
-;;   org-noter-always-create-frame nil
-;;   ;; I want to see the whole file
-;;   org-noter-hide-other nil
-;;   ;; Everything is relative to the main notes file
-;;   org-noter-notes-search-path (list org-directory)
-;;   )
-;;  (require 'org-noter-pdftools))
-;;
-;;(use-package org-pdftools
-;;  :hook (org-mode . org-pdftools-setup-link))
-;;
-;;(use-package org-noter-pdftools
-;;  :after org-noter
-;;  :config
-;;  ;; Add a function to ensure precise note is inserted
-;;  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-;;    (interactive "P")
-;;    (org-noter--with-valid-session
-;;     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-;;                                                   (not org-noter-insert-note-no-questions)
-;;                                                 org-noter-insert-note-no-questions))
-;;           (org-pdftools-use-isearch-link t)
-;;           (org-pdftools-use-freestyle-annot t))
-;;       (org-noter-insert-note (org-noter--get-precise-info)))))
-;;
-;;  ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
-;;  (defun org-noter-set-start-location (&optional arg)
-;;    "When opening a session with this document, go to the current location.
-;;With a prefix ARG, remove start location."
-;;    (interactive "P")
-;;    (org-noter--with-valid-session
-;;     (let ((inhibit-read-only t)
-;;           (ast (org-noter--parse-root))
-;;           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-;;       (with-current-buffer (org-noter--session-notes-buffer session)
-;;         (org-with-wide-buffer
-;;          (goto-char (org-element-property :begin ast))
-;;          (if arg
-;;              (org-entry-delete nil org-noter-property-note-location)
-;;            (org-entry-put nil org-noter-property-note-location
-;;                           (org-noter--pretty-print-location location))))))))
-;;  (with-eval-after-load 'pdf-annot
-;;    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
 
 ; more finegrainded undo
