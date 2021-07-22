@@ -18,7 +18,9 @@
   :recipe (:host github
   :repo "abrochard/emacs-todoist"))
 
-(package! org-roam-bibtex)
+(package! org-roam-bibtex
+  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+
 (package! org-roam-server)
 (package! md-roam
   :recipe (:host github
