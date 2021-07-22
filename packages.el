@@ -31,7 +31,7 @@
   :repo "abo-abo/org-download"))
 
 (package! org-roam
-  :recipe (:host github :repo "org-roam/org-roam" :branch "v2"))
+  :recipe (:host github :repo "org-roam/org-roam"))
 ;; (package! org-roam-bibtex
 ;;   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! mathpix.el

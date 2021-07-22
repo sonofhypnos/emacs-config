@@ -43,7 +43,7 @@
   :init
   (advice-add 'python-mode :before 'elpy-enable))
 
-;anki support and org-roam templates
+;anki support and org templates
 (use-package anki-editor
 
   :init
@@ -181,6 +181,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORG-ROAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(setq org-roam-v2-ack t)
+
 ;;journal template copied from here: https://org-roam.discourse.group/t/dailies-capture-templates-best-practices/1043
     (setq org-roam-dailies-capture-templates
           (let ((head
@@ -244,161 +246,193 @@
 ;;  :hook (pdf-tools-enabled . hide-mode-line-mode)
 ;;  :config
 ;;  (setq pdf-view-midnight-colors '("#ABB2BF" . "#282C35")))
-
-
-
-
-(add-to-list 'load-path "~/emacs/lisp/org/org-protocol.el")
-
-
-
-;; Variable for later use
-
-
-
-
-(after! org-roam
+;;
+;;
+;;
+;;
+;;(add-to-list 'load-path "~/emacs/lisp/org/org-protocol.el")
+;;
+;;
+;;
+;;;; Variable for later use
+;;
+;;
+;;
+;;
+(use-package! org-roam
+  :after org
   :init
   (map! :leader
         :prefix "a"
-        :desc "org-roam" "l" #'org-roam
-        :desc "org-roam-insert" "i" #'org-roam-insert
-        :desc "org-roam-switch-to-buffer" "u" #'org-roam-switch-to-buffer
-        :desc "org-roam-node-find" "f" #'org-roam-find-file
-        :desc "org-roam-show-graph" "g" #'org-roam-server-mode
+;;        :desc "org-roam" "l" #'org-roam
+        :desc "org-roam-node-insert" "i" #'org-roam-node-insert
+;;        :desc "org-roam-switch-to-buffer" "u" #'org-roam-switch-to-buffer
+        :desc "org-roam-node-find" "f" #'org-roam-node-find
+;;        :desc "org-roam-show-graph" "g" #'org-roam-server-mode
         :desc "org-roam-capture" "c" #'org-roam-capture
-        :desc "org-roam-dailies-capture-today" "t" #'org-roam-dailies-capture-today
-        :desc "org-roam-tag-add" "at" #'org-roam-tag-add
-        :desc "org-roam-dailies-find-today" "d" #'org-roam-dailies-find-today
-        :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
-        :desc "org-roam-tag-delete" "ö" #'org-roam-tag-delete
-        :desc "org-roam-buffer-activate" "r" #'org-roam-buffer-activate
-        :desc "org-roam-buffer-deactivate" "z" #'org-roam-buffer-deactivate
-        :desc "org-roam-backlinks-mode" "bl" #'org-roam-backlinks-mode)
-(add-to-list 'org-roam-capture-templates
-             '("r" "reading" plain
-               (function org-roam-capture--get-point) "* %? \n\n* related"
-               :file-name "project/${slug}"
-               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M:%S>\n#+tags: reading\n"
-               :unnarrowed t))
-(add-to-list 'org-roam-capture-templates
-             '("d" "project" plain
-               (function org-roam-capture--get-point) "* %?\n\n* related"
-               :file-name "project/${slug}"
-               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M:%S>\n"
-               :unnarrowed t))
-(add-to-list 'org-roam-capture-templates
-             '("r" "reference/tag" plain
-               (function org-roam-capture--get-point) "* %?"
-               :file-name "project/%<%y-%m-%d%h%m%s>"
-               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M:%S>\n"
-               :unnarrowed t))
+        :desc "org-roam-dailies-capture-today" "t" #'org-roam-dailies-today
+;;        :desc "org-roam-tag-add" "at" #'org-roam-tag-add
+;;        :desc "org-roam-dailies-find-today" "d" #'org-roam-dailies-find-today
+;;        :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
+;;        :desc "org-roam-tag-delete" "ö" #'org-roam-tag-delete
+        :desc "org-roam-ref-find" "r" #'org-roam-ref-find
+        :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
+        )
+;;  (add-to-list 'display-buffer-alist
+;;               '(("\\*org-roam\\*"
+;;                  (display-buffer-in-direction)
+;;                  (direction . right)
+;;                  (window-width . 0.33)
+;;                  (window-height . fit-window-to-buffer))))
+  :config
+  (org-roam-setup)
 
-  (setq org-roam-capture-ref-templates ; copied from jethros dots
-        '(("e" "ref" plain (function org-roam--capture-get-point)
-           "%?\n* related"
-           :file-name "lit/${slug}"
-           :head "#+setupfile:./hugo_setup.org
-#+roam_key: ${ref}
-#+hugo_slug: ${slug}
-#+roam_tags: website
-#+title: ${title}
 
-- source :: ${ref}
-* thoughts
-** "
-           :unnarrowed t
-           )))
+(setq org-roam-capture-templates
+        '(("d" "default" plain
+           "%?"
+           :if-new (file+head "${slug}.org"
+                              "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* related\n")
+           :immediate-finish t
+           :unnarrowed t)))
 
-  (setq org-roam-link-title-format "%s")
+;;(add-to-list 'org-roam-capture-templates
+;;             '("p" "more" plain "%?"
+;;               :file-name "${slug}"
+;;               :if-new (file+head "${slug}.org"
+;;                                  "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* related\n")
+;;               :unnarrowed t))
+;;(add-to-list 'org-roam-capture-templates
+;;             '("d" "project" plain
+;;               (function org-roam-capture--get-point) "* %?\n\n* related"
+;;               :file-name "project/${slug}"
+;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
+;;               :unnarrowed t))
+;;(add-to-list 'org-roam-capture-templates
+;;             '("r" "reference/tag" plain
+;;               (function org-roam-capture--get-point) "* %?"
+;;               :file-name "project/%<%y-%m-%d%h%m%s>"
+;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
+;;               :unnarrowed t))
+
+
+
+  (setq org-roam-capture-ref-templates
+        '(("r" "ref" plain
+           "%?"
+           :if-new (file+head "${slug}.org"
+                              "#+title: ${title}\n")
+           :unnarrowed t)))
+
+
+
+
+
+
+;;  (setq org-roam-capture-ref-templates ; copied from jethros dots
+;;        '(("e" "ref" plain (function org-roam--capture-get-point)
+;;           "%?\n* related"
+;;           :file-name "lit/${slug}"
+;;           :head "#+setupfile:./hugo_setup.org
+;;#+roam_key: ${ref}
+;;#+hugo_slug: ${slug}
+;;#+roam_tags: website
+;;#+title: ${title}
+;;
+;;- source :: ${ref}
+;;* thoughts
+;;** "
+;;           :unnarrowed t
+;;           )))
+
+  ;(setq org-roam-link-title-format "%s")
   (require 'org-roam-protocol)
+;;
+;;;;org-roam server creates an interactive graph from the org-roam files in the browser.
+;;(use-package org-roam-server
+;;  :config
+;;  (setq org-roam-server-host "127.0.0.1"
+;;        org-roam-server-port 8080
+;;        org-roam-server-authenticate nil
+;;        org-roam-server-export-inline-images t
+;;        org-roam-server-serve-files nil
+;;        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+;;        org-roam-server-network-poll t
+;;        org-roam-server-network-arrows nil
+;;        org-roam-server-network-label-truncate t
+;;        org-roam-server-network-label-truncate-length 60
+;;        org-roam-server-network-label-wrap-length 20))
+;;
+;;
+;;(use-package deft
+;;  :after org
+;;  :bind
+;;  ("C-c n d" . deft)
+;;  :custom
+;;  (deft-recursive t)
+;;  (deft-use-filter-string-for-filename t)
+;;  (deft-default-extension "org")
+;;  (deft-directory org-directory))
+;;
+;;
+;;;;Bibliography configuration
+;;(setq
+;; bibtex-completion-notes-path org-directory
+;; bibtex-completion-bibliography zot_bib
+;; bibtex-completion-pdf-field "file"
+;; bibtex-completion-notes-template-multiple-files
+;; (concat
+;;  "#+TITLE: ${title}\n"
+;;  "#+ROAM_KEY: cite:${=key=}\n"
+;;  "* TODO Notes\n"
+;;  ":PROPERTIES:\n"
+;;  ":Custom_ID: ${=key=}\n"
+;;  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+;;  ":AUTHOR: ${author-abbrev}\n"
+;;  ":JOURNAL: ${journaltitle}\n"
+;;  ":DATE: ${date}\n"
+;;  ":YEAR: ${year}\n"
+;;  ":DOI: ${doi}\n"
+;;  ":URL: ${url}\n"
+;;  ":END:\n\n"
+;;  )
+;; )
+;;
+;;(use-package org-ref
+;;    :config
+;;    :ensure t
+;;    :init
+;;    (setq org-ref-completion-library 'org-ref-ivy-cite
+;;          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
+;;     (setq
+;;         org-ref-default-bibliography (list zot_bib)
+;;         org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
+;;         org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+;;         org-ref-notes-directory (concat org-roam-directory "/lit")
+;;         org-ref-notes-function 'orb-edit-notes)
+;;     )
 )
-
-;;org-roam server creates an interactive graph from the org-roam files in the browser.
-(use-package org-roam-server
-  :config
-  (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8080
-        org-roam-server-authenticate nil
-        org-roam-server-export-inline-images t
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20))
-
-
-(use-package deft
-  :after org
-  :bind
-  ("C-c n d" . deft)
-  :custom
-  (deft-recursive t)
-  (deft-use-filter-string-for-filename t)
-  (deft-default-extension "org")
-  (deft-directory org-directory))
-
-
-;;Bibliography configuration
-(setq
- bibtex-completion-notes-path org-directory
- bibtex-completion-bibliography zot_bib
- bibtex-completion-pdf-field "file"
- bibtex-completion-notes-template-multiple-files
- (concat
-  "#+TITLE: ${title}\n"
-  "#+ROAM_KEY: cite:${=key=}\n"
-  "* TODO Notes\n"
-  ":PROPERTIES:\n"
-  ":Custom_ID: ${=key=}\n"
-  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-  ":AUTHOR: ${author-abbrev}\n"
-  ":JOURNAL: ${journaltitle}\n"
-  ":DATE: ${date}\n"
-  ":YEAR: ${year}\n"
-  ":DOI: ${doi}\n"
-  ":URL: ${url}\n"
-  ":END:\n\n"
-  )
- )
-
-(use-package org-ref
-    :config
-    :ensure t
-    :init
-    (setq org-ref-completion-library 'org-ref-ivy-cite
-          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
-     (setq
-         org-ref-default-bibliography (list zot_bib)
-         org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
-         org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-         org-ref-notes-directory (concat org-roam-directory "/lit")
-         org-ref-notes-function 'orb-edit-notes
-       )
-         )
-
-
-(setq display-line-numbers-type t)
-
- (use-package! org-roam-bibtex
-  :after (org-roam)
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  :config
-  (setq org-roam-bibtex-preformat-keywords
-   '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
-  (setq orb-templates
-        '(("r" "ref" plain (function org-roam-capture--get-point)
-           ""
-           :file-name "${slug}"
-           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
-
-- keywords :: ${keywords}
-
-\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
-
-           :unnarrowed t))))
+;;
+;;
+;;(setq display-line-numbers-type t)
+;;
+;; (use-package! org-roam-bibtex
+;;  :after (org-roam)
+;;  :hook (org-roam-mode . org-roam-bibtex-mode)
+;;  :config
+;;  (setq org-roam-bibtex-preformat-keywords
+;;   '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
+;;  (setq orb-templates
+;;        '(("r" "ref" plain (function org-roam-capture--get-point)
+;;           ""
+;;           :file-name "${slug}"
+;;           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
+;;
+;;- keywords :: ${keywords}
+;;
+;;\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
+;;
+;;           :unnarrowed t))))
 
 
 ; more finegrainded undo
@@ -490,7 +524,7 @@ before we send our 'ok' to the SessionManager."
 ;;(use-package wakatime-mode
 ;;  :ensure t)
 
-(add-hook 'after-init-hook 'org-roam-mode)
+;;(add-hook 'after-init-hook 'org-roam)
 (add-hook 'after-init-hook 'org-zotxt-mode)
 
 ;;(global-wakatime-mode)
