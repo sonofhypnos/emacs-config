@@ -43,6 +43,10 @@
   :init
   (advice-add 'python-mode :before 'elpy-enable))
 
+  (map! :after emr
+         :map prog-mode-map
+         "M-RET" #'emr-show-refactor-menu)
+
 ;anki support and org templates
 (use-package anki-editor
 

@@ -14,7 +14,7 @@
  '(objed-cursor-color "#dc322f")
  '(org-protocol-project-alist
    '(("https://orgmode.org/worg/dsklsdflkj/" :base-url "https://orgmode.org/worg/dsklsdflkj/" :working-directory "/home/tassilo/Dropbox/org-roam/protocol/" :online-suffix ".html" :working-suffix ".org")))
- '(package-selected-packages '(org-roam))
+ '(package-selected-packages '(emr org-noter org-roam))
  '(pdf-view-midnight-colors (cons "#839496" "#002b36"))
  '(rustic-ansi-faces
    ["#002b36" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])

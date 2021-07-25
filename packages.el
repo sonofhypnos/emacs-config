@@ -21,7 +21,10 @@
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 
-(package! org-roam-server)
+;(package! helm-swoop)
+;(package! emr)
+
+;(package! org-roam-server)
 (package! md-roam
   :recipe (:host github
   :repo "nobiot/md-roam"))
