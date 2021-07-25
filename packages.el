@@ -28,6 +28,9 @@
 (package! md-roam
   :recipe (:host github
   :repo "nobiot/md-roam"))
+(package! org-pdftools
+  :recipe (:host github
+  :repo "fuxialexander/org-pdftools"))
 (package! org-noter-pdftools)
 (package! org-download
   :recipe (:host github
@@ -41,7 +44,7 @@
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! anki-editor)
 
-;;(package! pdf-tools)
+(package! pdf-tools)
 (package! zotxt)
 
 ;; To install a package with Doom you must declare them here and run 'doom sync'

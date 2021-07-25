@@ -36,9 +36,10 @@
    )
 
 
+;setting these keys here, so debugging is less painful
+
 ;python support
 (use-package elpy
-  :ensure t
   :defer t
   :init
   (advice-add 'python-mode :before 'elpy-enable))
@@ -187,98 +188,25 @@
 
 (setq org-roam-v2-ack t)
 
-;;journal template copied from here: https://org-roam.discourse.group/t/dailies-capture-templates-best-practices/1043
-    (setq org-roam-dailies-capture-templates
-          (let ((head
-                 (concat
-    "#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today"
-    "\n* Morgenroutine"
-    "\n - [ ] start Focusmate Session"
-    "\n - [ ] start tracking"
-    "\n - [ ] check Bedtime yesterday"
-    "\n - [ ] Medis genommen"
-    "\n - [ ] Duschen"
-    "\n - [ ] Uhr angezogen"
-    "\n - [ ] Ziele gesetzt"
-    "\n - [ ] gegessen"
-    "\n - [ ] Anki"
-    "\n - [ ] Zähne geputzt"
-    "\n* Evening Routine"
-    "\n - [ ] start Focusmate Session"
-    "\n - [ ] Impuls unterdrückt?"
-    "\n - [ ] put reminder for tomorrows Session on your Pillow"
-    "\n - [ ] go through notes"
-    "\n - [ ] go through to-do inbox"
-    "\n - [ ] check Habits/Beeminder"
-    "\n - [ ] Tasks Reviewed"
-    "\n - [ ] Timetracking Reviewed"
-    "\n - [ ] ask Journal Questions"
-    "\n - [ ] determine bedtime"
-    "\n - [ ] review Anki"
-    "\n - [ ] Brush Teeth!"
-    "\n* Inbox"
-    "\n* Journal"
-    "\n* Evening Journal"
-    "\n** What did you achieve today?"
-    "\n** What are you grateful for?"
-    "\n** What worried you today?"
-    "\n** What else is on your mind?")))
-            `(("j" "journal" entry
-               #'org-roam-capture--get-point
-               "* %<%H:%M> %?"
-               :file-name "daily/%<%Y-%m-%d>"
-               :head ,head
-               :olp ("Journal"))
-              ("t" "do today" item
-               #'org-roam-capture--get-point
-               "[ ] %(princ as/agenda-captured-link)"
-               :file-name "daily/%<%Y-%m-%d>"
-               :head ,head
-               :olp ("Do Today"))
-              ("m" "maybe do today" item
-               #'org-roam-capture--get-point
-               "[ ] %(princ as/agenda-captured-link)"
-               :file-name "daily/%<%Y-%m-%d>"
-               :head ,head
-               :olp ("Maybe Do Today")
-               :immediate-finish t))))
+;;(setq org-roam-capture-templates
+;;        '(("d" "default" plain
+;;           "%?"
+;;           :if-new (file+head "${slug}.org"
+;;                              "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* related\n")
+;;           :immediate-finish t
+;;           :unnarrowed t)))
 
-
-;;add pdf-viewer. I have no idea whether something similar would be added through the pdf-package in the init-file
-;;(use-package pdf-view
-;;  :hook (pdf-tools-enabled . pdf-view-midnight-minor-mode)
-;;  :hook (pdf-tools-enabled . hide-mode-line-mode)
-;;  :config
-;;  (setq pdf-view-midnight-colors '("#ABB2BF" . "#282C35")))
-;;
-;;
-;;
-;;
-;;(add-to-list 'load-path "~/emacs/lisp/org/org-protocol.el")
-;;
-;;
-;;
-;;;; Variable for later use
-;;
-;;
-;;
-;;
 (use-package! org-roam
   :after org
   :init
   (map! :leader
         :prefix "a"
-;;        :desc "org-roam" "l" #'org-roam
         :desc "org-roam-node-insert" "i" #'org-roam-node-insert
-;;        :desc "org-roam-switch-to-buffer" "u" #'org-roam-switch-to-buffer
         :desc "org-roam-node-find" "f" #'org-roam-node-find
-;;        :desc "org-roam-show-graph" "g" #'org-roam-server-mode
         :desc "org-roam-capture" "c" #'org-roam-capture
-        :desc "org-roam-dailies-capture-today" "t" #'org-roam-dailies-today
-;;        :desc "org-roam-tag-add" "at" #'org-roam-tag-add
-;;        :desc "org-roam-dailies-find-today" "d" #'org-roam-dailies-find-today
-;;        :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
-;;        :desc "org-roam-tag-delete" "ö" #'org-roam-tag-delete
+        :desc "org-roam-tag-add" "at" #'org-roam-tag-add
+        :desc "org-roam-dailies-find-today" "d" #'org-roam-dailies-find-today
+        :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
         :desc "org-roam-ref-find" "r" #'org-roam-ref-find
         :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
         )
@@ -289,7 +217,71 @@
 ;;                  (window-width . 0.33)
 ;;                  (window-height . fit-window-to-buffer))))
   :config
-  (org-roam-setup)
+(org-roam-setup)
+
+
+(setq org-roam-dailies-directory "daily/")
+;;(setq org-roam-dailies-capture-templates
+;;;;(let ((newhead
+;;;;                 (concat
+;;;;    "#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today"
+;;;;    "\n* Morgenroutine"
+;;;;    "\n - [ ] start Focusmate Session"
+;;;;    "\n - [ ] start tracking"
+;;;;    "\n - [ ] check Bedtime yesterday"
+;;;;    "\n - [ ] Medis genommen"
+;;;;    "\n - [ ] Duschen"
+;;;;    "\n - [ ] Uhr angezogen"
+;;;;    "\n - [ ] Ziele gesetzt"
+;;;;    "\n - [ ] gegessen"
+;;;;    "\n - [ ] Anki"
+;;;;    "\n - [ ] Zähne geputzt"
+;;;;    "\n* Evening Routine"
+;;;;    "\n - [ ] start Focusmate Session"
+;;;;    "\n - [ ] Impuls unterdrückt?"
+;;;;    "\n - [ ] put reminder for tomorrows Session on your Pillow"
+;;;;    "\n - [ ] go through notes"
+;;;;    "\n - [ ] go through to-do inbox"
+;;;;    "\n - [ ] check Habits/Beeminder"
+;;;;    "\n - [ ] Tasks Reviewed"
+;;;;    "\n - [ ] Timetracking Reviewed"
+;;;;    "\n - [ ] ask Journal Questions"
+;;;;    "\n - [ ] determine bedtime"
+;;;;    "\n - [ ] review Anki"
+;;;;    "\n - [ ] Brush Teeth!"
+;;;;    "\n* Inbox"
+;;;;    "\n* Journal"
+;;;;    "\n* Evening Journal"
+;;;;    "\n** What did you achieve today?"
+;;;;    "\n** What are you grateful for?"
+;;;;    "\n** What worried you today?"
+;;;;    "\n** What else is on your mind?"))
+;;;;      (org-filename "%<%Y-%m-%d>.org"))
+;;            `(("j" "journal" entry
+;;               #'org-roam-capture--get-point
+;;               "* %<%H:%M> %?"
+;;               :if-new (file+head "%<%Y-%m-%d>.org"
+;;                        ,newhead) ;I don't really get scope in elisp yet so this is the save way to
+;;                                 ;do it for me
+;;               :olp ("Journal")
+;;               )
+;;              ("t" "do today" item
+;;               #'org-roam-capture--get-point
+;;               "[ ] %(princ as/agenda-captured-link)"
+;;               :if-new (file+head "%<%Y-%m-%d>.org"
+;;                        ,newhead)
+;;               :olp ("Do Today"))
+;;              ("m" "maybe do today" item
+;;               #'org-roam-capture--get-point
+;;               "[ ] %(princ as/agenda-captured-link)"
+;;               :if-new (file+head "%<%Y-%m-%d>.org"
+;;                        ,newhead)
+;;               :olp ("Maybe Do Today")
+;;               :immediate-finish t)
+;;              )
+;;;;            )
+;;)
+
 
 
 (setq org-roam-capture-templates
@@ -318,6 +310,9 @@
 ;;               :file-name "project/%<%y-%m-%d%h%m%s>"
 ;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
 ;;               :unnarrowed t))
+
+
+;here come some nice but non-essential functions:
 
 ; see https://github.com/org-roam/org-roam/issues/1565
 (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
@@ -388,14 +383,9 @@ ${tags:20}")
   (setq org-roam-capture-ref-templates
         '(("r" "ref" plain
            "%?"
-           :if-new (file+head "$lit/{slug}.org"
+           :if-new (file+head "${slug}.org"
                               "#+title: ${title}\n")
            :unnarrowed t)))
-
-
-
-
-
 
 ;;  (setq org-roam-capture-ref-templates
 ;;        '(("e" "ref" plain (function org-roam--capture-get-point)
@@ -415,7 +405,9 @@ ${tags:20}")
 
   ;(setq org-roam-link-title-format "%s")
   (require 'org-roam-protocol)
-;;
+
+
+ ; Org-roam-server currently does not work
 ;;;;org-roam server creates an interactive graph from the org-roam files in the browser.
 ;;(use-package org-roam-server
 ;;  :config
@@ -443,64 +435,65 @@ ${tags:20}")
 ;;  (deft-directory org-directory))
 ;;
 ;;
-;;;;Bibliography configuration
-;;(setq
-;; bibtex-completion-notes-path org-directory
-;; bibtex-completion-bibliography zot_bib
-;; bibtex-completion-pdf-field "file"
-;; bibtex-completion-notes-template-multiple-files
-;; (concat
-;;  "#+TITLE: ${title}\n"
-;;  "#+ROAM_KEY: cite:${=key=}\n"
-;;  "* TODO Notes\n"
-;;  ":PROPERTIES:\n"
-;;  ":Custom_ID: ${=key=}\n"
-;;  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-;;  ":AUTHOR: ${author-abbrev}\n"
-;;  ":JOURNAL: ${journaltitle}\n"
-;;  ":DATE: ${date}\n"
-;;  ":YEAR: ${year}\n"
-;;  ":DOI: ${doi}\n"
-;;  ":URL: ${url}\n"
-;;  ":END:\n\n"
-;;  )
-;; )
+;;Bibliography configuration
 ;;
-;;(use-package org-ref
-;;    :config
-;;    :ensure t
-;;    :init
-;;    (setq org-ref-completion-library 'org-ref-ivy-cite
-;;          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
-;;     (setq
-;;         org-ref-default-bibliography (list zot_bib)
-;;         org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
-;;         org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-;;         org-ref-notes-directory (concat org-roam-directory "/lit")
-;;         org-ref-notes-function 'orb-edit-notes)
-;;     )
+(setq
+ bibtex-completion-notes-path org-directory
+ bibtex-completion-bibliography zot_bib
+ bibtex-completion-pdf-field "file"
+ bibtex-completion-notes-template-multiple-files
+ (concat
+  "#+TITLE: ${title}\n"
+  "#+ROAM_KEY: cite:${=key=}\n"
+  "* TODO Notes\n"
+  ":PROPERTIES:\n"
+  ":Custom_ID: ${=key=}\n"
+  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+  ":AUTHOR: ${author-abbrev}\n"
+  ":JOURNAL: ${journaltitle}\n"
+  ":DATE: ${date}\n"
+  ":YEAR: ${year}\n"
+  ":DOI: ${doi}\n"
+  ":URL: ${url}\n"
+  ":END:\n\n"
+  )
+ )
 )
-;;
-;;
-;;(setq display-line-numbers-type t)
-;;
-;; (use-package! org-roam-bibtex
-;;  :after (org-roam)
-;;  :hook (org-roam-mode . org-roam-bibtex-mode)
-;;  :config
-;;  (setq org-roam-bibtex-preformat-keywords
-;;   '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
-;;  (setq orb-templates
-;;        '(("r" "ref" plain (function org-roam-capture--get-point)
-;;           ""
-;;           :file-name "${slug}"
-;;           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
-;;
-;;- keywords :: ${keywords}
-;;
-;;\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
-;;
-;;           :unnarrowed t))))
+
+(use-package org-ref
+    :config
+    :ensure t
+    :init
+    (setq org-ref-completion-library 'org-ref-ivy-cite
+          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
+     (setq
+         org-ref-default-bibliography (list zot_bib)
+         org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
+         org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+         org-ref-notes-directory (concat org-roam-directory "/lit")
+         org-ref-notes-function 'orb-edit-notes)
+     )
+
+
+
+
+ (use-package! org-roam-bibtex
+  :after (org-roam)
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :config
+  (setq org-roam-bibtex-preformat-keywords
+   '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
+  (setq orb-templates
+        '(("r" "ref" plain (function org-roam-capture--get-point)
+           ""
+           :file-name "${slug}"
+           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
+
+- keywords :: ${keywords}
+
+\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
+
+           :unnarrowed t))))
 
 
 ; more finegrainded undo
@@ -527,6 +520,54 @@ ${tags:20}")
 (define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
 
 
+
+
+(after! pdf-tools
+  (add-hook! 'pdf-tools-enabled-hook
+    (pdf-view-midnight-minor-mode 1)))
+
+
+
+(use-package org-noter
+  :config
+   (setq org-noter-notes-search-path '("~/org-roam/")))
+
+(use-package org-pdftools
+  :hook (org-mode . org-pdftools-setup-link))
+
+(use-package! org-noter-pdftools
+  :after org-noter
+  :config
+  (pdf-tools-install)
+  ;; Add a function to ensure precise note is inserted
+  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                   (not org-noter-insert-note-no-questions)
+                                                 org-noter-insert-note-no-questions))
+           (org-pdftools-use-isearch-link t)
+           (org-pdftools-use-freestyle-annot t))
+       (org-noter-insert-note (org-noter--get-precise-info)))))
+
+  ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+  (defun org-noter-set-start-location (&optional arg)
+    "When opening a session with this document, go to the current location.
+With a prefix ARG, remove start location."
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((inhibit-read-only t)
+           (ast (org-noter--parse-root))
+           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+       (with-current-buffer (org-noter--session-notes-buffer session)
+         (org-with-wide-buffer
+          (goto-char (org-element-property :begin ast))
+          (if arg
+              (org-entry-delete nil org-noter-property-note-location)
+            (org-entry-put nil org-noter-property-note-location
+                           (org-noter--pretty-print-location location))))))))
+  (with-eval-after-load 'pdf-annot
+    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
 
 
