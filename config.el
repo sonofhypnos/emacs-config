@@ -32,128 +32,128 @@
 (setq org-directory "~/org-roam")
 (setq org-roam-directory org-directory)
 (setq
-   zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
-   )
+ zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
+ )
 
 
-;setting these keys here, so debugging is less painful
+                                        ;;setting these keys here, so debugging is less painful
 
-;python support
+                                        ;;python support
 (use-package elpy
   :defer t
   :init
   (advice-add 'python-mode :before 'elpy-enable))
 
-  (map! :after emr
-         :map prog-mode-map
-         "M-RET" #'emr-show-refactor-menu)
+(map! :after emr
+      :map prog-mode-map
+      "M-RET" #'emr-show-refactor-menu)
 
-;anki support and org templates
+                                        ;;anki support and org templates
 (use-package anki-editor
 
   :init
   (setq-default anki-editor-use-math-jax t) ; github.com/louietan/anki-editor/issues/60#issuecomment-617441799
-;;  ;; create custom key map
-;;  (progn
-;;    (defvar anki-editor-mode-map (make-sparse-keymap))
-;;    (add-to-list 'minor-mode-map-alist (cons 'anki-editor-mode
-;;                                             anki-editor-mode-map)))
-;;  :custom
-;;  (anki-editor-create-decks t)
-;;  (anki-editor-org-tags-as-anki-tags t)
-;;  :config
-  ;only works on Mac-OS
-;;  ;; The very simple Keyboard Maestro macro called by this function may be downloaded here:
-;;  ;; https://www.dropbox.com/s/or5h9v9ydnd3z9f/Anki%3A%20open%20note%20ID.kmmacros?dl=0
-;;  (defun ps/anki-editor-open-note-externally ()
-;;    "Copy note id to clipboard, switch to Anki desktop, and open note in browser."
-;;    (interactive)
-;;    (let ((note-id (org-entry-get nil "ANKI_NOTE_ID")))
-;;      (if (eq note-id nil)
-;;          (error "Note id not found")
-;;        (progn
-;;          (kill-new (concat "nid:" note-id))
-;;          (shell-command "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"496A3425-8985-4117-AE0F-ABD6DC85FB9F\"'")))))
-;;  :general
-;;  ("M-A-i" 'anki-editor-mode)
-;;  (anki-editor-mode-map
-;;   "s-c" 'anki-editor-cloze-region
-;;   "s-i" 'anki-editor-insert-note
-;;   "s-n" 'anki-editor-push-new-notes
-;;   "s-x" 'ps/anki-editor-open-note-externally
-;;   "s-a" 'anki-editor-push-notes ; push all notes
-;;   "s-h" (lambda () (interactive) (anki-editor-push-notes '(4))))) ; push notes under heading
+  ;;  ;; create custom key map
+  ;;  (progn
+  ;;    (defvar anki-editor-mode-map (make-sparse-keymap))
+  ;;    (add-to-list 'minor-mode-map-alist (cons 'anki-editor-mode
+  ;;                                             anki-editor-mode-map)))
+  ;;  :custom
+  ;;  (anki-editor-create-decks t)
+  ;;  (anki-editor-org-tags-as-anki-tags t)
+  ;;  :config
+                                        ;;only works on Mac-OS
+  ;;  ;; The very simple Keyboard Maestro macro called by this function may be downloaded here:
+  ;;  ;; https://www.dropbox.com/s/or5h9v9ydnd3z9f/Anki%3A%20open%20note%20ID.kmmacros?dl=0
+  ;;  (defun ps/anki-editor-open-note-externally ()
+  ;;    "Copy note id to clipboard, switch to Anki desktop, and open note in browser."
+  ;;    (interactive)
+  ;;    (let ((note-id (org-entry-get nil "ANKI_NOTE_ID")))
+  ;;      (if (eq note-id nil)
+  ;;          (error "Note id not found")
+  ;;        (progn
+  ;;          (kill-new (concat "nid:" note-id))
+  ;;          (shell-command "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"496A3425-8985-4117-AE0F-ABD6DC85FB9F\"'")))))
+  ;;  :general
+  ;;  ("M-A-i" 'anki-editor-mode)
+  ;;  (anki-editor-mode-map
+  ;;   "s-c" 'anki-editor-cloze-region
+  ;;   "s-i" 'anki-editor-insert-note
+  ;;   "s-n" 'anki-editor-push-new-notes
+  ;;   "s-x" 'ps/anki-editor-open-note-externally
+  ;;   "s-a" 'anki-editor-push-notes ; push all notes
+  ;;   "s-h" (lambda () (interactive) (anki-editor-push-notes '(4))))) ; push notes under heading
 
- :bind (:map org-mode-map
-             ("<f12>" . anki-editor-cloze-region-auto-incr)
-             ("<f11>" . anki-editor-cloze-region-dont-incr)
-             ("<f10>" . anki-editor-reset-cloze-number)
-             ("<f9>"  . anki-editor-push-tree))
- :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
- :config
- (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
-       anki-editor-org-tags-as-anki-tags t)
+  :bind (:map org-mode-map
+         ("<f12>" . anki-editor-cloze-region-auto-incr)
+         ("<f11>" . anki-editor-cloze-region-dont-incr)
+         ("<f10>" . anki-editor-reset-cloze-number)
+         ("<f9>"  . anki-editor-push-tree))
+  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+  :config
+  (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
+        anki-editor-org-tags-as-anki-tags t)
 
- (defun anki-editor-cloze-region-auto-incr (&optional arg)
-   "Cloze region without hint and increase card number."
-   (interactive)
-   (anki-editor-cloze-region my-anki-editor-cloze-number "")
-   (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-   (forward-sexp))
- (defun anki-editor-cloze-region-dont-incr (&optional arg)
-   "Cloze region without hint using the previous card number."
-   (interactive)
-   (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
-                                    (progn
-                                      (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-                                      1))
-                                   (t (1- my-anki-editor-cloze-number))) "")
-   (forward-sexp))
- (defun anki-editor-reset-cloze-number (&optional arg)
-   "Reset cloze number to ARG or 1"
-   (interactive)
-   (setq my-anki-editor-cloze-number (or arg 1)))
- (defun anki-editor-push-tree ()
-   "Push all notes under a tree."
-   (interactive)
-   (anki-editor-push-notes '(4))
-   (anki-editor-reset-cloze-number))
- ;; Initialize
- (anki-editor-reset-cloze-number)
+  (defun anki-editor-cloze-region-auto-incr (&optional arg)
+    "Cloze region without hint and increase card number."
+    (interactive)
+    (anki-editor-cloze-region my-anki-editor-cloze-number "")
+    (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+    (forward-sexp))
+  (defun anki-editor-cloze-region-dont-incr (&optional arg)
+    "Cloze region without hint using the previous card number."
+    (interactive)
+    (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
+                                     (progn
+                                       (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+                                       1))
+                                    (t (1- my-anki-editor-cloze-number))) "")
+    (forward-sexp))
+  (defun anki-editor-reset-cloze-number (&optional arg)
+    "Reset cloze number to ARG or 1"
+    (interactive)
+    (setq my-anki-editor-cloze-number (or arg 1)))
+  (defun anki-editor-push-tree ()
+    "Push all notes under a tree."
+    (interactive)
+    (anki-editor-push-notes '(4))
+    (anki-editor-reset-cloze-number))
+  ;; Initialize
+  (anki-editor-reset-cloze-number)
 
-(setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
-:demand
-:config
-(add-to-list 'org-capture-templates
-             '("a" "Anki basic"
-               entry
-               (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
-(add-to-list 'org-capture-templates
-             '("A" "Anki cloze"
-               entry
-               (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
-(add-to-list 'org-capture-templates
-             '("T" "Anki type"
-               entry
-               (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
+  (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
+  :demand
+  :config
+  (add-to-list 'org-capture-templates
+               '("a" "Anki basic"
+                 entry
+                 (file+headline org-my-anki-file "Dispatch Shelf")
+                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
+  (add-to-list 'org-capture-templates
+               '("A" "Anki cloze"
+                 entry
+                 (file+headline org-my-anki-file "Dispatch Shelf")
+                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
+  (add-to-list 'org-capture-templates
+               '("T" "Anki type"
+                 entry
+                 (file+headline org-my-anki-file "Dispatch Shelf")
+                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
 
-(add-to-list 'org-capture-templates
-             `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
-               "* [[%:link][%:description]]\n %?\n \n %i\n%T"
-             :immediate-finish t))
-;;(add-to-list 'org-capture-templates
-;;             '("l" "Link" entry (file+headline (concat org-directory "links.org") "Links")
-;;                 "* [[%:link][% \"%:description\"]] %?\n\n %T\n%i"
-;;             :immediate-finish t))
-;;(setq org-capture-templates
-;;      '(("s" "Simple" entry (file+headline "~/test" "Simple Notes")
-;;         "%[~/.emacs.d/.org-popup]" :immediate-finish t :prepend t)
-;;        ("a" "Titled" entry (file+headline "~/test" "Titled Notes")
-;;         "%[~/.emacs.d/.org-popup]" :immediate-finish t :prepend t)))
-             
+  (add-to-list 'org-capture-templates
+               `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
+                 "* [[%:link][%:description]]\n %?\n \n %i\n%T"
+                 :immediate-finish t))
+  ;;(add-to-list 'org-capture-templates
+  ;;             '("l" "Link" entry (file+headline (concat org-directory "links.org") "Links")
+  ;;                 "* [[%:link][% \"%:description\"]] %?\n\n %T\n%i"
+  ;;             :immediate-finish t))
+  ;;(setq org-capture-templates
+  ;;      '(("s" "Simple" entry (file+headline "~/test" "Simple Notes")
+  ;;         "%[~/.emacs.d/.org-popup]" :immediate-finish t :prepend t)
+  ;;        ("a" "Titled" entry (file+headline "~/test" "Titled Notes")
+  ;;         "%[~/.emacs.d/.org-popup]" :immediate-finish t :prepend t)))
+
   (add-to-list 'org-capture-templates
                '("L" "Protocol Link" entry
                  (file+headline +org-capture-notes-file "Inbox")
@@ -166,15 +166,15 @@
                  "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
                  :prepend t
                  :kill-buffer t))
- (defun make-orgcapture-frame ()
-     "Create a new frame and run org-capture."
-     (interactive)
-     (make-frame '((name . "org-capture") ))
-     (select-frame-by-name "org-capture")
-     (org-capture)
-     (delete-other-windows)
-     )
- )
+  (defun make-orgcapture-frame ()
+    "Create a new frame and run org-capture."
+    (interactive)
+    (make-frame '((name . "org-capture") ))
+    (select-frame-by-name "org-capture")
+    (org-capture)
+    (delete-other-windows)
+    )
+  )
 
 ;; Allow Emacs to access content from clipboard.
 ;;(defvar select-enable-clipboard t
@@ -182,12 +182,12 @@
 
 
 (defun toggle-maximize-buffer () "Maximize buffer"
-  (interactive)
-  (if (= 1 (length (window-list)))
-      (jump-to-register '_)
-    (progn
-      (window-configuration-to-register '_)
-      (delete-other-windows))))
+       (interactive)
+       (if (= 1 (length (window-list)))
+           (jump-to-register '_)
+         (progn
+           (window-configuration-to-register '_)
+           (delete-other-windows))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORG-ROAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -198,7 +198,7 @@
 (use-package! org-roam
   :after org
   :init
-   (map! :leader
+  (map! :leader
         :prefix "a"
         :desc "org-roam-node-insert" "i" #'org-roam-node-insert
         :desc "org-roam-node-find" "f" #'org-roam-node-find
@@ -209,18 +209,18 @@
         :desc "org-roam-ref-find" "r" #'org-roam-ref-find
         :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
         )
-;;  (add-to-list 'display-buffer-alist
-;;               '(("\\*org-roam\\*"
-;;                  (display-buffer-in-direction)
-;;                  (direction . right)
-;;                  (window-width . 0.33)
-;;                  (window-height . fit-window-to-buffer))))
+  ;;  (add-to-list 'display-buffer-alist
+  ;;               '(("\\*org-roam\\*"
+  ;;                  (display-buffer-in-direction)
+  ;;                  (direction . right)
+  ;;                  (window-width . 0.33)
+  ;;                  (window-height . fit-window-to-buffer))))
   :config
-(org-roam-setup)
+  (org-roam-setup)
 
 
-(setq org-roam-dailies-directory "daily/")
-;;(setq org-roam-dailies-capture-templates
+  (setq org-roam-dailies-directory "daily/")
+  ;;(setq org-roam-dailies-capture-templates
 ;;;;(let ((newhead
 ;;;;                 (concat
 ;;;;    "#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -256,34 +256,34 @@
 ;;;;    "\n** What worried you today?"
 ;;;;    "\n** What else is on your mind?"))
 ;;;;      (org-filename "%<%Y-%m-%d>.org"))
-;;            `(("j" "journal" entry
-;;               #'org-roam-capture--get-point
-;;               "* %<%H:%M> %?"
-;;               :if-new (file+head "%<%Y-%m-%d>.org"
-;;                        ,newhead) ;I don't really get scope in elisp yet so this is the save way to
-;;                                 ;do it for me
-;;               :olp ("Journal")
-;;               )
-;;              ("t" "do today" item
-;;               #'org-roam-capture--get-point
-;;               "[ ] %(princ as/agenda-captured-link)"
-;;               :if-new (file+head "%<%Y-%m-%d>.org"
-;;                        ,newhead)
-;;               :olp ("Do Today"))
-;;              ("m" "maybe do today" item
-;;               #'org-roam-capture--get-point
-;;               "[ ] %(princ as/agenda-captured-link)"
-;;               :if-new (file+head "%<%Y-%m-%d>.org"
-;;                        ,newhead)
-;;               :olp ("Maybe Do Today")
-;;               :immediate-finish t)
-;;              )
+  ;;            `(("j" "journal" entry
+  ;;               #'org-roam-capture--get-point
+  ;;               "* %<%H:%M> %?"
+  ;;               :if-new (file+head "%<%Y-%m-%d>.org"
+  ;;                        ,newhead) ;I don't really get scope in elisp yet so this is the save way to
+  ;;                                 ;do it for me
+  ;;               :olp ("Journal")
+  ;;               )
+  ;;              ("t" "do today" item
+  ;;               #'org-roam-capture--get-point
+  ;;               "[ ] %(princ as/agenda-captured-link)"
+  ;;               :if-new (file+head "%<%Y-%m-%d>.org"
+  ;;                        ,newhead)
+  ;;               :olp ("Do Today"))
+  ;;              ("m" "maybe do today" item
+  ;;               #'org-roam-capture--get-point
+  ;;               "[ ] %(princ as/agenda-captured-link)"
+  ;;               :if-new (file+head "%<%Y-%m-%d>.org"
+  ;;                        ,newhead)
+  ;;               :olp ("Maybe Do Today")
+  ;;               :immediate-finish t)
+  ;;              )
 ;;;;            )
-;;)
+  ;;)
 
 
 
-(setq org-roam-capture-templates
+  (setq org-roam-capture-templates
         '(("d" "default" plain
            "%?"
            :if-new (file+head "${slug}.org"
@@ -291,91 +291,91 @@
            :immediate-finish t
            :unnarrowed t)))
 
-;;(add-to-list 'org-roam-capture-templates
-;;             '("p" "more" plain "%?"
-;;               :file-name "${slug}"
-;;               :if-new (file+head "${slug}.org"
-;;                                  "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* related\n")
-;;               :unnarrowed t))
-;;(add-to-list 'org-roam-capture-templates
-;;             '("d" "project" plain
-;;               (function org-roam-capture--get-point) "* %?\n\n* related"
-;;               :file-name "project/${slug}"
-;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
-;;               :unnarrowed t))
-;;(add-to-list 'org-roam-capture-templates
-;;             '("r" "reference/tag" plain
-;;               (function org-roam-capture--get-point) "* %?"
-;;               :file-name "project/%<%y-%m-%d%h%m%s>"
-;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
-;;               :unnarrowed t))
+  ;;(add-to-list 'org-roam-capture-templates
+  ;;             '("p" "more" plain "%?"
+  ;;               :file-name "${slug}"
+  ;;               :if-new (file+head "${slug}.org"
+  ;;                                  "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* related\n")
+  ;;               :unnarrowed t))
+  ;;(add-to-list 'org-roam-capture-templates
+  ;;             '("d" "project" plain
+  ;;               (function org-roam-capture--get-point) "* %?\n\n* related"
+  ;;               :file-name "project/${slug}"
+  ;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
+  ;;               :unnarrowed t))
+  ;;(add-to-list 'org-roam-capture-templates
+  ;;             '("r" "reference/tag" plain
+  ;;               (function org-roam-capture--get-point) "* %?"
+  ;;               :file-name "project/%<%y-%m-%d%h%m%s>"
+  ;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
+  ;;               :unnarrowed t))
 
 
-;here come some nice but non-essential functions:
+                                        ;;here come some nice but non-essential functions:
 
-; see https://github.com/org-roam/org-roam/issues/1565
-(cl-defmethod org-roam-node-filetitle ((node org-roam-node))
-  "Return the file TITLE for the node."
-  (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
+                                        ;; see https://github.com/org-roam/org-roam/issues/1565
+  (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
+    "Return the file TITLE for the node."
+    (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
 
-(cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
-  "Return the hierarchy for the node."
-  (let ((title (org-roam-node-title node))
-        (olp (org-roam-node-olp node))
-        (level (org-roam-node-level node))
-        (filetitle (org-roam-node-filetitle node)))
-    (concat
-     (if (> level 0) (concat filetitle " > "))
-     (if (> level 1) (concat (string-join olp " > ") " > "))
-     title))
-  )
+  (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
+    "Return the hierarchy for the node."
+    (let ((title (org-roam-node-title node))
+          (olp (org-roam-node-olp node))
+          (level (org-roam-node-level node))
+          (filetitle (org-roam-node-filetitle node)))
+      (concat
+       (if (> level 0) (concat filetitle " > "))
+       (if (> level 1) (concat (string-join olp " > ") " > "))
+       title))
+    )
 
-(setq org-roam-node-display-template "${hierarchy:*}
+  (setq org-roam-node-display-template "${hierarchy:*}
 ${tags:20}")
 
 
 
-(cl-defmethod org-roam-node-directories ((node org-roam-node))
-  (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
-      (format "(%s)" (car (f-split dirs)))
-    ""))
+  (cl-defmethod org-roam-node-directories ((node org-roam-node))
+    (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
+        (format "(%s)" (car (f-split dirs)))
+      ""))
 
-(cl-defmethod org-roam-node-backlinkscount ((node org-roam-node))
-  (let* ((count (caar (org-roam-db-query
-                       [:select (funcall count source)
-                                :from links
-                                :where (= dest $s1)
-                                :and (= type "id")]
-                       (org-roam-node-id node)))))
-    (format "[%d]" count)))
+  (cl-defmethod org-roam-node-backlinkscount ((node org-roam-node))
+    (let* ((count (caar (org-roam-db-query
+                         [:select (funcall count source)
+                          :from links
+                          :where (= dest $s1)
+                          :and (= type "id")]
+                         (org-roam-node-id node)))))
+      (format "[%d]" count)))
 
-(setq org-roam-node-display-template "${directories:9} ${title:50} ${tags:5} ${backlinkscount:5}")
+  (setq org-roam-node-display-template "${directories:9} ${title:50} ${tags:5} ${backlinkscount:5}")
 
 
-(defun org-hide-properties ()
-  "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward
-            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
-      (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
-        (overlay-put ov_this 'display "")
-        (overlay-put ov_this 'hidden-prop-drawer t))))
-  (put 'org-toggle-properties-hide-state 'state 'hidden))
+  (defun org-hide-properties ()
+    "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+    (interactive)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward
+              "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+        (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+          (overlay-put ov_this 'display "")
+          (overlay-put ov_this 'hidden-prop-drawer t))))
+    (put 'org-toggle-properties-hide-state 'state 'hidden))
 
-(defun org-show-properties ()
-  "Show all org-mode property drawers hidden by org-hide-properties."
-  (interactive)
-  (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
-  (put 'org-toggle-properties-hide-state 'state 'shown))
+  (defun org-show-properties ()
+    "Show all org-mode property drawers hidden by org-hide-properties."
+    (interactive)
+    (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+    (put 'org-toggle-properties-hide-state 'state 'shown))
 
-(defun org-toggle-properties ()
-  "Toggle visibility of property drawers."
-  (interactive)
-  (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
-      (org-show-properties)
-    (org-hide-properties)))
+  (defun org-toggle-properties ()
+    "Toggle visibility of property drawers."
+    (interactive)
+    (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+        (org-show-properties)
+      (org-hide-properties)))
 
 
 
@@ -386,102 +386,102 @@ ${tags:20}")
                               "#+title: ${title}\n")
            :unnarrowed t)))
 
-;;  (setq org-roam-capture-ref-templates
-;;        '(("e" "ref" plain (function org-roam--capture-get-point)
-;;           "%?\n* related"
-;;           :file-name "lit/${slug}"
-;;           :head "#+setupfile:./hugo_setup.org
-;;#+roam_key: ${ref}
-;;#+hugo_slug: ${slug}
-;;#+roam_tags: website
-;;#+title: ${title}
-;;
-;;- source :: ${ref}
-;;* thoughts
-;;** "
-;;           :unnarrowed t
-;;           )))
+  ;;  (setq org-roam-capture-ref-templates
+  ;;        '(("e" "ref" plain (function org-roam--capture-get-point)
+  ;;           "%?\n* related"
+  ;;           :file-name "lit/${slug}"
+  ;;           :head "#+setupfile:./hugo_setup.org
+  ;;#+roam_key: ${ref}
+  ;;#+hugo_slug: ${slug}
+  ;;#+roam_tags: website
+  ;;#+title: ${title}
+  ;;
+  ;;- source :: ${ref}
+  ;;* thoughts
+  ;;** "
+  ;;           :unnarrowed t
+  ;;           )))
 
-  ;(setq org-roam-link-title-format "%s")
+                                        ;;(setq org-roam-link-title-format "%s")
   (require 'org-roam-protocol)
 
 
- ; Org-roam-server currently does not work
+                                        ;; Org-roam-server currently does not work
 ;;;;org-roam server creates an interactive graph from the org-roam files in the browser.
-;;(use-package org-roam-server
-;;  :config
-;;  (setq org-roam-server-host "127.0.0.1"
-;;        org-roam-server-port 8080
-;;        org-roam-server-authenticate nil
-;;        org-roam-server-export-inline-images t
-;;        org-roam-server-serve-files nil
-;;        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-;;        org-roam-server-network-poll t
-;;        org-roam-server-network-arrows nil
-;;        org-roam-server-network-label-truncate t
-;;        org-roam-server-network-label-truncate-length 60
-;;        org-roam-server-network-label-wrap-length 20))
-;;
-;;
-;;(use-package deft
-;;  :after org
-;;  :bind
-;;  ("C-c n d" . deft)
-;;  :custom
-;;  (deft-recursive t)
-;;  (deft-use-filter-string-for-filename t)
-;;  (deft-default-extension "org")
-;;  (deft-directory org-directory))
-;;
-;;
-;;Bibliography configuration
-;;
-(setq
- bibtex-completion-notes-path org-directory
- bibtex-completion-bibliography zot_bib
- bibtex-completion-pdf-field "file"
- bibtex-completion-notes-template-multiple-files
- (concat
-  "#+TITLE: ${title}\n"
-  "#+ROAM_KEY: cite:${=key=}\n"
-  "* TODO Notes\n"
-  ":PROPERTIES:\n"
-  ":Custom_ID: ${=key=}\n"
-  ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-  ":AUTHOR: ${author-abbrev}\n"
-  ":JOURNAL: ${journaltitle}\n"
-  ":DATE: ${date}\n"
-  ":YEAR: ${year}\n"
-  ":DOI: ${doi}\n"
-  ":URL: ${url}\n"
-  ":END:\n\n"
+  ;;(use-package org-roam-server
+  ;;  :config
+  ;;  (setq org-roam-server-host "127.0.0.1"
+  ;;        org-roam-server-port 8080
+  ;;        org-roam-server-authenticate nil
+  ;;        org-roam-server-export-inline-images t
+  ;;        org-roam-server-serve-files nil
+  ;;        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+  ;;        org-roam-server-network-poll t
+  ;;        org-roam-server-network-arrows nil
+  ;;        org-roam-server-network-label-truncate t
+  ;;        org-roam-server-network-label-truncate-length 60
+  ;;        org-roam-server-network-label-wrap-length 20))
+  ;;
+  ;;
+  ;;(use-package deft
+  ;;  :after org
+  ;;  :bind
+  ;;  ("C-c n d" . deft)
+  ;;  :custom
+  ;;  (deft-recursive t)
+  ;;  (deft-use-filter-string-for-filename t)
+  ;;  (deft-default-extension "org")
+  ;;  (deft-directory org-directory))
+  ;;
+  ;;
+  ;;Bibliography configuration
+  ;;
+  (setq
+   bibtex-completion-notes-path org-directory
+   bibtex-completion-bibliography zot_bib
+   bibtex-completion-pdf-field "file"
+   bibtex-completion-notes-template-multiple-files
+   (concat
+    "#+TITLE: ${title}\n"
+    "#+ROAM_KEY: cite:${=key=}\n"
+    "* TODO Notes\n"
+    ":PROPERTIES:\n"
+    ":Custom_ID: ${=key=}\n"
+    ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+    ":AUTHOR: ${author-abbrev}\n"
+    ":JOURNAL: ${journaltitle}\n"
+    ":DATE: ${date}\n"
+    ":YEAR: ${year}\n"
+    ":DOI: ${doi}\n"
+    ":URL: ${url}\n"
+    ":END:\n\n"
+    )
+   )
   )
- )
-)
 
 (use-package org-ref
-    :config
-    :ensure t
-    :init
-    (setq org-ref-completion-library 'org-ref-ivy-cite
-          org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
-     (setq
-         org-ref-default-bibliography (list zot_bib)
-         org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
-         org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-         org-ref-notes-directory (concat org-roam-directory "/lit")
-         org-ref-notes-function 'orb-edit-notes)
-     )
+  :config
+  :ensure t
+  :init
+  (setq org-ref-completion-library 'org-ref-ivy-cite
+        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
+  (setq
+   org-ref-default-bibliography (list zot_bib)
+   org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
+   org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+   org-ref-notes-directory (concat org-roam-directory "/lit")
+   org-ref-notes-function 'orb-edit-notes)
+  )
 
 
 
 
- (use-package! org-roam-bibtex
+(use-package! org-roam-bibtex
   :after (org-roam)
   :hook (org-roam-mode . org-roam-bibtex-mode)
   :config
   (setq org-roam-bibtex-preformat-keywords
-   '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
+        '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
   (setq orb-templates
         '(("r" "ref" plain (function org-roam-capture--get-point)
            ""
@@ -495,9 +495,9 @@ ${tags:20}")
            :unnarrowed t))))
 
 
-; more finegrainded undo
+                                        ;; more finegrainded undo
 (setq evil-want-fine-undo t)
-;safe delete
+                                        ;;safe delete
 (setq-default delete-by-moving-to-trash t)
 
 ;; add macro for Vim surround for more characters
@@ -529,7 +529,7 @@ ${tags:20}")
 
 (use-package org-noter
   :config
-   (setq org-noter-notes-search-path '("~/org-roam/")))
+  (setq org-noter-notes-search-path '("~/org-roam/")))
 
 (use-package org-pdftools
   :hook (org-mode . org-pdftools-setup-link))
@@ -600,16 +600,16 @@ before we send our 'ok' to the SessionManager."
                                   :session "org.gnome.SessionManager" my-gnome-client-path
                                   "org.gnome.SessionManager.ClientPrivate" "EndSessionResponse" nil
                                   t "") ) ) )
-         (dbus-register-signal
-          :session "org.gnome.SessionManager" my-gnome-client-path
-          "org.gnome.SessionManager.ClientPrivate" "QueryEndSession"
-          end-session-response )
-         (dbus-register-signal
-          :session "org.gnome.SessionManager" my-gnome-client-path
-          "org.gnome.SessionManager.ClientPrivate" "EndSession"
-          `(lambda (arg)
-             (add-hook 'kill-emacs-hook ,end-session-response t)
-             (kill-emacs) ) ) ) )
+    (dbus-register-signal
+     :session "org.gnome.SessionManager" my-gnome-client-path
+     "org.gnome.SessionManager.ClientPrivate" "QueryEndSession"
+     end-session-response )
+    (dbus-register-signal
+     :session "org.gnome.SessionManager" my-gnome-client-path
+     "org.gnome.SessionManager.ClientPrivate" "EndSession"
+     `(lambda (arg)
+        (add-hook 'kill-emacs-hook ,end-session-response t)
+        (kill-emacs) ) ) ) )
 
 ;; DESKTOP_AUTOSTART_ID is set by the Gnome desktop manager when emacs
 ;; is autostarted.  We can use it to register as a client with gnome
