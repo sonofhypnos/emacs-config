@@ -22,8 +22,9 @@
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 
 ;(package! helm-swoop)
-;(package! emr)
+(package! emr)
 
+(package! format-all)
 ;(package! org-roam-server)
 (package! md-roam
   :recipe (:host github
