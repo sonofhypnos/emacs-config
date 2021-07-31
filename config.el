@@ -36,9 +36,9 @@
  )
 
 
-                                        ;;setting these keys here, so debugging is less painful
+;;setting these keys here, so debugging is less painful
 
-                                        ;;python support
+;;python support
 (use-package elpy
   :defer t
   :init
@@ -48,7 +48,7 @@
       :map prog-mode-map
       "M-RET" #'emr-show-refactor-menu)
 
-                                        ;;anki support and org templates
+;;anki support and org templates
 (use-package anki-editor
 
   :init
@@ -62,7 +62,7 @@
   ;;  (anki-editor-create-decks t)
   ;;  (anki-editor-org-tags-as-anki-tags t)
   ;;  :config
-                                        ;;only works on Mac-OS
+  ;;only works on Mac-OS
   ;;  ;; The very simple Keyboard Maestro macro called by this function may be downloaded here:
   ;;  ;; https://www.dropbox.com/s/or5h9v9ydnd3z9f/Anki%3A%20open%20note%20ID.kmmacros?dl=0
   ;;  (defun ps/anki-editor-open-note-externally ()
@@ -204,7 +204,8 @@
         :desc "org-roam-node-find" "f" #'org-roam-node-find
         :desc "org-roam-capture" "c" #'org-roam-capture
         :desc "org-roam-tag-add" "at" #'org-roam-tag-add
-        :desc "org-roam-dailies-find-today" "d" #'org-roam-dailies-find-today
+        :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
+        :desc "org-roam-dailies-goto-date" "d" #'org-roam-dailies-goto-date
         :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
         :desc "org-roam-ref-find" "r" #'org-roam-ref-find
         :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
@@ -220,41 +221,46 @@
 
 
   (setq org-roam-dailies-directory "daily/")
-  ;;(setq org-roam-dailies-capture-templates
+  (setq org-roam-dailies-capture-templates
+     `(("d" "default" entry "* %?"
+         :if-new (file+head "%<%Y-%m-%d>.org" ,(concat
+   "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
+   ; The following was replaced by me
+   ;"#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today"
+   "\n* Morgenroutine"
+   "\n - [ ] start Focusmate Session"
+   "\n - [ ] start tracking"
+   "\n - [ ] check Bedtime yesterday"
+   "\n - [ ] Medis genommen"
+   "\n - [ ] Duschen"
+   "\n - [ ] Uhr angezogen"
+   "\n - [ ] Ziele gesetzt"
+   "\n - [ ] gegessen"
+   "\n - [ ] Anki"
+   "\n - [ ] Zähne geputzt"
+   "\n* Evening Routine"
+   "\n - [ ] start Focusmate Session"
+   "\n - [ ] Impuls unterdrückt?"
+   "\n - [ ] put reminder for tomorrows Session on your Pillow"
+   "\n - [ ] go through notes"
+   "\n - [ ] go through to-do inbox"
+   "\n - [ ] check Habits/Beeminder"
+   "\n - [ ] Tasks Reviewed"
+   "\n - [ ] Timetracking Reviewed"
+   "\n - [ ] ask Journal Questions"
+   "\n - [ ] determine bedtime"
+   "\n - [ ] review Anki"
+   "\n - [ ] Brush Teeth!"
+   "\n* Inbox"
+   "\n* Journal"
+   "\n* Evening Journal"
+   "\n** What did you achieve today?"
+   "\n** What are you grateful for?"
+   "\n** What worried you today?"
+   "\n** What else is on your mind?"))
+:add-created t
+         )))
 ;;;;(let ((newhead
-;;;;                 (concat
-;;;;    "#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today"
-;;;;    "\n* Morgenroutine"
-;;;;    "\n - [ ] start Focusmate Session"
-;;;;    "\n - [ ] start tracking"
-;;;;    "\n - [ ] check Bedtime yesterday"
-;;;;    "\n - [ ] Medis genommen"
-;;;;    "\n - [ ] Duschen"
-;;;;    "\n - [ ] Uhr angezogen"
-;;;;    "\n - [ ] Ziele gesetzt"
-;;;;    "\n - [ ] gegessen"
-;;;;    "\n - [ ] Anki"
-;;;;    "\n - [ ] Zähne geputzt"
-;;;;    "\n* Evening Routine"
-;;;;    "\n - [ ] start Focusmate Session"
-;;;;    "\n - [ ] Impuls unterdrückt?"
-;;;;    "\n - [ ] put reminder for tomorrows Session on your Pillow"
-;;;;    "\n - [ ] go through notes"
-;;;;    "\n - [ ] go through to-do inbox"
-;;;;    "\n - [ ] check Habits/Beeminder"
-;;;;    "\n - [ ] Tasks Reviewed"
-;;;;    "\n - [ ] Timetracking Reviewed"
-;;;;    "\n - [ ] ask Journal Questions"
-;;;;    "\n - [ ] determine bedtime"
-;;;;    "\n - [ ] review Anki"
-;;;;    "\n - [ ] Brush Teeth!"
-;;;;    "\n* Inbox"
-;;;;    "\n* Journal"
-;;;;    "\n* Evening Journal"
-;;;;    "\n** What did you achieve today?"
-;;;;    "\n** What are you grateful for?"
-;;;;    "\n** What worried you today?"
-;;;;    "\n** What else is on your mind?"))
 ;;;;      (org-filename "%<%Y-%m-%d>.org"))
   ;;            `(("j" "journal" entry
   ;;               #'org-roam-capture--get-point
@@ -311,9 +317,9 @@
   ;;               :unnarrowed t))
 
 
-                                        ;;here come some nice but non-essential functions:
+  ;;here come some nice but non-essential functions:
 
-                                        ;; see https://github.com/org-roam/org-roam/issues/1565
+  ;; see https://github.com/org-roam/org-roam/issues/1565
   (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
     "Return the file TITLE for the node."
     (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
@@ -402,11 +408,11 @@ ${tags:20}")
   ;;           :unnarrowed t
   ;;           )))
 
-                                        ;;(setq org-roam-link-title-format "%s")
+  ;;(setq org-roam-link-title-format "%s")
   (require 'org-roam-protocol)
 
 
-                                        ;; Org-roam-server currently does not work
+  ;; Org-roam-server currently does not work
 ;;;;org-roam server creates an interactive graph from the org-roam files in the browser.
   ;;(use-package org-roam-server
   ;;  :config
@@ -495,9 +501,9 @@ ${tags:20}")
            :unnarrowed t))))
 
 
-                                        ;; more finegrainded undo
+;; more finegrainded undo
 (setq evil-want-fine-undo t)
-                                        ;;safe delete
+;;safe delete
 (setq-default delete-by-moving-to-trash t)
 
 ;; add macro for Vim surround for more characters
