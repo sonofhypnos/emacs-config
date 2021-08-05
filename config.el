@@ -205,6 +205,7 @@
         :desc "org-roam-capture" "c" #'org-roam-capture
         :desc "org-roam-tag-add" "at" #'org-roam-tag-add
         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
+        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today
         :desc "org-roam-dailies-goto-date" "d" #'org-roam-dailies-goto-date
         :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
         :desc "org-roam-ref-find" "r" #'org-roam-ref-find
@@ -219,11 +220,8 @@
   :config
   (org-roam-setup)
 
-
-  (setq org-roam-dailies-directory "daily/")
-  (setq org-roam-dailies-capture-templates
-     `(("d" "default" entry "* %?"
-         :if-new (file+head "%<%Y-%m-%d>.org" ,(concat
+  (setq daily-template
+        (concat
    "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
    ; The following was replaced by me
    ;"#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -257,9 +255,13 @@
    "\n** What did you achieve today?"
    "\n** What are you grateful for?"
    "\n** What worried you today?"
-   "\n** What else is on your mind?"))
-:add-created t
-         )))
+   "\n** What else is on your mind?")
+        )
+  (setq org-roam-dailies-directory "daily/")
+  (setq org-roam-dailies-capture-templates
+     `(("Journal" "daily" plain "%T\n%?\n"
+        :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal"))
+       )))
 ;;;;(let ((newhead
 ;;;;      (org-filename "%<%Y-%m-%d>.org"))
   ;;            `(("j" "journal" entry
@@ -288,12 +290,11 @@
   ;;)
 
 
-
   (setq org-roam-capture-templates
         '(("d" "default" plain
            "%?"
            :if-new (file+head "${slug}.org"
-                              "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* related\n")
+                              "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
            :immediate-finish t
            :unnarrowed t)))
 
@@ -387,7 +388,7 @@ ${tags:20}")
 
   (setq org-roam-capture-ref-templates
         '(("r" "ref" plain
-           "%?"
+           "%?\n* Quote\n\" %x\"  "
            :if-new (file+head "${slug}.org"
                               "#+title: ${title}\n")
            :unnarrowed t)))
