@@ -227,6 +227,7 @@
    ;"#+title: %<%Y-%m-%d (%A)>\n* [/] Do Today\n* [/] Maybe Do Today"
    "\n* Morgenroutine"
    "\n - [ ] start Focusmate Session"
+   "\n - [ ] Kalender angesehen"
    "\n - [ ] start tracking"
    "\n - [ ] check Bedtime yesterday"
    "\n - [ ] Medis genommen"
