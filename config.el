@@ -337,8 +337,6 @@
        title))
     )
 
-  (setq org-roam-node-display-template "${hierarchy:*}
-${tags:20}")
 
 
 
@@ -355,9 +353,6 @@ ${tags:20}")
                           :and (= type "id")]
                          (org-roam-node-id node)))))
       (format "[%d]" count)))
-
-  (setq org-roam-node-display-template "${directories:9} ${title:50} ${tags:5} ${backlinkscount:5}")
-
 
   (defun org-hide-properties ()
     "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
