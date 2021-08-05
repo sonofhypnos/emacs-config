@@ -632,6 +632,11 @@ before we send our 'ok' to the SessionManager."
 (map! :leader :desc "execute emacs command" "SPC" #'execute-extended-command)
 (map! :leader :desc "projectile find file" ":" #'projectile-find-file)
 
+;; dark mode for pdfs
+(after! pdf-tools
+  (add-hook! 'pdf-tools-enabled-hook
+    (pdf-view-midnight-minor-mode 1)))
+
 
 ;;(use-package wakatime-mode
 ;;  :ensure t)
