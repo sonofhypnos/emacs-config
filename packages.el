@@ -26,7 +26,9 @@
 (package! benchmark-init)
 
 (package! format-all)
-;;(package! org-roam-server)
+(package! websocket)
+(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+
 (package! md-roam
   :recipe (:host github
            :repo "nobiot/md-roam"))

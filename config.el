@@ -518,6 +518,18 @@
            :unnarrowed t))))
 
 
+;;org-roam-ui support
+(use-package! websocket
+    :after org-roam)
+
+(use-package! org-roam-ui
+    :after org-roam ;; or :after org
+    :config
+    (setq org-roam-ui-sync-theme t
+          org-roam-ui-follow t
+          org-roam-ui-update-on-save t
+          org-roam-ui-open-on-start t))
+
 ;; more finegrainded undo
 (setq evil-want-fine-undo t)
 ;;safe delete
