@@ -229,6 +229,7 @@
         :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
         :desc "org-roam-ref-find" "r" #'org-roam-ref-find
         :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
+        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree
         )
   ;;  (add-to-list 'display-buffer-alist
   ;;               '(("\\*org-roam\\*"
@@ -405,7 +406,7 @@
         '(("r" "ref" plain
            "%?\n* Quote\n\" %x\"  "
            :if-new (file+head "${slug}.org"
-                              "#+title: ${title}\n")
+                              "#+title: ${title}\n#+author:\n")
            :unnarrowed t)))
 
   ;;  (setq org-roam-capture-ref-templates
