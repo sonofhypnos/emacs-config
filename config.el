@@ -189,6 +189,25 @@
            (window-configuration-to-register '_)
            (delete-other-windows))))
 
+
+;;shell support
+
+(use-package vterm
+  :commands vterm
+  :config
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+  (setq vterm-shell "zsh")
+  (setq vterm-max-scrollback 10000))
+
+(use-package term
+  :config
+  (setq explicit-shell-file-name "zsh")
+  (setq explicit-zsh-args '()) ; I don't know what this is for?
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORG-ROAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -571,11 +590,6 @@ With a prefix ARG, remove start location."
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
-(use-package term
-  :config
-  (setq explicit-shell-file-name "zsh")
-  ;;(setq explicit-zsh-args '()) ; I don't know what this is for?
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
 (use-package org-download
   :init
