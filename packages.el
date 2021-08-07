@@ -23,6 +23,7 @@
 
 ;;(package! helm-swoop)
 ;;(package! emr)
+(package! benchmark-init)
 
 (package! format-all)
 ;;(package! org-roam-server)
