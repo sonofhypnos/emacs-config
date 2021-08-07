@@ -32,11 +32,7 @@
 (setq org-directory "~/org-roam")
 (setq org-roam-directory org-directory)
 (setq
- zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
- )
-
-
-;;setting these keys here, so debugging is less painful
+ zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
 
 ;;python support
 (use-package elpy
@@ -53,36 +49,6 @@
 
   :init
   (setq-default anki-editor-use-math-jax t) ; github.com/louietan/anki-editor/issues/60#issuecomment-617441799
-  ;;  ;; create custom key map
-  ;;  (progn
-  ;;    (defvar anki-editor-mode-map (make-sparse-keymap))
-  ;;    (add-to-list 'minor-mode-map-alist (cons 'anki-editor-mode
-  ;;                                             anki-editor-mode-map)))
-  ;;  :custom
-  ;;  (anki-editor-create-decks t)
-  ;;  (anki-editor-org-tags-as-anki-tags t)
-  ;;  :config
-  ;;only works on Mac-OS
-  ;;  ;; The very simple Keyboard Maestro macro called by this function may be downloaded here:
-  ;;  ;; https://www.dropbox.com/s/or5h9v9ydnd3z9f/Anki%3A%20open%20note%20ID.kmmacros?dl=0
-  ;;  (defun ps/anki-editor-open-note-externally ()
-  ;;    "Copy note id to clipboard, switch to Anki desktop, and open note in browser."
-  ;;    (interactive)
-  ;;    (let ((note-id (org-entry-get nil "ANKI_NOTE_ID")))
-  ;;      (if (eq note-id nil)
-  ;;          (error "Note id not found")
-  ;;        (progn
-  ;;          (kill-new (concat "nid:" note-id))
-  ;;          (shell-command "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"496A3425-8985-4117-AE0F-ABD6DC85FB9F\"'")))))
-  ;;  :general
-  ;;  ("M-A-i" 'anki-editor-mode)
-  ;;  (anki-editor-mode-map
-  ;;   "s-c" 'anki-editor-cloze-region
-  ;;   "s-i" 'anki-editor-insert-note
-  ;;   "s-n" 'anki-editor-push-new-notes
-  ;;   "s-x" 'ps/anki-editor-open-note-externally
-  ;;   "s-a" 'anki-editor-push-notes ; push all notes
-  ;;   "s-h" (lambda () (interactive) (anki-editor-push-notes '(4))))) ; push notes under heading
 
   :bind (:map org-mode-map
          ("<f12>" . anki-editor-cloze-region-auto-incr)
@@ -144,15 +110,6 @@
                `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
                  "* [[%:link][%:description]]\n %?\n \n %i\n%T"
                  :immediate-finish t))
-  ;;(add-to-list 'org-capture-templates
-  ;;             '("l" "Link" entry (file+headline (concat org-directory "links.org") "Links")
-  ;;                 "* [[%:link][% \"%:description\"]] %?\n\n %T\n%i"
-  ;;             :immediate-finish t))
-  ;;(setq org-capture-templates
-  ;;      '(("s" "Simple" entry (file+headline "~/test" "Simple Notes")
-  ;;         "%[~/.emacs.d/.org-popup]" :immediate-finish t :prepend t)
-  ;;        ("a" "Titled" entry (file+headline "~/test" "Titled Notes")
-  ;;         "%[~/.emacs.d/.org-popup]" :immediate-finish t :prepend t)))
 
   (add-to-list 'org-capture-templates
                '("L" "Protocol Link" entry
@@ -175,11 +132,6 @@
     (delete-other-windows)
     )
   )
-
-;; Allow Emacs to access content from clipboard.
-;;(defvar select-enable-clipboard t
-;;      select-enable-primary t)
-
 
 (defun toggle-maximize-buffer () "Maximize buffer"
        (interactive)
@@ -231,12 +183,6 @@
         :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree
         )
-  ;;  (add-to-list 'display-buffer-alist
-  ;;               '(("\\*org-roam\\*"
-  ;;                  (display-buffer-in-direction)
-  ;;                  (direction . right)
-  ;;                  (window-width . 0.33)
-  ;;                  (window-height . fit-window-to-buffer))))
   :config
   (org-roam-setup)
 
@@ -319,62 +265,7 @@
            :immediate-finish t
            :unnarrowed t)))
 
-  ;;(add-to-list 'org-roam-capture-templates
-  ;;             '("p" "more" plain "%?"
-  ;;               :file-name "${slug}"
-  ;;               :if-new (file+head "${slug}.org"
-  ;;                                  "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* related\n")
-  ;;               :unnarrowed t))
-  ;;(add-to-list 'org-roam-capture-templates
-  ;;             '("d" "project" plain
-  ;;               (function org-roam-capture--get-point) "* %?\n\n* related"
-  ;;               :file-name "project/${slug}"
-  ;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
-  ;;               :unnarrowed t))
-  ;;(add-to-list 'org-roam-capture-templates
-  ;;             '("r" "reference/tag" plain
-  ;;               (function org-roam-capture--get-point) "* %?"
-  ;;               :file-name "project/%<%y-%m-%d%h%m%s>"
-  ;;               :head "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n"
-  ;;               :unnarrowed t))
-
-
-  ;;here come some nice but non-essential functions:
-
-  ;; see https://github.com/org-roam/org-roam/issues/1565
-  (cl-defmethod org-roam-node-filetitle ((node org-roam-node))
-    "Return the file TITLE for the node."
-    (org-roam-get-keyword "TITLE" (org-roam-node-file node)))
-
-  (cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
-    "Return the hierarchy for the node."
-    (let ((title (org-roam-node-title node))
-          (olp (org-roam-node-olp node))
-          (level (org-roam-node-level node))
-          (filetitle (org-roam-node-filetitle node)))
-      (concat
-       (if (> level 0) (concat filetitle " > "))
-       (if (> level 1) (concat (string-join olp " > ") " > "))
-       title))
-    )
-
-
-
-
-  (cl-defmethod org-roam-node-directories ((node org-roam-node))
-    (if-let ((dirs (file-name-directory (file-relative-name (org-roam-node-file node) org-roam-directory))))
-        (format "(%s)" (car (f-split dirs)))
-      ""))
-
-  (cl-defmethod org-roam-node-backlinkscount ((node org-roam-node))
-    (let* ((count (caar (org-roam-db-query
-                         [:select (funcall count source)
-                          :from links
-                          :where (= dest $s1)
-                          :and (= type "id")]
-                         (org-roam-node-id node)))))
-      (format "[%d]" count)))
-
+  ;;here come some nice but non-essential functions for org-roam:
   (defun org-hide-properties ()
     "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
     (interactive)
