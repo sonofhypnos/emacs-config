@@ -35,7 +35,7 @@
  zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
 
 ;;python support
-(use-package elpy
+(use-package! elpy
   :defer t
   :init
   (advice-add 'python-mode :before 'elpy-enable))
@@ -45,8 +45,8 @@
       "M-RET" #'emr-show-refactor-menu)
 
 ;;anki support and org templates
-(use-package anki-editor
-
+(use-package! anki-editor
+  :after org
   :init
   (setq-default anki-editor-use-math-jax t) ; github.com/louietan/anki-editor/issues/60#issuecomment-617441799
 
@@ -144,14 +144,16 @@
 
 ;;shell support
 
-(use-package vterm
+(use-package! vterm
+  :after org
   :commands vterm
   :config
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
   (setq vterm-shell "zsh")
   (setq vterm-max-scrollback 10000))
 
-(use-package term
+(use-package! term
+  :after org
   :config
   (setq explicit-shell-file-name "zsh")
   (setq explicit-zsh-args '()) ; I don't know what this is for?
@@ -320,22 +322,6 @@
   (require 'org-roam-protocol)
 
 
-  ;; Org-roam-server currently does not work
-;;;;org-roam server creates an interactive graph from the org-roam files in the browser.
-  ;;(use-package org-roam-server
-  ;;  :config
-  ;;  (setq org-roam-server-host "127.0.0.1"
-  ;;        org-roam-server-port 8080
-  ;;        org-roam-server-authenticate nil
-  ;;        org-roam-server-export-inline-images t
-  ;;        org-roam-server-serve-files nil
-  ;;        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-  ;;        org-roam-server-network-poll t
-  ;;        org-roam-server-network-arrows nil
-  ;;        org-roam-server-network-label-truncate t
-  ;;        org-roam-server-network-label-truncate-length 60
-  ;;        org-roam-server-network-label-wrap-length 20))
-  ;;
   ;;
   ;;(use-package deft
   ;;  :after org
@@ -373,7 +359,8 @@
    )
   )
 
-(use-package org-ref
+(use-package! org-ref
+  :after org
   :config
   :ensure t
   :init
@@ -453,11 +440,13 @@
 
 
 
-(use-package org-noter
+(use-package! org-noter
+  :after org
   :config
   (setq org-noter-notes-search-path '("~/org-roam/")))
 
-(use-package org-pdftools
+(use-package! org-pdftools
+  :after org
   :hook (org-mode . org-pdftools-setup-link))
 
 (use-package! org-noter-pdftools
@@ -495,7 +484,8 @@ With a prefix ARG, remove start location."
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
 
-(use-package org-download
+(use-package! org-download
+  :after org
   :init
   (map! :leader
         :prefix "d"
@@ -527,15 +517,6 @@ With a prefix ARG, remove start location."
 ;;(global-wakatime-mode)
 
 ;;
-
-
-;;(require 'company-org-roam)
-;;        (use-package company-org-roam
-;;                :when (featurep! :completion company)
-;;                :after org-roam
-;;                :config
-;;        (set-company-backend! 'org-mode '(company-org-roam company-yasnippet company-dabbrev))
-
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
