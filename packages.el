@@ -2,7 +2,7 @@
 ;;; $DOOMDIR/packages.el
 
 (package! wakatime-mode)
-
+(package! org-mode :recipe (:repo "https://code.orgmode.org/bzg/org-mode.git")) ;see https://github.com/hlissner/doom-emacs/issues/4534
 (package! org-ref)
 (package! org-noter)
 (package! org-habit-plus

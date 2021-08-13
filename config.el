@@ -160,6 +160,11 @@
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
 
+(cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
+  (use-package benchmark-init
+    :config
+    (require 'benchmark-init-modes)                                     ; explicitly required
+    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
