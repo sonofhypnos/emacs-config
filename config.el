@@ -160,6 +160,11 @@
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
 
+(map! (:when (featurep! :tools lookup)
+ :leader :desc "projectile find file" :r ":" #'projectile-find-file
+ :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
+
+
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
   (use-package benchmark-init
     :config
@@ -307,38 +312,11 @@
                               "#+title: ${title}\n#+author:\n")
            :unnarrowed t)))
 
-  ;;  (setq org-roam-capture-ref-templates
-  ;;        '(("e" "ref" plain (function org-roam--capture-get-point)
-  ;;           "%?\n* related"
-  ;;           :file-name "lit/${slug}"
-  ;;           :head "#+setupfile:./hugo_setup.org
-  ;;#+roam_key: ${ref}
-  ;;#+hugo_slug: ${slug}
-  ;;#+roam_tags: website
-  ;;#+title: ${title}
-  ;;
-  ;;- source :: ${ref}
-  ;;* thoughts
-  ;;** "
-  ;;           :unnarrowed t
-  ;;           )))
 
   ;;(setq org-roam-link-title-format "%s")
   (require 'org-roam-protocol)
 
 
-  ;;
-  ;;(use-package deft
-  ;;  :after org
-  ;;  :bind
-  ;;  ("C-c n d" . deft)
-  ;;  :custom
-  ;;  (deft-recursive t)
-  ;;  (deft-use-filter-string-for-filename t)
-  ;;  (deft-default-extension "org")
-  ;;  (deft-directory org-directory))
-  ;;
-  ;;
   ;;Bibliography configuration
   ;;
   (setq
@@ -367,7 +345,6 @@
 (use-package! org-ref
   :after org
   :config
-  :ensure t
   :init
   (setq org-ref-completion-library 'org-ref-ivy-cite
         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
@@ -504,8 +481,6 @@ With a prefix ARG, remove start location."
 ;;Custom Shortcuts
 ;;(map! :i "ö" #'evil-normal-state)
 
-(map! :leader :desc "execute emacs command" "SPC" #'execute-extended-command)
-(map! :leader :desc "projectile find file" ":" #'projectile-find-file)
 
 ;; dark mode for pdfs
 (after! pdf-tools
@@ -514,10 +489,7 @@ With a prefix ARG, remove start location."
 
 
 ;;(use-package wakatime-mode
-;;  :ensure t)
-
-;;(add-hook 'after-init-hook 'org-roam)
-(add-hook 'after-init-hook 'org-zotxt-mode)
+;;  )
 
 ;;(global-wakatime-mode)
 
