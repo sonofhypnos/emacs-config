@@ -44,6 +44,18 @@
       :map prog-mode-map
       "M-RET" #'emr-show-refactor-menu)
 
+
+(map! :after spray
+      :map spray-mode-map
+      "s" #'spray-slower
+      "d" #'spray-faster
+      "j" #'spray-backward-word
+      "k" #'spray-stop
+      "l" #'spray-forward-word
+      "SPC" #'spray-stop
+      "q" #'spray-quit
+      )
+
 ;;anki support and org templates
 (use-package! anki-editor
   :after org
