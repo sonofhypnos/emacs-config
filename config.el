@@ -482,22 +482,12 @@ With a prefix ARG, remove start location."
 (add-hook 'dired-mode-hook 'org-download-enable)
 (setq org-image-actual-width nil)
 
-;;Custom Shortcuts
-;;(map! :i "ö" #'evil-normal-state)
-
-
 ;; dark mode for pdfs
 (after! pdf-tools
   (add-hook! 'pdf-tools-enabled-hook
     (pdf-view-midnight-minor-mode 1)))
 
-
-;;(use-package wakatime-mode
-;;  )
-
-;;(global-wakatime-mode)
-
-;;
+(global-wakatime-mode)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
