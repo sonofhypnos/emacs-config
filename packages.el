@@ -1,6 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
+(package! activity-watch-mode)
 (package! wakatime-mode)
 (package! org-mode :recipe (:repo "https://code.orgmode.org/bzg/org-mode.git")) ;see https://github.com/hlissner/doom-emacs/issues/4534
 (package! org-ref)

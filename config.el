@@ -214,7 +214,6 @@
         (concat
    "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
    "\n* Morgenroutine"
-   "\n - [ ] Start Focusmate Session"
    "\n - [ ] Kalender angesehen"
    "\n - [ ] Start tracking"
    "\n - [ ] Check Bedtime yesterday"
@@ -224,7 +223,6 @@
    "\n - [ ] Review Anki"
    "\n - [ ] Brush Teeth"
    "\n* Evening Routine"
-   "\n - [ ] Start Focusmate Session"
    "\n - [ ] Check Habits/Beeminder"
    "\n - [ ] Tasks Reviewed"
    "\n - [ ] Timetracking Reviewed"
@@ -488,6 +486,7 @@ With a prefix ARG, remove start location."
     (pdf-view-midnight-minor-mode 1)))
 
 (global-wakatime-mode)
+(global-activity-watch-mode)
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
