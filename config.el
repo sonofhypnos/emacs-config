@@ -29,10 +29,11 @@
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org-roam")
-(setq org-roam-directory org-directory)
-(setq
- zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
+(setq   org-directory "~/org-roam"
+        org-roam-directory org-directory
+        projectile-project-search-path '("~/repos")
+        zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
+
 
 ;;python support
 (use-package! elpy
@@ -208,8 +209,6 @@
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree
         )
   :config
-  (org-roam-setup)
-
   (setq daily-template
         (concat
    "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -243,33 +242,6 @@
      `(("Journal" "daily" plain "%T\n%?\n"
         :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal"))
        )))
-;;;;(let ((newhead
-;;;;      (org-filename "%<%Y-%m-%d>.org"))
-  ;;            `(("j" "journal" entry
-  ;;               #'org-roam-capture--get-point
-  ;;               "* %<%H:%M> %?"
-  ;;               :if-new (file+head "%<%Y-%m-%d>.org"
-  ;;                        ,newhead) ;I don't really get scope in elisp yet so this is the save way to
-  ;;                                 ;do it for me
-  ;;               :olp ("Journal")
-  ;;               )
-  ;;              ("t" "do today" item
-  ;;               #'org-roam-capture--get-point
-  ;;               "[ ] %(princ as/agenda-captured-link)"
-  ;;               :if-new (file+head "%<%Y-%m-%d>.org"
-  ;;                        ,newhead)
-  ;;               :olp ("Do Today"))
-  ;;              ("m" "maybe do today" item
-  ;;               #'org-roam-capture--get-point
-  ;;               "[ ] %(princ as/agenda-captured-link)"
-  ;;               :if-new (file+head "%<%Y-%m-%d>.org"
-  ;;                        ,newhead)
-  ;;               :olp ("Maybe Do Today")
-  ;;               :immediate-finish t)
-  ;;              )
-;;;;            )
-  ;;)
-
 
   (setq org-roam-capture-templates
         '(("d" "default" plain
