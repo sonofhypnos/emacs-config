@@ -50,6 +50,7 @@
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! anki-editor)
 
+(package! vimgolf)
 (package! pdf-tools)
 (package! zotxt)
 
