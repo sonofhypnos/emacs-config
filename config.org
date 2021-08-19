@@ -448,6 +448,12 @@ With a prefix ARG, remove start location."
 (setq org-image-actual-width nil)
 #+end_src
 
+backup files
+
+#+begin_src emacs-lisp
+(setq auto-save-default t
+      make-backup-files t)
+#+end_src
 #+begin_src emacs-lisp
 ;; dark mode for pdfs
 (after! pdf-tools

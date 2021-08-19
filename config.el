@@ -389,6 +389,9 @@ With a prefix ARG, remove start location."
 (add-hook 'dired-mode-hook 'org-download-enable)
 (setq org-image-actual-width nil)
 
+(setq auto-save-default t
+      make-backup-files t)
+
 ;; dark mode for pdfs
 (after! pdf-tools
   (add-hook! 'pdf-tools-enabled-hook
