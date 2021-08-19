@@ -69,9 +69,10 @@
          ("<f10>" . anki-editor-reset-cloze-number)
          ("<f9>"  . anki-editor-push-tree))
   :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+
   :config
-  (setq anki-editor-create-decks t ;; Allow anki-editor to create a new deck if it doesn't exist
-        anki-editor-org-tags-as-anki-tags t)
+  (setq-default anki-editor-use-math-jax t)
+  (setq anki-editor-org-tags-as-anki-tags t)
 
   (defun anki-editor-cloze-region-auto-incr (&optional arg)
     "Cloze region without hint and increase card number."
@@ -101,8 +102,6 @@
   (anki-editor-reset-cloze-number)
 
   (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
-  :demand
-  :config
   (add-to-list 'org-capture-templates
                '("a" "Anki basic"
                  entry
@@ -370,7 +369,7 @@
 (setq-default delete-by-moving-to-trash t)
 
 ;; add macro for Vim surround for more characters
-;;; this macro was copied from here: https://stackoverflow.com/a/22418983/4921402
+;;; this macro was copied from here:2
 (defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
   (let ((inner-name (make-symbol (concat "evil-inner-" name)))
         (outer-name (make-symbol (concat "evil-a-" name))))
@@ -385,10 +384,8 @@
 (define-and-bind-quoted-text-object "pipe" "|" "|" "|")
 (define-and-bind-quoted-text-object "slash" "/" "/" "/")
 (define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
+(define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
 (define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
-
-
-
 
 (after! pdf-tools
   (add-hook! 'pdf-tools-enabled-hook
