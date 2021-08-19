@@ -1,124 +1,71 @@
-;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
-
-;; Place your private configuration here! Remember, you do not need to run 'doom
-;; sync' after modifying this file!
-
-
-;; Some functionality uses this to identify you, e.g. GPG configuration, email
-;; clients, file templates and snippets.
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
-;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
-;; are the three important ones:
-;;
-;; + `doom-font'
-;; + `doom-variable-pitch-font'
-;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
-;;   presentations or streaming.
-;;
-;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
-;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-
-;; There are two ways to load a theme. Both assume the theme is installed and
-;; available. You can either set `doom-theme' or manually load a theme with the
-;; `load-theme' function. This is the default:
-;;(setq doom-theme 'doom-one)
-
-;; If you use `org' and don't want your org files in the default location below,
-;; change `org-directory'. It must be set before org loads!
 (setq   org-directory "~/org-roam"
         org-roam-directory org-directory
         projectile-project-search-path '("~/repos")
         zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
 
-
-;;python support
-(use-package! elpy
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable))
-
-(map! :after emr
-      :map prog-mode-map
-      "M-RET" #'emr-show-refactor-menu)
-
-
-(map! :after spray
-      :map spray-mode-map
-      "s" #'spray-slower
-      "d" #'spray-faster
-      "j" #'spray-backward-word
-      "k" #'spray-stop
-      "l" #'spray-forward-word
-      "SPC" #'spray-stop
-      "q" #'spray-quit
-      )
-
-;;anki support and org templates
 (use-package! anki-editor
   :after org
   :init
-  (setq-default anki-editor-use-math-jax t) ; github.com/louietan/anki-editor/issues/60#issuecomment-617441799
 
-  :bind (:map org-mode-map
-         ("<f12>" . anki-editor-cloze-region-auto-incr)
-         ("<f11>" . anki-editor-cloze-region-dont-incr)
-         ("<f10>" . anki-editor-reset-cloze-number)
-         ("<f9>"  . anki-editor-push-tree))
-  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+:bind (:map org-mode-map
+       ("<f12>" . anki-editor-cloze-region-auto-incr)
+       ("<f11>" . anki-editor-cloze-region-dont-incr)
+       ("<f10>" . anki-editor-reset-cloze-number)
+       ("<f9>"  . anki-editor-push-tree))
+:hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
-  :config
-  (setq-default anki-editor-use-math-jax t)
-  (setq anki-editor-org-tags-as-anki-tags t)
+:config
+(setq-default anki-editor-use-math-jax t)
+(setq anki-editor-org-tags-as-anki-tags t)
 
-  (defun anki-editor-cloze-region-auto-incr (&optional arg)
-    "Cloze region without hint and increase card number."
-    (interactive)
-    (anki-editor-cloze-region my-anki-editor-cloze-number "")
-    (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-    (forward-sexp))
-  (defun anki-editor-cloze-region-dont-incr (&optional arg)
-    "Cloze region without hint using the previous card number."
-    (interactive)
-    (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
-                                     (progn
-                                       (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-                                       1))
-                                    (t (1- my-anki-editor-cloze-number))) "")
-    (forward-sexp))
-  (defun anki-editor-reset-cloze-number (&optional arg)
-    "Reset cloze number to ARG or 1"
-    (interactive)
-    (setq my-anki-editor-cloze-number (or arg 1)))
-  (defun anki-editor-push-tree ()
-    "Push all notes under a tree."
-    (interactive)
-    (anki-editor-push-notes '(4))
-    (anki-editor-reset-cloze-number))
-  ;; Initialize
-  (anki-editor-reset-cloze-number)
+(defun anki-editor-cloze-region-auto-incr (&optional arg)
+  "Cloze region without hint and increase card number."
+  (interactive)
+  (anki-editor-cloze-region my-anki-editor-cloze-number "")
+  (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+  (forward-sexp))
+(defun anki-editor-cloze-region-dont-incr (&optional arg)
+  "Cloze region without hint using the previous card number."
+  (interactive)
+  (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
+                                   (progn
+                                     (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+                                     1))
+                                  (t (1- my-anki-editor-cloze-number))) "")
+  (forward-sexp))
+(defun anki-editor-reset-cloze-number (&optional arg)
+  "Reset cloze number to ARG or 1"
+  (interactive)
+  (setq my-anki-editor-cloze-number (or arg 1)))
+(defun anki-editor-push-tree ()
+  "Push all notes under a tree."
+  (interactive)
+  (anki-editor-push-notes '(4))
+  (anki-editor-reset-cloze-number))
+;; Initialize
+(anki-editor-reset-cloze-number)
 
-  (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
-  (add-to-list 'org-capture-templates
-               '("a" "Anki basic"
-                 entry
-                 (file+headline org-my-anki-file "Dispatch Shelf")
-                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
-  (add-to-list 'org-capture-templates
-               '("A" "Anki cloze"
-                 entry
-                 (file+headline org-my-anki-file "Dispatch Shelf")
-                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
-  (add-to-list 'org-capture-templates
-               '("T" "Anki type"
-                 entry
-                 (file+headline org-my-anki-file "Dispatch Shelf")
-                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
+(setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
+(add-to-list 'org-capture-templates
+             '("a" "Anki basic"
+               entry
+               (file+headline org-my-anki-file "Dispatch Shelf")
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
+(add-to-list 'org-capture-templates
+             '("A" "Anki cloze"
+               entry
+               (file+headline org-my-anki-file "Dispatch Shelf")
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
+(add-to-list 'org-capture-templates
+             '("T" "Anki type"
+               entry
+               (file+headline org-my-anki-file "Dispatch Shelf")
+               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
 
-  (add-to-list 'org-capture-templates
+(add-to-list 'org-capture-templates
                `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
                  "* [[%:link][%:description]]\n %?\n \n %i\n%T"
                  :immediate-finish t))
@@ -145,9 +92,6 @@
            (window-configuration-to-register '_)
            (delete-other-windows))))
 
-
-;;shell support
-
 (use-package! vterm
   :after org
   :commands vterm
@@ -170,17 +114,21 @@
 
 
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
-  (use-package benchmark-init
-    :config
-    (require 'benchmark-init-modes)                                     ; explicitly required
-    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 
+(use-package benchmark-init
+  :config
+  (require 'benchmark-init-modes)                                     ; explicitly required
+  (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORG-ROAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq org-roam-v2-ack t)
+
+(after! org
+  :config
+  (setq org-export-with-tasks nil))
 
 (use-package! org-roam
   :after org
@@ -446,22 +394,27 @@ With a prefix ARG, remove start location."
   (add-hook! 'pdf-tools-enabled-hook
     (pdf-view-midnight-minor-mode 1)))
 
+(map! :after spray
+      :map spray-mode-map
+      "s" #'spray-slower
+      "d" #'spray-faster
+      "j" #'spray-backward-word
+      "k" #'spray-stop
+      "l" #'spray-forward-word
+      "SPC" #'spray-stop
+      "q" #'spray-quit
+      )
+
 (global-wakatime-mode)
 (global-activity-watch-mode)
 
-;; Here are some additional functions/macros that could help you configure Doom:
-;;
-;; - `load!' for loading external *.el files relative to this one
-;; - `use-package!' for configuring packages
-;; - `after!' for running code after a package has loaded
-;; - `add-load-path!' for adding directories to the `load-path', relative to
-;;   this file. Emacs searches the `load-path' when you load packages with
-;;   `require' or `use-package'.
-;; - `map!' for binding new keys
-;;
-;; To get information about any of these functions/macros, move the cursor over
-;; the highlighted symbol at press 'K' (non-evil users must press 'C-c c k').
-;; This will open documentation for it, including demos of how they are used.
-;;
-;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
-;; they are implemented.
+(org-roam-bibtex-mode)
+
+(map! :after emr
+      :map prog-mode-map
+      "M-RET" #'emr-show-refactor-menu)
+
+(use-package! elpy
+  :defer t
+  :init
+  (advice-add 'python-mode :before 'elpy-enable))
