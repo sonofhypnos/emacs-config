@@ -135,15 +135,7 @@
                  "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
                  :prepend t
                  :kill-buffer t))
-  (defun make-orgcapture-frame ()
-    "Create a new frame and run org-capture."
-    (interactive)
-    (make-frame '((name . "org-capture") ))
-    (select-frame-by-name "org-capture")
-    (org-capture)
-    (delete-other-windows)
-    )
-  )
+)
 
 (defun toggle-maximize-buffer () "Maximize buffer"
        (interactive)
