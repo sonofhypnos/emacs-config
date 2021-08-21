@@ -1,0 +1,6 @@
+#+TITLE: Snippets
+#+begin_src emacs-lisp
+(defun test-function-tassilo ()
+  (shell-command "echo hello >> /home/tassilo/.doom.d/test-file"))
+(test-function-tassilo)
+#+end_src
