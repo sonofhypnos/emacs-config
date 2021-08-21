@@ -118,8 +118,6 @@
    (require 'benchmark-init-modes)                             ; explicitly required
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 
-(setq org-roam-v2-ack t)
-
 (after! org
   :config
   (setq org-export-with-tasks nil))
@@ -196,6 +194,8 @@
     (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
     (put 'org-toggle-properties-hide-state 'state 'shown))
 
+(add-hook 'org-mode-hook #'org-hide-properties)
+
   (defun org-toggle-properties ()
     "Toggle visibility of property drawers."
     (interactive)
@@ -237,10 +237,7 @@
     ":YEAR: ${year}\n"
     ":DOI: ${doi}\n"
     ":URL: ${url}\n"
-    ":END:\n\n"
-    )
-   )
-  )
+    ":END:\n\n")))
 
 (use-package! org-ref
   :after org
@@ -253,11 +250,7 @@
    org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
    org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
    org-ref-notes-directory (concat org-roam-directory "/lit")
-   org-ref-notes-function 'orb-edit-notes)
-  )
-
-
-
+   org-ref-notes-function 'orb-edit-notes))
 
 (use-package! org-roam-bibtex
   :after (org-roam)
@@ -270,11 +263,8 @@
            ""
            :file-name "${slug}"
            :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
-
 - keywords :: ${keywords}
-
 \n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
-
            :unnarrowed t))))
 
 
@@ -317,8 +307,6 @@
 (after! pdf-tools
   (add-hook! 'pdf-tools-enabled-hook
     (pdf-view-midnight-minor-mode 1)))
-
-
 
 (use-package! org-noter
   :after org
@@ -363,14 +351,13 @@ With a prefix ARG, remove start location."
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
-
 (use-package! org-download
   :after org
   :init
   (map! :leader
         :prefix "d"
-        :desc "org-screenshot" "d" #'org-download-screenshot)
-  )
+        :desc "org-screenshot" "<C-c>" #'org-download-screenshot))
+
 ;; org-download
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)
@@ -407,15 +394,14 @@ With a prefix ARG, remove start location."
 (defun post-tangle-config ()
   (and (file-in-directory-p
         buffer-file-name (file-name-directory config-file))
-(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md")
+(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")
                 ))
 (defun private-enable-post-tangle ()
   (add-hook 'after-save-hook #'test-hooks-emacs nil 'local))
 (defun post-tangle-config ()
   (shell-command "ls"))
-(defun literate-tangle-hook-add ()
-  (add-hook 'org-mode-hook #'private-enable-post-tangle))
-(literate-tangle-additions)
+(after! org
+ (add-hook 'org-mode-hook #'private-enable-post-tangle))
 
 (use-package! elpy
   :defer t

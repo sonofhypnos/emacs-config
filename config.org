@@ -7,7 +7,7 @@ My personal information
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 #+end_src
-
+* TODO Figure out what loads org early
 Setting up my directories.
 #+begin_src emacs-lisp
 (setq   org-directory "~/org-roam"
@@ -165,12 +165,9 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
 #+end_src
 
 * Org-roam
-** TODO Split up org-roam
+** DONE Split up org-roam
 ** TODO Explain Org-roam configuration
 #+begin_src emacs-lisp
-
-(setq org-roam-v2-ack t)
-
 (after! org
   :config
   (setq org-export-with-tasks nil))
@@ -236,7 +233,6 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
            :unnarrowed t)))
 
 #+end_src
-* TODO Hook this to opening Emacs files
 
 #+begin_src emacs-lisp
   ;;here come some nice but non-essential functions for org-roam:
@@ -257,6 +253,11 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
     (interactive)
     (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
     (put 'org-toggle-properties-hide-state 'state 'shown))
+
+(add-hook 'org-mode-hook #'org-hide-properties)
+#+end_src
+
+#+begin_src emacs-lisp
 
   (defun org-toggle-properties ()
     "Toggle visibility of property drawers."
@@ -299,10 +300,7 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
     ":YEAR: ${year}\n"
     ":DOI: ${doi}\n"
     ":URL: ${url}\n"
-    ":END:\n\n"
-    )
-   )
-  )
+    ":END:\n\n")))
 
 (use-package! org-ref
   :after org
@@ -315,11 +313,7 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
    org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
    org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
    org-ref-notes-directory (concat org-roam-directory "/lit")
-   org-ref-notes-function 'orb-edit-notes)
-  )
-
-
-
+   org-ref-notes-function 'orb-edit-notes))
 
 (use-package! org-roam-bibtex
   :after (org-roam)
@@ -332,11 +326,8 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
            ""
            :file-name "${slug}"
            :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
-
 - keywords :: ${keywords}
-
 \n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
-
            :unnarrowed t))))
 
 
@@ -384,20 +375,22 @@ I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] t
 
 #+end_src
 
+Enabling night-mode for pdfs
 #+begin_src emacs-lisp
-
-
 (after! pdf-tools
   (add-hook! 'pdf-tools-enabled-hook
     (pdf-view-midnight-minor-mode 1)))
+#+end_src
 
-
-
+org-noter for pdfs
+#+begin_src emacs-lisp
 (use-package! org-noter
   :after org
   :config
   (setq org-noter-notes-search-path '("~/org-roam/")))
+#+end_src
 
+#+begin_src emacs-lisp
 (use-package! org-pdftools
   :after org
   :hook (org-mode . org-pdftools-setup-link))
@@ -436,7 +429,10 @@ With a prefix ARG, remove start location."
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
+#+end_src
 
+I use this shortcut a lot to make notes for my university courses
+#+begin_src emacs-lisp
 (use-package! org-download
   :after org
   :init
@@ -444,6 +440,9 @@ With a prefix ARG, remove start location."
         :prefix "d"
         :desc "org-screenshot" "d" #'org-download-screenshot)
   )
+#+end_src
+
+#+begin_src emacs-lisp
 ;; org-download
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)
@@ -500,15 +499,14 @@ Remove todos from my literate config
 (defun post-tangle-config ()
   (and (file-in-directory-p
         buffer-file-name (file-name-directory config-file))
-(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md")
+(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")
                 ))
 (defun private-enable-post-tangle ()
   (add-hook 'after-save-hook #'test-hooks-emacs nil 'local))
 (defun post-tangle-config ()
   (shell-command "ls"))
-(defun literate-tangle-hook-add ()
-  (add-hook 'org-mode-hook #'private-enable-post-tangle))
-(literate-tangle-additions)
+(after! org
+ (add-hook 'org-mode-hook #'private-enable-post-tangle))
 #+end_src
 
 Adding support for python. At the moment I not using Emacs for coding in python anyways.
