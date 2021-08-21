@@ -404,6 +404,19 @@ With a prefix ARG, remove start location."
       :map prog-mode-map
       "M-RET" #'emr-show-refactor-menu)
 
+(defun post-tangle-config ()
+  (and (file-in-directory-p
+        buffer-file-name (file-name-directory config-file))
+(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md")
+                ))
+(defun private-enable-post-tangle ()
+  (add-hook 'after-save-hook #'test-hooks-emacs nil 'local))
+(defun post-tangle-config ()
+  (shell-command "ls"))
+(defun literate-tangle-hook-add ()
+  (add-hook 'org-mode-hook #'private-enable-post-tangle))
+(literate-tangle-additions)
+
 (use-package! elpy
   :defer t
   :init
