@@ -13,7 +13,8 @@ Setting up my directories.
 (setq   org-directory "~/org-roam"
         org-roam-directory org-directory
         projectile-project-search-path '("~/repos")
-        zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
+        zot-bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
+        config-file "config.org")
 #+end_src
 
 * [[https://apps.ankiweb.net/][Anki]] setup
@@ -105,9 +106,8 @@ These are my other capture templates. It took me quite some time to finally get 
   (add-to-list 'org-capture-templates
                '("L" "Protocol Link" entry
                  (file+headline +org-capture-notes-file "Inbox")
-                 "* [[%:link][% \"%:description\"]] \n \n %? \n%i \n %T"
-                 :prepend t
-                 :kill-buffer t))
+                 "* [[%:link][%:description]] \n \n %? \n%i \n %T"
+                 :prepend t))
   (add-to-list 'org-capture-templates
                '("S" "Todo Protocoll" entry
                  (file+headline +org-capture-notes-file "Inbox")
@@ -130,6 +130,7 @@ These are my other capture templates. It took me quite some time to finally get 
 #+end_src
 
 
+I don't really use the terminal in Emacs yet. Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
 #+begin_src emacs-lisp
 (use-package! vterm
   :after org
@@ -152,24 +153,21 @@ These are my other capture templates. It took me quite some time to finally get 
  :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
 
 
-(cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
   #+end_src
 
-  #+begin_src emacs-lisp
+
+#+begin_src emacs-lisp
+(cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
  (use-package benchmark-init
    :config
-   (require 'benchmark-init-modes)                                     ; explicitly required
+   (require 'benchmark-init-modes)                             ; explicitly required
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
 
 * Org-roam
-** TODO
 ** TODO Split up org-roam
 ** TODO Explain Org-roam configuration
 #+begin_src emacs-lisp
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORG-ROAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (setq org-roam-v2-ack t)
 
@@ -180,21 +178,17 @@ These are my other capture templates. It took me quite some time to finally get 
 (use-package! org-roam
   :after org
   :init
-  (map! :leader
-        :prefix "a"
-        :desc "org-roam-node-insert" "i" #'org-roam-node-insert
-        :desc "org-roam-node-find" "f" #'org-roam-node-find
-        :desc "org-roam-capture" "c" #'org-roam-capture
-        :desc "org-roam-tag-add" "at" #'org-roam-tag-add
-        :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
-        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today
-        :desc "org-roam-dailies-goto-date" "d" #'org-roam-dailies-goto-date
-        :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
-        :desc "org-roam-ref-find" "r" #'org-roam-ref-find
-        :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
+  (map! (:map org-mode-map
+         :localleader
+         :prefix "m"
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree
-        )
+        ))
   :config
+
+  #+end_src
+
+  My daily checklists
+  #+begin_src emacs-lisp
   (setq daily-template
         (concat
    "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -223,6 +217,10 @@ These are my other capture templates. It took me quite some time to finally get 
    "\n** What worried you today?"
    "\n** What else is on your mind?")
         )
+#+end_src
+
+
+#+begin_src emacs-lisp
   (setq org-roam-dailies-directory "daily/")
   (setq org-roam-dailies-capture-templates
      `(("Journal" "daily" plain "%T\n%?\n"
@@ -237,6 +235,10 @@ These are my other capture templates. It took me quite some time to finally get 
            :immediate-finish t
            :unnarrowed t)))
 
+#+end_src
+* TODO Hook this to opening Emacs files
+
+#+begin_src emacs-lisp
   ;;here come some nice but non-essential functions for org-roam:
   (defun org-hide-properties ()
     "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
@@ -281,7 +283,7 @@ These are my other capture templates. It took me quite some time to finally get 
   ;;
   (setq
    bibtex-completion-notes-path org-directory
-   bibtex-completion-bibliography zot_bib
+   bibtex-completion-bibliography zot-bib
    bibtex-completion-pdf-field "file"
    bibtex-completion-notes-template-multiple-files
    (concat
@@ -309,7 +311,7 @@ These are my other capture templates. It took me quite some time to finally get 
   (setq org-ref-completion-library 'org-ref-ivy-cite
         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
   (setq
-   org-ref-default-bibliography (list zot_bib)
+   org-ref-default-bibliography (list zot-bib)
    org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
    org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
    org-ref-notes-directory (concat org-roam-directory "/lit")
@@ -491,6 +493,7 @@ Adding time-tracking modes.
 (map! :after emr
       :map prog-mode-map
       "M-RET" #'emr-show-refactor-menu)
+#+end_src
 
 #+end_src
 

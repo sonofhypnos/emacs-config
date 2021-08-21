@@ -4,68 +4,69 @@
 (setq   org-directory "~/org-roam"
         org-roam-directory org-directory
         projectile-project-search-path '("~/repos")
-        zot_bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
+        zot-bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
+        config-file "config.org")
 
 (use-package! anki-editor
   :after org
   :init
 
-:bind (:map org-mode-map
-       ("<f12>" . anki-editor-cloze-region-auto-incr)
-       ("<f11>" . anki-editor-cloze-region-dont-incr)
-       ("<f10>" . anki-editor-reset-cloze-number)
-       ("<f9>"  . anki-editor-push-tree))
-:hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+  :bind (:map org-mode-map
+         ("<f12>" . anki-editor-cloze-region-auto-incr)
+         ("<f11>" . anki-editor-cloze-region-dont-incr)
+         ("<f10>" . anki-editor-reset-cloze-number)
+         ("<f9>"  . anki-editor-push-tree))
+  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
-:config
-(setq-default anki-editor-use-math-jax t)
-(setq anki-editor-org-tags-as-anki-tags t)
+  :config
+  (setq-default anki-editor-use-math-jax t)
+  (setq anki-editor-org-tags-as-anki-tags t)
 
-(defun anki-editor-cloze-region-auto-incr (&optional arg)
-  "Cloze region without hint and increase card number."
-  (interactive)
-  (anki-editor-cloze-region my-anki-editor-cloze-number "")
-  (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-  (forward-sexp))
-(defun anki-editor-cloze-region-dont-incr (&optional arg)
-  "Cloze region without hint using the previous card number."
-  (interactive)
-  (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
-                                   (progn
-                                     (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-                                     1))
-                                  (t (1- my-anki-editor-cloze-number))) "")
-  (forward-sexp))
-(defun anki-editor-reset-cloze-number (&optional arg)
-  "Reset cloze number to ARG or 1"
-  (interactive)
-  (setq my-anki-editor-cloze-number (or arg 1)))
-(defun anki-editor-push-tree ()
-  "Push all notes under a tree."
-  (interactive)
-  (anki-editor-push-notes '(4))
-  (anki-editor-reset-cloze-number))
-;; Initialize
-(anki-editor-reset-cloze-number)
+  (defun anki-editor-cloze-region-auto-incr (&optional arg)
+    "Cloze region without hint and increase card number."
+    (interactive)
+    (anki-editor-cloze-region my-anki-editor-cloze-number "")
+    (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+    (forward-sexp))
+  (defun anki-editor-cloze-region-dont-incr (&optional arg)
+    "Cloze region without hint using the previous card number."
+    (interactive)
+    (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
+                                     (progn
+                                       (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+                                       1))
+                                    (t (1- my-anki-editor-cloze-number))) "")
+    (forward-sexp))
+  (defun anki-editor-reset-cloze-number (&optional arg)
+    "Reset cloze number to ARG or 1"
+    (interactive)
+    (setq my-anki-editor-cloze-number (or arg 1)))
+  (defun anki-editor-push-tree ()
+    "Push all notes under a tree."
+    (interactive)
+    (anki-editor-push-notes '(4))
+    (anki-editor-reset-cloze-number))
+  ;; Initialize
+  (anki-editor-reset-cloze-number)
 
-(setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
-(add-to-list 'org-capture-templates
-             '("a" "Anki basic"
-               entry
-               (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
-(add-to-list 'org-capture-templates
-             '("A" "Anki cloze"
-               entry
-               (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
-(add-to-list 'org-capture-templates
-             '("T" "Anki type"
-               entry
-               (file+headline org-my-anki-file "Dispatch Shelf")
-               "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
+  (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
+  (add-to-list 'org-capture-templates
+               '("a" "Anki basic"
+                 entry
+                 (file+headline org-my-anki-file "Dispatch Shelf")
+                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
+  (add-to-list 'org-capture-templates
+               '("A" "Anki cloze"
+                 entry
+                 (file+headline org-my-anki-file "Dispatch Shelf")
+                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
+  (add-to-list 'org-capture-templates
+               '("T" "Anki type"
+                 entry
+                 (file+headline org-my-anki-file "Dispatch Shelf")
+                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
 
-(add-to-list 'org-capture-templates
+  (add-to-list 'org-capture-templates
                `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
                  "* [[%:link][%:description]]\n %?\n \n %i\n%T"
                  :immediate-finish t))
@@ -73,9 +74,8 @@
   (add-to-list 'org-capture-templates
                '("L" "Protocol Link" entry
                  (file+headline +org-capture-notes-file "Inbox")
-                 "* [[%:link][% \"%:description\"]] \n \n %? \n%i \n %T"
-                 :prepend t
-                 :kill-buffer t))
+                 "* [[%:link][%:description]] \n \n %? \n%i \n %T"
+                 :prepend t))
   (add-to-list 'org-capture-templates
                '("S" "Todo Protocoll" entry
                  (file+headline +org-capture-notes-file "Inbox")
@@ -112,17 +112,11 @@
  :leader :desc "projectile find file" :r ":" #'projectile-find-file
  :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
 
-
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
-
-(use-package benchmark-init
-  :config
-  (require 'benchmark-init-modes)                                     ; explicitly required
-  (add-hook 'after-init-hook #'benchmark-init/deactivate)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ORG-ROAM ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ (use-package benchmark-init
+   :config
+   (require 'benchmark-init-modes)                             ; explicitly required
+   (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 
 (setq org-roam-v2-ack t)
 
@@ -133,21 +127,13 @@
 (use-package! org-roam
   :after org
   :init
-  (map! :leader
-        :prefix "a"
-        :desc "org-roam-node-insert" "i" #'org-roam-node-insert
-        :desc "org-roam-node-find" "f" #'org-roam-node-find
-        :desc "org-roam-capture" "c" #'org-roam-capture
-        :desc "org-roam-tag-add" "at" #'org-roam-tag-add
-        :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
-        :desc "org-roam-dailies-capture-today" "j" #'org-roam-dailies-capture-today
-        :desc "org-roam-dailies-goto-date" "d" #'org-roam-dailies-goto-date
-        :desc "org-roam-alias-add" "aa" #'org-roam-alias-add
-        :desc "org-roam-ref-find" "r" #'org-roam-ref-find
-        :desc "org-roam-buffer-toggle" "l" #'org-roam-buffer-toggle
+  (map! (:map org-mode-map
+         :localleader
+         :prefix "m"
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree
-        )
+        ))
   :config
+
   (setq daily-template
         (concat
    "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -176,6 +162,7 @@
    "\n** What worried you today?"
    "\n** What else is on your mind?")
         )
+
   (setq org-roam-dailies-directory "daily/")
   (setq org-roam-dailies-capture-templates
      `(("Journal" "daily" plain "%T\n%?\n"
@@ -234,7 +221,7 @@
   ;;
   (setq
    bibtex-completion-notes-path org-directory
-   bibtex-completion-bibliography zot_bib
+   bibtex-completion-bibliography zot-bib
    bibtex-completion-pdf-field "file"
    bibtex-completion-notes-template-multiple-files
    (concat
@@ -262,7 +249,7 @@
   (setq org-ref-completion-library 'org-ref-ivy-cite
         org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
   (setq
-   org-ref-default-bibliography (list zot_bib)
+   org-ref-default-bibliography (list zot-bib)
    org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
    org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
    org-ref-notes-directory (concat org-roam-directory "/lit")
