@@ -351,13 +351,6 @@ With a prefix ARG, remove start location."
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
-(use-package! org-download
-  :after org
-  :init
-  (map! :leader
-        :prefix "d"
-        :desc "org-screenshot" "<C-c>" #'org-download-screenshot))
-
 ;; org-download
 ;; Drag-and-drop to `dired`
 (add-hook 'dired-mode-hook 'org-download-enable)
@@ -391,19 +384,21 @@ With a prefix ARG, remove start location."
       :map prog-mode-map
       "M-RET" #'emr-show-refactor-menu)
 
-(defun post-tangle-config ()
+(defun pre-tangle-config ()
   (and (file-in-directory-p
         buffer-file-name (file-name-directory config-file))
-(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")
-                ))
-(defun private-enable-post-tangle ()
-  (add-hook 'after-save-hook #'test-hooks-emacs nil 'local))
-(defun post-tangle-config ()
+(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
+(defun private-enable-pre-tangle ()
+  (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
+
+(defun pre-tangle-config ()
   (shell-command "ls"))
 (after! org
- (add-hook 'org-mode-hook #'private-enable-post-tangle))
+ (add-hook 'org-mode-hook #'private-enable-pre-tangle))
 
 (use-package! elpy
   :defer t
   :init
   (advice-add 'python-mode :before 'elpy-enable))
+
+(setq doom-scratch-initial-major-mode t)

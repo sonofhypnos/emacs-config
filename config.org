@@ -382,7 +382,7 @@ Enabling night-mode for pdfs
     (pdf-view-midnight-minor-mode 1)))
 #+end_src
 
-org-noter for pdfs
+Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using. But in the meantime I'll try to use org-noter.
 #+begin_src emacs-lisp
 (use-package! org-noter
   :after org
@@ -432,15 +432,6 @@ With a prefix ARG, remove start location."
 #+end_src
 
 I use this shortcut a lot to make notes for my university courses
-#+begin_src emacs-lisp
-(use-package! org-download
-  :after org
-  :init
-  (map! :leader
-        :prefix "d"
-        :desc "org-screenshot" "d" #'org-download-screenshot)
-  )
-#+end_src
 
 #+begin_src emacs-lisp
 ;; org-download
@@ -496,17 +487,17 @@ Adding time-tracking modes.
 
 Remove todos from my literate config
 #+begin_src emacs-lisp
-(defun post-tangle-config ()
+(defun pre-tangle-config ()
   (and (file-in-directory-p
         buffer-file-name (file-name-directory config-file))
-(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")
-                ))
-(defun private-enable-post-tangle ()
-  (add-hook 'after-save-hook #'test-hooks-emacs nil 'local))
-(defun post-tangle-config ()
+(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
+(defun private-enable-pre-tangle ()
+  (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
+
+(defun pre-tangle-config ()
   (shell-command "ls"))
 (after! org
- (add-hook 'org-mode-hook #'private-enable-post-tangle))
+ (add-hook 'org-mode-hook #'private-enable-pre-tangle))
 #+end_src
 
 Adding support for python. At the moment I not using Emacs for coding in python anyways.
@@ -515,4 +506,9 @@ Adding support for python. At the moment I not using Emacs for coding in python 
   :defer t
   :init
   (advice-add 'python-mode :before 'elpy-enable))
+#+end_src
+
+Setting the scratch buffer in doom
+#+begin_src emacs-lisp
+(setq doom-scratch-initial-major-mode t)
 #+end_src
