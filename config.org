@@ -489,15 +489,13 @@ Remove todos from my literate config
 #+begin_src emacs-lisp
 (defun pre-tangle-config ()
   (and (file-in-directory-p
-        buffer-file-name (file-name-directory config-file))
-(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
+        buffer-file-name doom-private-dir)
+       (shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.el; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
 (defun private-enable-pre-tangle ()
   (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
 
-(defun pre-tangle-config ()
-  (shell-command "ls"))
 (after! org
- (add-hook 'org-mode-hook #'private-enable-pre-tangle))
+  (add-hook 'org-mode-hook #'private-enable-pre-tangle))
 #+end_src
 
 Adding support for python. At the moment I not using Emacs for coding in python anyways.

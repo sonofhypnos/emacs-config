@@ -386,15 +386,13 @@ With a prefix ARG, remove start location."
 
 (defun pre-tangle-config ()
   (and (file-in-directory-p
-        buffer-file-name (file-name-directory config-file))
-(shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.md; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
+        buffer-file-name doom-private-dir)
+       (shell-command "sed -i '/^[^\"]*TODO[^\"]*$/d' config.el; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
 (defun private-enable-pre-tangle ()
   (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
 
-(defun pre-tangle-config ()
-  (shell-command "ls"))
 (after! org
- (add-hook 'org-mode-hook #'private-enable-pre-tangle))
+  (add-hook 'org-mode-hook #'private-enable-pre-tangle))
 
 (use-package! elpy
   :defer t
