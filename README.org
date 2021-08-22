@@ -8,7 +8,6 @@ My personal information
       user-mail-address "tassilo.neubauer@gmail.com")
 #+end_src
 
-* TODO Figure out what loads org early
 Setting up my directories.
 #+begin_src emacs-lisp
 (setq   org-directory "~/org-roam"
@@ -153,8 +152,6 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
 (map! (:when (featurep! :tools lookup)
  :leader :desc "projectile find file" :r ":" #'projectile-find-file
  :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
-
-
   #+end_src
 
 
@@ -168,7 +165,6 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
 
 * Org-roam
 ** DONE Split up org-roam
-** TODO Explain Org-roam configuration
 #+begin_src emacs-lisp
 (after! org
   :config
@@ -188,34 +184,6 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
 
   My daily checklists
   #+begin_src emacs-lisp
-  (setq daily-template
-        (concat
-   "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
-   "\n* Morgenroutine"
-   "\n - [ ] Kalender angesehen"
-   "\n - [ ] Start tracking"
-   "\n - [ ] Check Bedtime yesterday"
-   "\n - [ ] Medis genommen"
-   "\n - [ ] Uhr angezogen"
-   "\n - [ ] Ziele gesetzt"
-   "\n - [ ] Review Anki"
-   "\n - [ ] Brush Teeth"
-   "\n* Evening Routine"
-   "\n - [ ] Check Habits/Beeminder"
-   "\n - [ ] Tasks Reviewed"
-   "\n - [ ] Timetracking Reviewed"
-   "\n - [ ] Ask Journal Questions"
-   "\n - [ ] Determine bedtime"
-   "\n - [ ] Review Anki"
-   "\n - [ ] Brush Teeth"
-   "\n* Inbox"
-   "\n* Journal"
-   "\n* Evening Journal"
-   "\n** What did you achieve today?"
-   "\n** What are you grateful for?"
-   "\n** What worried you today?"
-   "\n** What else is on your mind?")
-        )
 
   (setq org-roam-dailies-directory "daily/")
   (setq org-roam-dailies-capture-templates
@@ -251,34 +219,46 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
     (put 'org-toggle-properties-hide-state 'state 'shown))
 
 (add-hook 'org-mode-hook #'org-hide-properties)
-#+end_src
-
-#+begin_src emacs-lisp
-
   (defun org-toggle-properties ()
     "Toggle visibility of property drawers."
     (interactive)
     (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
         (org-show-properties)
       (org-hide-properties)))
+  ;;(setq org-roam-link-title-format "%s")
+  (require 'org-roam-protocol)
 
+  (add-to-list 'org-capture-templates
+               `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
+                 "* [[%:link][%:description]]\n %?\n \n %i\n%T"
+                 :immediate-finish t))
 
-
+  (add-to-list 'org-capture-templates
+               '("L" "Protocol Link" entry
+                 (file+headline +org-capture-notes-file "Inbox")
+                 "* [[%:link][%:description]] \n \n %? \n%i \n %T"
+                 :prepend t))
+  (add-to-list 'org-capture-templates
+               '("S" "Todo Protocoll" entry
+                 (file+headline +org-capture-notes-file "Inbox")
+                 "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
+                 :prepend t
+                 :kill-buffer t))
   (setq org-roam-capture-ref-templates
         '(("r" "ref" plain
            "%?\n* Quote\n\" %x\"  "
            :if-new (file+head "${slug}.org"
                               "#+title: ${title}\n#+author:\n")
            :unnarrowed t)))
+                )
+#+end_src
+
+#+begin_src emacs-lisp
 
 
-  ;;(setq org-roam-link-title-format "%s")
-  (require 'org-roam-protocol)
-
-
-  ;;Bibliography configuration
-  ;;
-  (setq
+(use-package! bibtex
+  :init
+(setq
    bibtex-completion-notes-path org-directory
    bibtex-completion-bibliography zot-bib
    bibtex-completion-pdf-field "file"
@@ -366,9 +346,6 @@ I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] t
 (define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
 (define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
 (define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
-
-
-
 #+end_src
 
 Enabling night-mode for pdfs
@@ -466,7 +443,6 @@ backup files
 
 Adding time-tracking modes.
 
-** TODO figure out how to load these modes late
 #+begin_src emacs-lisp
 (global-wakatime-mode)
 (global-activity-watch-mode)
@@ -499,7 +475,6 @@ Adding support for python. At the moment I not using Emacs for coding in python 
   :init
   (advice-add 'python-mode :before 'elpy-enable))
 #+end_src
-
 
 Setting the scratch buffer in doom
 #+begin_src emacs-lisp
