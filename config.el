@@ -4,8 +4,7 @@
 (setq   org-directory "~/org-roam"
         org-roam-directory org-directory
         projectile-project-search-path '("~/repos")
-        zot-bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
-        config-file "config.org")
+        zot-bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
 
 (use-package! anki-editor
   :after org
@@ -378,8 +377,6 @@ With a prefix ARG, remove start location."
 (global-wakatime-mode)
 (global-activity-watch-mode)
 
-(org-roam-bibtex-mode)
-
 (map! :after emr
       :map prog-mode-map
       "M-RET" #'emr-show-refactor-menu)
@@ -399,4 +396,5 @@ With a prefix ARG, remove start location."
   :init
   (advice-add 'python-mode :before 'elpy-enable))
 
-(setq doom-scratch-initial-major-mode t)
+(after! emacs-lisp-mode
+  (setq doom-scratch-initial-major-mode emacs-lisp-mode))

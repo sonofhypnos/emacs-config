@@ -13,8 +13,7 @@ Setting up my directories.
 (setq   org-directory "~/org-roam"
         org-roam-directory org-directory
         projectile-project-search-path '("~/repos")
-        zot-bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib")
-        config-file "config.org")
+        zot-bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
 #+end_src
 
 * [[https://apps.ankiweb.net/][Anki]] setup
@@ -476,16 +475,12 @@ Adding time-tracking modes.
 #+end_src
 
 #+begin_src emacs-lisp
-(org-roam-bibtex-mode)
-#+end_src
-
-#+begin_src emacs-lisp
 (map! :after emr
       :map prog-mode-map
       "M-RET" #'emr-show-refactor-menu)
 #+end_src
 
-Remove todos from my literate config
+Remove todos from my literate config.
 #+begin_src emacs-lisp
 (defun pre-tangle-config ()
   (and (file-in-directory-p
@@ -506,7 +501,9 @@ Adding support for python. At the moment I not using Emacs for coding in python 
   (advice-add 'python-mode :before 'elpy-enable))
 #+end_src
 
+
 Setting the scratch buffer in doom
 #+begin_src emacs-lisp
-(setq doom-scratch-initial-major-mode t)
+(after! emacs-lisp-mode
+  (setq doom-scratch-initial-major-mode emacs-lisp-mode))
 #+end_src
