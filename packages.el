@@ -9,7 +9,6 @@
 (package! org-habit-plus
   :recipe (:host github
            :repo "myshevchuk/org-habit-plus"))
-
 (package! elpy)
 (package! org-mind-map)
 (package! real-auto-save
@@ -18,19 +17,14 @@
 (package! emacs-todoist
   :recipe (:host github
            :repo "abrochard/emacs-todoist"))
-
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! spray)
-
 ;;(package! helm-swoop)
-;;(package! emr)
 (package! benchmark-init)
-
 (package! format-all)
 (package! websocket)
 (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
-
 (package! md-roam
   :recipe (:host github
            :repo "nobiot/md-roam"))
@@ -53,6 +47,7 @@
 (package! vimgolf)
 (package! pdf-tools)
 (package! zotxt)
+
 
 ;; To install a package with Doom you must declare them here and run 'doom sync'
 ;; on the command line, then restart Emacs for the changes to take effect -- or

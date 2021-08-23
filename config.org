@@ -525,7 +525,4 @@ Setting the scratch buffer in doom
 #+end_src
 
 #+begin_src emacs-lisp
-(map! :after emr
-      :map prog-mode-map
-      "M-RET" #'emr-show-refactor-menu)
 #+end_src
