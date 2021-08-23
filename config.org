@@ -125,9 +125,6 @@ bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' 
 #+end_src
 
 
-
-
-
 From https://gist.github.com/mads-hartmann/3402786
 #+begin_src emacs-lisp
 (defun toggle-maximize-buffer () "Maximize buffer"
@@ -157,25 +154,30 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
   (setq explicit-zsh-args '()) ; I don't know what this is for?
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
+#+end_src
 
+* TODO Fix remapping space
+The way I remap these commands is definitely incorrect, and once I have time for it, i'll figure out the correct way.
+#+begin_src emacs-lisp
 (map! (:when (featurep! :tools lookup)
  :leader :desc "projectile find file" :r ":" #'projectile-find-file
  :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
-
-
   #+end_src
 
 
+This bit is required in order for benchmark-init to stop complaining.
 #+begin_src emacs-lisp
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
  (use-package benchmark-init
    :config
-   (require 'benchmark-init-modes)                             ; explicitly required
+   (require 'benchmark-init-modes) ; explicitly required
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
 
 * Org-roam
 ** DONE Split up org-roam
+** TODO Add Shortcuts for dailies
+** TODO Repair Templates
 ** TODO Explain Org-roam configuration
 #+begin_src emacs-lisp
 (after! org
@@ -188,14 +190,14 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
   (map! (:map org-mode-map
          :localleader
          :prefix "m"
-        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree
-        ))
-  :config
+         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
+         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
 
   #+end_src
 
   My daily checklists
   #+begin_src emacs-lisp
+  :config
   (setq daily-template
         (concat
    "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -228,8 +230,7 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
   (setq org-roam-dailies-directory "daily/")
   (setq org-roam-dailies-capture-templates
      `(("Journal" "daily" plain "%T\n%?\n"
-        :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal"))
-       )))
+        :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))))
 
   (setq org-roam-capture-templates
         '(("d" "default" plain
@@ -289,14 +290,11 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
            "%?\n* Quote\n\" %x\"  "
            :if-new (file+head "${slug}.org"
                               "#+title: ${title}\n#+author:\n")
-           :unnarrowed t)))
-                )
+           :unnarrowed t))))
 #+end_src
 
 * TODO give credit
 #+begin_src emacs-lisp
-
-
 (use-package! bibtex
   :init
 (setq
@@ -493,12 +491,6 @@ Adding time-tracking modes.
 (global-activity-watch-mode)
 #+end_src
 
-#+begin_src emacs-lisp
-(map! :after emr
-      :map prog-mode-map
-      "M-RET" #'emr-show-refactor-menu)
-#+end_src
-
 Before tangling, I remove todos from config.org and copy it to README.org
 #+begin_src emacs-lisp
 (defun pre-tangle-config ()
@@ -526,4 +518,10 @@ Setting the scratch buffer in doom
 #+begin_src emacs-lisp
 (after! emacs-lisp-mode
   (setq doom-scratch-initial-major-mode emacs-lisp-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(map! :after emr
+      :map prog-mode-map
+      "M-RET" #'emr-show-refactor-menu)
 #+end_src
