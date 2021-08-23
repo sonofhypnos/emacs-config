@@ -121,7 +121,7 @@ bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' 
                '("L" "Protocol Link" entry
                  (file+headline +org-capture-notes-file "Inbox")
                  "* [[%:link][%:description]] \n \n %? \n%i \n %T"
-                 :prepend t))
+                 :prepend t)))
 #+end_src
 
 
@@ -224,8 +224,7 @@ This bit is required in order for benchmark-init to stop complaining.
    "\n** What did you achieve today?"
    "\n** What are you grateful for?"
    "\n** What worried you today?"
-   "\n** What else is on your mind?")
-        )
+   "\n** What else is on your mind?"))
 
   (setq org-roam-dailies-directory "daily/")
   (setq org-roam-dailies-capture-templates
@@ -390,11 +389,17 @@ I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] t
 
 #+end_src
 
+Reenabling Menu and finding out whether I find it useful
+#+begin_src emacs-lisp
+(menu-bar-mode 1)
+#+end_src
+
+
 Enabling night-mode for pdfs
 #+begin_src emacs-lisp
-(after! pdf-tools
-  (add-hook! 'pdf-tools-enabled-hook
-    (pdf-view-midnight-minor-mode 1)))
+;(after! pdf-tools
+;  (add-hook! 'pdf-tools-enabled-hook
+;    (pdf-view-midnight-minor-mode 1)))
 #+end_src
 
 Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using. But in the meantime I'll try to use org-noter.
@@ -479,8 +484,7 @@ backup files
       "k" #'spray-stop
       "l" #'spray-forward-word
       "SPC" #'spray-stop
-      "q" #'spray-quit
-      )
+      "q" #'spray-quit)
 #+end_src
 
 Adding time-tracking modes.

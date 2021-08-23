@@ -117,11 +117,8 @@ bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' 
                '("L" "Protocol Link" entry
                  (file+headline +org-capture-notes-file "Inbox")
                  "* [[%:link][%:description]] \n \n %? \n%i \n %T"
-                 :prepend t))
+                 :prepend t)))
 #+end_src
-
-
-
 
 
 From https://gist.github.com/mads-hartmann/3402786
@@ -153,20 +150,22 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
   (setq explicit-zsh-args '()) ; I don't know what this is for?
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
+#+end_src
 
+The way I remap these commands is definitely incorrect, and once I have time for it, i'll figure out the correct way.
+#+begin_src emacs-lisp
 (map! (:when (featurep! :tools lookup)
  :leader :desc "projectile find file" :r ":" #'projectile-find-file
  :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
-
-
   #+end_src
 
 
+This bit is required in order for benchmark-init to stop complaining.
 #+begin_src emacs-lisp
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
  (use-package benchmark-init
    :config
-   (require 'benchmark-init-modes)                             ; explicitly required
+   (require 'benchmark-init-modes) ; explicitly required
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
 
@@ -183,14 +182,14 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
   (map! (:map org-mode-map
          :localleader
          :prefix "m"
-        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree
-        ))
-  :config
+         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
+         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
 
   #+end_src
 
   My daily checklists
   #+begin_src emacs-lisp
+  :config
   (setq daily-template
         (concat
    "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -217,14 +216,12 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
    "\n** What did you achieve today?"
    "\n** What are you grateful for?"
    "\n** What worried you today?"
-   "\n** What else is on your mind?")
-        )
+   "\n** What else is on your mind?"))
 
   (setq org-roam-dailies-directory "daily/")
   (setq org-roam-dailies-capture-templates
      `(("Journal" "daily" plain "%T\n%?\n"
-        :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal"))
-       )))
+        :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))))
 
   (setq org-roam-capture-templates
         '(("d" "default" plain
@@ -284,13 +281,10 @@ I don't really use the terminal in Emacs yet. Most of this configuration was cop
            "%?\n* Quote\n\" %x\"  "
            :if-new (file+head "${slug}.org"
                               "#+title: ${title}\n#+author:\n")
-           :unnarrowed t)))
-                )
+           :unnarrowed t))))
 #+end_src
 
 #+begin_src emacs-lisp
-
-
 (use-package! bibtex
   :init
 (setq
@@ -386,11 +380,17 @@ I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] t
 
 #+end_src
 
+Reenabling Menu and finding out whether I find it useful
+#+begin_src emacs-lisp
+(menu-bar-mode 1)
+#+end_src
+
+
 Enabling night-mode for pdfs
 #+begin_src emacs-lisp
-(after! pdf-tools
-  (add-hook! 'pdf-tools-enabled-hook
-    (pdf-view-midnight-minor-mode 1)))
+;(after! pdf-tools
+;  (add-hook! 'pdf-tools-enabled-hook
+;    (pdf-view-midnight-minor-mode 1)))
 #+end_src
 
 Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using. But in the meantime I'll try to use org-noter.
@@ -475,8 +475,7 @@ backup files
       "k" #'spray-stop
       "l" #'spray-forward-word
       "SPC" #'spray-stop
-      "q" #'spray-quit
-      )
+      "q" #'spray-quit)
 #+end_src
 
 Adding time-tracking modes.
@@ -486,18 +485,12 @@ Adding time-tracking modes.
 (global-activity-watch-mode)
 #+end_src
 
-#+begin_src emacs-lisp
-(map! :after emr
-      :map prog-mode-map
-      "M-RET" #'emr-show-refactor-menu)
-#+end_src
-
 Before tangling, I remove todos from config.org and copy it to README.org
 #+begin_src emacs-lisp
 (defun pre-tangle-config ()
   (and (file-in-directory-p
         buffer-file-name doom-private-dir)
-       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; sed -i '/^[^\"]*DONE[^\"]*$/d' README.org")))
+       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
 (defun private-enable-pre-tangle ()
   (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
 
@@ -519,4 +512,10 @@ Setting the scratch buffer in doom
 #+begin_src emacs-lisp
 (after! emacs-lisp-mode
   (setq doom-scratch-initial-major-mode emacs-lisp-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(map! :after emr
+      :map prog-mode-map
+      "M-RET" #'emr-show-refactor-menu)
 #+end_src
