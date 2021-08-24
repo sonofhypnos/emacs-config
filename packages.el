@@ -38,8 +38,8 @@
 (package! org-auto-tangle)
 (package! org-roam
   :recipe (:host github :repo "org-roam/org-roam"))
-;; (package! org-roam-bibtex
-;;   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(package! org-roam-bibtex
+ :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! anki-editor)

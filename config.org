@@ -15,7 +15,7 @@ Setting up my directories.
 (setq   org-directory "~/org-roam"
         org-roam-directory org-directory
         projectile-project-search-path '("~/repos")
-        zot-bib (concat (getenv "HOME") "/repos/bibliography/zotLib.bib"))
+        zot-bib "~/repos/bibliography/zotLib.bib")
 #+end_src
 
 * [[https://apps.ankiweb.net/][Anki]] setup
@@ -25,16 +25,15 @@ I copied and adjusted a lot of the following Post  [[https://yiufung.net/post/an
 #+begin_src emacs-lisp
 (use-package! anki-editor
   :after org
-  :init
   #+end_src
 
-keybindings
+keybindings for Anki.
 #+begin_src emacs-lisp
-  :bind (:map org-mode-map
-         ("<f12>" . anki-editor-cloze-region-auto-incr)
-         ("<f11>" . anki-editor-cloze-region-dont-incr)
-         ("<f10>" . anki-editor-reset-cloze-number)
-         ("<f9>"  . anki-editor-push-tree))
+ (map! :map org-mode-map
+         "<f12>"  #'anki-editor-cloze-region-auto-incr
+         "<f11>"  #'anki-editor-cloze-region-dont-incr
+         "<f10>"  #'anki-editor-reset-cloze-number
+         "<f9>"   #'anki-editor-push-tree)
   :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
   #+end_src
@@ -94,24 +93,7 @@ These functions where copied from [[https://yiufung.net/post/anki-org/][this pos
                  entry
                  (file+headline org-my-anki-file "Dispatch Shelf")
                  "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
-#+end_src
 
-
-* TODO Fix Capture
-* TODO Enable Capture with Chrome
-These are my other capture templates. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
-I set up the following bindings in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures
-
-#+begin_src
-bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
-
-bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
-#+end_src
-
-
-
-
-#+begin_src emacs-lisp
   (add-to-list 'org-capture-templates
                `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
                  "* [[%:link][%:description]]\n %?\n \n %i\n%T"
@@ -124,6 +106,16 @@ bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' 
                  :prepend t)))
 #+end_src
 
+
+* TODO Fix Capture
+* TODO Enable Capture with Chrome
+These are my other capture templates. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
+I set up the following bindings in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures
+#+begin_src :tangle no
+bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
+
+bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
+#+end_src
 
 From https://gist.github.com/mads-hartmann/3402786
 #+begin_src emacs-lisp
@@ -186,7 +178,6 @@ This bit is required in order for benchmark-init to stop complaining.
 
 (use-package! org-roam
   :after org
-  :init
   (map! (:map org-mode-map
          :localleader
          :prefix "m"
@@ -357,10 +348,6 @@ This bit is required in order for benchmark-init to stop complaining.
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
-;; more finegrainded undo
-(setq evil-want-fine-undo t)
-;;safe delete
-(setq-default delete-by-moving-to-trash t)
 #+end_src
 
 
@@ -389,17 +376,11 @@ I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] t
 
 #+end_src
 
-Reenabling Menu and finding out whether I find it useful
-#+begin_src emacs-lisp
-(menu-bar-mode 1)
-#+end_src
-
-
 Enabling night-mode for pdfs
 #+begin_src emacs-lisp
-;(after! pdf-tools
-;  (add-hook! 'pdf-tools-enabled-hook
-;    (pdf-view-midnight-minor-mode 1)))
+(after! pdf-tools
+  (add-hook! 'pdf-tools-enabled-hook
+    (pdf-view-midnight-minor-mode 1)))
 #+end_src
 
 Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using. But in the meantime I'll try to use org-noter.
@@ -452,12 +433,16 @@ With a prefix ARG, remove start location."
 #+end_src
 
 I use this shortcut a lot to make notes for my university courses
-
 #+begin_src emacs-lisp
-;; org-download
-;; Drag-and-drop to `dired`
+(use-package! org-download
+  :after org
+  :init
+  (map! :leader
+        :prefix "d"
+        :desc "org-screenshot" "d" #'org-download-screenshot)
 (add-hook 'dired-mode-hook 'org-download-enable)
 (setq org-image-actual-width nil)
+  )
 #+end_src
 
 backup files
@@ -490,10 +475,6 @@ backup files
 Adding time-tracking modes.
 
 ** TODO figure out how to load these modes late
-#+begin_src emacs-lisp
-(global-wakatime-mode)
-(global-activity-watch-mode)
-#+end_src
 
 Before tangling, I remove todos from config.org and copy it to README.org
 #+begin_src emacs-lisp
@@ -530,4 +511,14 @@ Setting the scratch buffer in doom
   :hook (org-mode . org-auto-tangle-mode)
   :config
   (setq org-auto-tangle-default t))
+#+end_src
+
+more finegrainded undo.
+#+begin_src emacs-lisp
+(after! evil
+  (setq evil-want-fine-undo t)
+  (setq-default delete-by-moving-to-trash t)
+  (global-wakatime-mode)
+  (global-activity-watch-mode))
+
 #+end_src
