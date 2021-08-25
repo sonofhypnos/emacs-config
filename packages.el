@@ -43,6 +43,7 @@
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! anki-editor)
+(package! emr)
 
 (package! vimgolf)
 (package! pdf-tools)
