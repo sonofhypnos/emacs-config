@@ -362,9 +362,6 @@ I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] t
 (define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
 (define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
 (define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
-
-
-
 #+end_src
 
 Enabling night-mode for pdfs
@@ -510,5 +507,4 @@ more finegrainded undo.
   (setq-default delete-by-moving-to-trash t)
   (global-wakatime-mode)
   (global-activity-watch-mode))
-
 #+end_src
