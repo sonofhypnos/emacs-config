@@ -10,8 +10,8 @@ My personal information
 
 Setting up my directories.
 #+begin_src emacs-lisp
-(setq   org-directory "~/org-roam"
-        org-roam-directory org-directory
+(setq   org-roam-directory "~/org-roam"
+        org-directory "~/org"
         projectile-project-search-path '("~/repos")
         zot-bib "~/repos/bibliography/zotLib.bib")
 #+end_src
@@ -21,17 +21,21 @@ Setting up my directories.
 I copied and adjusted a lot of the following Post  [[https://yiufung.net/post/anki-org/][this excellent post]].
  support.
 #+begin_src emacs-lisp
+(map! :after anki-editor
+      :map org-mode-map
+        "<f12>"  #'anki-editor-cloze-region-auto-incr
+        "<f11>"  #'anki-editor-cloze-region-dont-incr
+        "<f10>"  #'anki-editor-reset-cloze-number
+        "<f9>"   #'anki-editor-push-tree)
+#+end_src
+
+#+begin_src emacs-lisp
 (use-package! anki-editor
-  :after org
+  :after org-roam
   #+end_src
 
 keybindings for Anki.
 #+begin_src emacs-lisp
- (map! :map org-mode-map
-         "<f12>"  #'anki-editor-cloze-region-auto-incr
-         "<f11>"  #'anki-editor-cloze-region-dont-incr
-         "<f10>"  #'anki-editor-reset-cloze-number
-         "<f9>"   #'anki-editor-push-tree)
   :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
   #+end_src
@@ -70,44 +74,12 @@ These functions where copied from [[https://yiufung.net/post/anki-org/][this pos
     (anki-editor-push-notes '(4))
     (anki-editor-reset-cloze-number))
   ;; Initialize
-  (anki-editor-reset-cloze-number)
+  (anki-editor-reset-cloze-number))
   #+end_src
 
-  I have made an org-capture template for each of my main Anki card types: basic, cloze and type. I found them really convenient when I learn about a new shortcut in Emacs that I want to remember.
-  #+begin_src emacs-lisp
-  (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
-  (add-to-list 'org-capture-templates
-               '("a" "Anki basic"
-                 entry
-                 (file+headline org-my-anki-file "Dispatch Shelf")
-                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
-  (add-to-list 'org-capture-templates
-               '("A" "Anki cloze"
-                 entry
-                 (file+headline org-my-anki-file "Dispatch Shelf")
-                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
-  (add-to-list 'org-capture-templates
-               '("T" "Anki type"
-                 entry
-                 (file+headline org-my-anki-file "Dispatch Shelf")
-                 "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
-
-  (add-to-list 'org-capture-templates
-               `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
-                 "* [[%:link][%:description]]\n %?\n \n %i\n%T"
-                 :immediate-finish t))
-
-  (add-to-list 'org-capture-templates
-               '("L" "Protocol Link" entry
-                 (file+headline +org-capture-notes-file "Inbox")
-                 "* [[%:link][%:description]] \n \n %? \n%i \n %T"
-                 :prepend t)))
-#+end_src
-
-
 These are my other capture templates. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
-I set up the following bindings in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures
-#+begin_src :tangle no
+Here's the bindings I set up in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures with some stolen Javascript:
+#+begin_src javascript :tangle no
 bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
 
 bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
@@ -164,116 +136,140 @@ This bit is required in order for benchmark-init to stop complaining.
 * Org-roam
 ** DONE Split up org-roam
 #+begin_src emacs-lisp
+
+
+(map! (:after org-roam
+        :map org-mode-map
+        :localleader
+        :prefix "m"
+        :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
+        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
 (after! org
   :config
   (setq org-export-with-tasks nil))
 
 (use-package! org-roam
   :after org
-  (map! (:map org-mode-map
-         :localleader
-         :prefix "m"
-         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
-         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
-
   #+end_src
 
   My daily checklists
   #+begin_src emacs-lisp
-  :config
-  (setq daily-template
-        (concat
-   "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
-   "\n* Morgenroutine"
-   "\n - [ ] Kalender angesehen"
-   "\n - [ ] Start tracking"
-   "\n - [ ] Check Bedtime yesterday"
-   "\n - [ ] Medis genommen"
-   "\n - [ ] Uhr angezogen"
-   "\n - [ ] Ziele gesetzt"
-   "\n - [ ] Review Anki"
-   "\n - [ ] Brush Teeth"
-   "\n* Evening Routine"
-   "\n - [ ] Check Habits/Beeminder"
-   "\n - [ ] Tasks Reviewed"
-   "\n - [ ] Timetracking Reviewed"
-   "\n - [ ] Ask Journal Questions"
-   "\n - [ ] Determine bedtime"
-   "\n - [ ] Review Anki"
-   "\n - [ ] Brush Teeth"
-   "\n* Inbox"
-   "\n* Journal"
-   "\n* Evening Journal"
-   "\n** What did you achieve today?"
-   "\n** What are you grateful for?"
-   "\n** What worried you today?"
-   "\n** What else is on your mind?"))
+:config
+(setq daily-template
+      (concat
+       "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
+       "\n* Morgenroutine"
+       "\n - [ ] Kalender angesehen"
+       "\n - [ ] Start tracking"
+       "\n - [ ] Check Bedtime yesterday"
+       "\n - [ ] Medis genommen"
+       "\n - [ ] Uhr angezogen"
+       "\n - [ ] Ziele gesetzt"
+       "\n - [ ] Review Anki"
+       "\n - [ ] Brush Teeth"
+       "\n* Evening Routine"
+       "\n - [ ] Check Habits/Beeminder"
+       "\n - [ ] Tasks Reviewed"
+       "\n - [ ] Timetracking Reviewed"
+       "\n - [ ] Ask Journal Questions"
+       "\n - [ ] Determine bedtime"
+       "\n - [ ] Review Anki"
+       "\n - [ ] Brush Teeth"
+       "\n* Inbox"
+       "\n* Journal"
+       "\n* Evening Journal"
+       "\n** What did you achieve today?"
+       "\n** What are you grateful for?"
+       "\n** What worried you today?"
+       "\n** What else is on your mind?"))
 
-  (setq org-roam-dailies-directory "daily/")
-  (setq org-roam-dailies-capture-templates
-     `(("Journal" "daily" plain "%T\n%?\n"
-        :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))))
+(setq org-roam-dailies-directory "daily/")
+(setq org-roam-dailies-capture-templates
+      `(
+        ("Journal" "daily" plain "%T\n%?\n"
+         :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))
+       ))
 
-  (setq org-roam-capture-templates
-        '(("d" "default" plain
-           "%?"
-           :if-new (file+head "${slug}.org"
-                              "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
-           :immediate-finish t
-           :unnarrowed t)))
+(setq org-roam-capture-templates
+      '(("d" "default" plain
+         "%?"
+         :if-new (file+head "${slug}.org"
+                            "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
+         :immediate-finish t
+         :unnarrowed t)))
 
-  ;;here come some nice but non-essential functions for org-roam:
-  (defun org-hide-properties ()
-    "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
-    (interactive)
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward
-              "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
-        (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
-          (overlay-put ov_this 'display "")
-          (overlay-put ov_this 'hidden-prop-drawer t))))
-    (put 'org-toggle-properties-hide-state 'state 'hidden))
 
-  (defun org-show-properties ()
-    "Show all org-mode property drawers hidden by org-hide-properties."
-    (interactive)
-    (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
-    (put 'org-toggle-properties-hide-state 'state 'shown))
+;;here come some nice but non-essential functions for org-roam:
+(defun org-hide-properties ()
+  "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward
+            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+      (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+        (overlay-put ov_this 'display "")
+        (overlay-put ov_this 'hidden-prop-drawer t))))
+  (put 'org-toggle-properties-hide-state 'state 'hidden))
+
+(defun org-show-properties ()
+  "Show all org-mode property drawers hidden by org-hide-properties."
+  (interactive)
+  (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+  (put 'org-toggle-properties-hide-state 'state 'shown))
 
 (add-hook 'org-mode-hook #'org-hide-properties)
-  (defun org-toggle-properties ()
-    "Toggle visibility of property drawers."
-    (interactive)
-    (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
-        (org-show-properties)
-      (org-hide-properties)))
-  ;;(setq org-roam-link-title-format "%s")
-  (require 'org-roam-protocol)
+(defun org-toggle-properties ()
+  "Toggle visibility of property drawers."
+  (interactive)
+  (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+      (org-show-properties)
+    (org-hide-properties)))
+;;(setq org-roam-link-title-format "%s")
+(require 'org-roam-protocol)
 
-  (add-to-list 'org-capture-templates
-               `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
-                 "* [[%:link][%:description]]\n %?\n \n %i\n%T"
-                 :immediate-finish t))
+(setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
+(add-to-list 'org-capture-templates
+             `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
+               "* [[%:link][%:description]]\n %?\n \n %i\n%T"
+               :immediate-finish t))
+(add-to-list 'org-capture-templates
+            '("a" "Anki basic"
+                entry
+                (file+headline org-my-anki-file "Dispatch Shelf")
+                "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
+(add-to-list 'org-capture-templates
+            '("A" "Anki cloze"
+                entry
+                (file+headline org-my-anki-file "Dispatch Shelf")
+                "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
+(add-to-list 'org-capture-templates
+            '("T" "Anki type"
+                entry
+                (file+headline org-my-anki-file "Dispatch Shelf")
+                "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
+(add-to-list 'org-capture-templates
+             '("L" "Protocol Link" entry
+               (file+headline +org-capture-notes-file "Inbox")
+               "* [[%:link][%:description]] \n \n %? \n%i \n %T"
+               :prepend t))
+(add-to-list 'org-capture-templates
+             '("S" "Todo Protocoll" entry
+               (file+headline +org-capture-notes-file "Inbox")
+               "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
+               :prepend t
+               :kill-buffer t))
 
-  (add-to-list 'org-capture-templates
-               '("L" "Protocol Link" entry
-                 (file+headline +org-capture-notes-file "Inbox")
-                 "* [[%:link][%:description]] \n \n %? \n%i \n %T"
-                 :prepend t))
-  (add-to-list 'org-capture-templates
-               '("S" "Todo Protocoll" entry
-                 (file+headline +org-capture-notes-file "Inbox")
-                 "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
-                 :prepend t
-                 :kill-buffer t))
-  (setq org-roam-capture-ref-templates
-        '(("r" "ref" plain
-           "%?\n* Quote\n\" %x\"  "
-           :if-new (file+head "${slug}.org"
-                              "#+title: ${title}\n#+author:\n")
-           :unnarrowed t))))
+(setq org-roam-capture-ref-templates
+      '(("r" "ref" plain
+         "%?\n* Quote\n\" %x\"  "
+         :if-new (file+head "${slug}.org"
+                            "#+title: ${title}\n#+author:\n")
+         :unnarrowed t))))
 #+end_src
+
+#+RESULTS:
+| r | ref | plain | %? |
 
 #+begin_src emacs-lisp
 (use-package! bibtex
@@ -312,7 +308,7 @@ This bit is required in order for benchmark-init to stop complaining.
    org-ref-notes-function 'orb-edit-notes))
 
 (use-package! org-roam-bibtex
-  :after (org-roam)
+  :after org-roam
   :hook (org-roam-mode . org-roam-bibtex-mode)
   :config
   (setq org-roam-bibtex-preformat-keywords
@@ -332,7 +328,7 @@ This bit is required in order for benchmark-init to stop complaining.
     :after org-roam)
 
 (use-package! org-roam-ui
-    :after org-roam ;; or :after org
+    :after org-roam
     :config
     (setq org-roam-ui-sync-theme t
           org-roam-ui-follow t
@@ -398,7 +394,6 @@ Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actu
            (org-pdftools-use-isearch-link t)
            (org-pdftools-use-freestyle-annot t))
        (org-noter-insert-note (org-noter--get-precise-info)))))
-
   ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
   (defun org-noter-set-start-location (&optional arg)
     "When opening a session with this document, go to the current location.
@@ -417,7 +412,37 @@ With a prefix ARG, remove start location."
                            (org-noter--pretty-print-location location))))))))
   (with-eval-after-load 'pdf-annot
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+#+end_src
 
+#+begin_src emacs-lisp
+(setq org-roam-dailies-capture-templates
+   (let ((head
+          (concat
+           "#+title: %<%A, %d %B %Y>\n#+roam_tags: Dailies\n* Inbox\n* Log\n"
+           "* [/] Do Today\n- [ ] Morning pages\n- [ ] Go through inbox\n- [ ] Flashcards\n* [/] Possibly Do Today\n")))
+     `(("d" "default" entry
+        "* %?"
+        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Inbox"))
+        :unnarrowed t)
+       ("D" "default + reference" entry
+        "* %?%a"
+        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Inbox"))
+        :unnarrowed t)
+       ("j" "journal" entry
+        "* %U: %?"
+        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Log")))
+       ("J" "journal + refernce" entry
+        "* %U: %? %a"
+        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Log")))
+       ("t" "Do Today" item
+        "[ ] %a"
+        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Do Today"))
+        :immediate-finish t)
+       ("p" "Possibly Do Today" item
+        "[ ] %a"
+        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Possibly Do Today"))
+        :immediate-finish t)
+       )))
 #+end_src
 
 I use this shortcut a lot to make notes for my university courses
@@ -468,7 +493,7 @@ Before tangling, I remove todos from config.org and copy it to README.org
 (defun pre-tangle-config ()
   (and (file-in-directory-p
         buffer-file-name doom-private-dir)
-       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
+       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md; doom compile")))
 (defun private-enable-pre-tangle ()
   (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
 
@@ -476,7 +501,7 @@ Before tangling, I remove todos from config.org and copy it to README.org
   (add-hook 'org-mode-hook #'private-enable-pre-tangle))
 #+end_src
 
-* Coding
+#+RESULTS* Coding
 Adding support for python. At the moment I not using Emacs for coding in python anyways.
 #+begin_src emacs-lisp
 (use-package! elpy

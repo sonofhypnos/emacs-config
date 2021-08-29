@@ -503,7 +503,7 @@ Before tangling, I remove todos from config.org and copy it to README.org
 (defun pre-tangle-config ()
   (and (file-in-directory-p
         buffer-file-name doom-private-dir)
-       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md")))
+       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; sed -i '/^[^\"]*DONE[^\"]*$/d' config.md; doom compile")))
 (defun private-enable-pre-tangle ()
   (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
 
