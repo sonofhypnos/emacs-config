@@ -12,8 +12,8 @@ My personal information
 * TODO Figure out what loads org early
 Setting up my directories.
 #+begin_src emacs-lisp
-(setq   org-directory "~/org-roam"
-        org-roam-directory org-directory
+(setq   org-roam-directory "~/org-roam"
+        org-directory "~/org"
         projectile-project-search-path '("~/repos")
         zot-bib "~/repos/bibliography/zotLib.bib")
 #+end_src
