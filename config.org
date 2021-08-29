@@ -196,9 +196,6 @@ This bit is required in order for benchmark-init to stop complaining.
       `(
         ("Journal" "daily" plain "%T\n%?\n"
          :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))
-
-        ("rnal" "daily" plain "%T\n%?\n"
-         :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("lol")))
        ))
 
 (setq org-roam-capture-templates
@@ -240,10 +237,10 @@ This bit is required in order for benchmark-init to stop complaining.
 (require 'org-roam-protocol)
 
 (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
-(setq org-capture-templates
-             `(("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
+(add-to-list 'org-capture-templates
+             `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
                "* [[%:link][%:description]]\n %?\n \n %i\n%T"
-               :immediate-finish t)))
+               :immediate-finish t))
 (add-to-list 'org-capture-templates
             '("a" "Anki basic"
                 entry
