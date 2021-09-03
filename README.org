@@ -1,7 +1,5 @@
 #+TITLE: Doom Configuration
 * Doom-Emacs Configuration
-Largest influences on this configuration have been:
-
 Inspired by the Book [[https://leanpub.com/lit-config][Literate Configuration]] I decided to migrate to a literate configuration. As of now, this is still in the rough draft stage and not really readable.
 
 My personal information
@@ -12,8 +10,8 @@ My personal information
 
 Setting up my directories.
 #+begin_src emacs-lisp
-(setq   org-roam-directory "~/org-roam"
-        org-directory org-roam-directory
+(setq   org-directory "~/org-roam"
+        org-roam-directory org-directory
         projectile-project-search-path '("~/repos")
         zot-bib "~/repos/bibliography/zotLib.bib")
 #+end_src
@@ -513,7 +511,6 @@ Setting the scratch buffer in doom
 (after! emacs-lisp-mode
   (setq doom-scratch-initial-major-mode emacs-lisp-mode))
 #+end_src
-
 
 #+begin_src emacs-lisp
 (use-package! org-auto-tangle
