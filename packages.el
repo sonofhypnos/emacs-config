@@ -20,6 +20,7 @@
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! spray)
+(package! openwith)
 ;;(package! helm-swoop)
 (package! benchmark-init)
 (package! format-all)

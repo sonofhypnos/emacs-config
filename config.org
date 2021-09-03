@@ -538,3 +538,12 @@ More finegrainded undo.
   (global-wakatime-mode)
   (global-activity-watch-mode))
 #+end_src
+
+Add default pdf-viewer
+#+begin_src emacs-lisp
+(use-package! openwith
+  :after-call pre-command-hook
+  :config
+  (openwith-mode t)
+  (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file))))
+#+end_src
