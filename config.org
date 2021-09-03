@@ -449,37 +449,6 @@ With a prefix ARG, remove start location."
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 #+end_src
 
-#+begin_src emacs-lisp
-(setq org-roam-dailies-capture-templates
-   (let ((head
-          (concat
-           "#+title: %<%A, %d %B %Y>\n#+roam_tags: Dailies\n* Inbox\n* Log\n"
-           "* [/] Do Today\n- [ ] Morning pages\n- [ ] Go through inbox\n- [ ] Flashcards\n* [/] Possibly Do Today\n")))
-     `(("d" "default" entry
-        "* %?"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Inbox"))
-        :unnarrowed t)
-       ("D" "default + reference" entry
-        "* %?%a"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Inbox"))
-        :unnarrowed t)
-       ("j" "journal" entry
-        "* %U: %?"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Log")))
-       ("J" "journal + refernce" entry
-        "* %U: %? %a"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Log")))
-       ("t" "Do Today" item
-        "[ ] %a"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Do Today"))
-        :immediate-finish t)
-       ("p" "Possibly Do Today" item
-        "[ ] %a"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Possibly Do Today"))
-        :immediate-finish t)
-       )))
-#+end_src
-
 I use this shortcut a lot to make notes for my university courses
 #+begin_src emacs-lisp
 (use-package! org-download
@@ -561,7 +530,7 @@ Setting the scratch buffer in doom
   (setq org-auto-tangle-default t))
 #+end_src
 
-more finegrainded undo.
+More finegrainded undo.
 #+begin_src emacs-lisp
 (after! evil
   (setq evil-want-fine-undo t)

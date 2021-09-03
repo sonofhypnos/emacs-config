@@ -1,5 +1,7 @@
 #+TITLE: Doom Configuration
 * Doom-Emacs Configuration
+Largest influences on this configuration have been:
+
 Inspired by the Book [[https://leanpub.com/lit-config][Literate Configuration]] I decided to migrate to a literate configuration. As of now, this is still in the rough draft stage and not really readable.
 
 My personal information
@@ -11,10 +13,36 @@ My personal information
 Setting up my directories.
 #+begin_src emacs-lisp
 (setq   org-roam-directory "~/org-roam"
-        org-directory "~/org"
+        org-directory org-roam-directory
         projectile-project-search-path '("~/repos")
         zot-bib "~/repos/bibliography/zotLib.bib")
 #+end_src
+
+Set up multiple languages for spell-checking. This was largly stolen from [[https://github.com/munen/emacs.d ][this]] repo.
+#+begin_src emacs-lisp
+(after! ispell
+  ;; Configure `LANG`, otherwise ispell.el cannot find a 'default
+  ;; dictionary' even though multiple dictionaries will be configured
+  ;; in next line.
+  (setenv "LANG" "en_US.UTF-8")
+  (setq ispell-program-name "hunspell")
+  ;; Configure German, Swiss German, and two variants of English.
+  (setq ispell-dictionary "de_DE,en_GB,en_US")
+  ;; ispell-set-spellchecker-params has to be called
+  ;; before ispell-hunspell-add-multi-dic will work
+  (ispell-set-spellchecker-params)
+  (ispell-hunspell-add-multi-dic "de_DE,en_GB,en_US")
+  ;; For saving words to the personal dictionary, don't infer it from
+  ;; the locale, otherwise it would save to ~/.hunspell_de_DE.
+  (setq ispell-personal-dictionary "~/.hunspell_personal")
+  (unless (file-exists-p ispell-personal-dictionary)
+  (write-region "" nil ispell-personal-dictionary nil 0)))
+
+;; The personal dictionary file has to exist, otherwise hunspell will
+;; silently not use it.
+#+end_src
+
+#+RESULTS:
 
 * [[https://apps.ankiweb.net/][Anki]] setup
 
@@ -414,37 +442,6 @@ With a prefix ARG, remove start location."
     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 #+end_src
 
-#+begin_src emacs-lisp
-(setq org-roam-dailies-capture-templates
-   (let ((head
-          (concat
-           "#+title: %<%A, %d %B %Y>\n#+roam_tags: Dailies\n* Inbox\n* Log\n"
-           "* [/] Do Today\n- [ ] Morning pages\n- [ ] Go through inbox\n- [ ] Flashcards\n* [/] Possibly Do Today\n")))
-     `(("d" "default" entry
-        "* %?"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Inbox"))
-        :unnarrowed t)
-       ("D" "default + reference" entry
-        "* %?%a"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Inbox"))
-        :unnarrowed t)
-       ("j" "journal" entry
-        "* %U: %?"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Log")))
-       ("J" "journal + refernce" entry
-        "* %U: %? %a"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Log")))
-       ("t" "Do Today" item
-        "[ ] %a"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Do Today"))
-        :immediate-finish t)
-       ("p" "Possibly Do Today" item
-        "[ ] %a"
-        :if-new (file+head+olp "%<%Y>/%<%B>/%<%Y-%m-%d>" ,head ("Possibly Do Today"))
-        :immediate-finish t)
-       )))
-#+end_src
-
 I use this shortcut a lot to make notes for my university courses
 #+begin_src emacs-lisp
 (use-package! org-download
@@ -501,7 +498,7 @@ Before tangling, I remove todos from config.org and copy it to README.org
   (add-hook 'org-mode-hook #'private-enable-pre-tangle))
 #+end_src
 
-#+RESULTS* Coding
+* Coding
 Adding support for python. At the moment I not using Emacs for coding in python anyways.
 #+begin_src emacs-lisp
 (use-package! elpy
@@ -517,6 +514,7 @@ Setting the scratch buffer in doom
   (setq doom-scratch-initial-major-mode emacs-lisp-mode))
 #+end_src
 
+
 #+begin_src emacs-lisp
 (use-package! org-auto-tangle
   :defer t
@@ -525,7 +523,7 @@ Setting the scratch buffer in doom
   (setq org-auto-tangle-default t))
 #+end_src
 
-more finegrainded undo.
+More finegrainded undo.
 #+begin_src emacs-lisp
 (after! evil
   (setq evil-want-fine-undo t)
