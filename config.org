@@ -165,7 +165,6 @@ This bit is required in order for benchmark-init to stop complaining.
 #+end_src
 
 * Org-roam
-** DONE Split up org-roam
 ** TODO Add Shortcuts for dailies
 ** TODO Repair Templates
 ** TODO Explain Org-roam configuration
@@ -195,7 +194,6 @@ This bit is required in order for benchmark-init to stop complaining.
        "\n* Morgenroutine"
        "\n - [ ] Kalender angesehen"
        "\n - [ ] Start tracking"
-       "\n - [ ] Check Bedtime yesterday"
        "\n - [ ] Medis genommen"
        "\n - [ ] Uhr angezogen"
        "\n - [ ] Ziele gesetzt"
@@ -206,7 +204,6 @@ This bit is required in order for benchmark-init to stop complaining.
        "\n - [ ] Tasks Reviewed"
        "\n - [ ] Timetracking Reviewed"
        "\n - [ ] Ask Journal Questions"
-       "\n - [ ] Determine bedtime"
        "\n - [ ] Review Anki"
        "\n - [ ] Brush Teeth"
        "\n* Inbox"
@@ -458,8 +455,7 @@ I use this shortcut a lot to make notes for my university courses
         :prefix "d"
         :desc "org-screenshot" "d" #'org-download-screenshot)
 (add-hook 'dired-mode-hook 'org-download-enable)
-(setq org-image-actual-width nil)
-  )
+(setq org-image-actual-width nil))
 #+end_src
 
 backup files
@@ -498,7 +494,7 @@ Before tangling, I remove todos from config.org and copy it to README.org
 (defun pre-tangle-config ()
   (and (file-in-directory-p
         buffer-file-name doom-private-dir)
-       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; sed -i '/^[^\"]*DONE[^\"]*$/d' config.org; yes | doom compile")))
+       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; yes | doom compile")))
 (defun private-enable-pre-tangle ()
   (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
 
