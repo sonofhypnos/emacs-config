@@ -482,9 +482,10 @@ Adding time-tracking modes.
 Before tangling, I remove todos from config.org and copy it to README.org
 #+begin_src emacs-lisp
 (defun pre-tangle-config ()
+
   (and (file-in-directory-p
         buffer-file-name doom-private-dir)
-       (shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org; yes | doom compile")))
+       (async-shell-command "yes | doom compile & cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org")))
 (defun private-enable-pre-tangle ()
   (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
 
