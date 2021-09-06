@@ -533,3 +533,9 @@ Add default pdf-viewer
   (openwith-mode t)
   (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file))))
 #+end_src
+
+Configure Rust
+#+begin_src emacs-lisp
+(after! lsp-rust
+  (setq lsp-rust-server 'rust-analyzer))
+#+end_src
