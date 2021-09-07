@@ -43,10 +43,9 @@ Set up multiple languages for spell-checking. See [[https://github.com/munen/ema
 ;; silently not use it.
 #+end_src
 
-* [[https://apps.ankiweb.net/][Anki]] setup
+** [[https://apps.ankiweb.net/][Anki]] setup
 
-I copied and adjusted a lot of the following Post  [[https://yiufung.net/post/anki-org/][this excellent post]].
- support.
+See [[https://yiufung.net/post/anki-org/][this excellent post]] to learn more about how to connect Anki with Emacs.
 #+begin_src emacs-lisp
 (map! :after anki-editor
       :map org-mode-map
@@ -111,58 +110,10 @@ bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ e
 bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
 #+end_src
 
-From https://gist.github.com/mads-hartmann/3402786
+
+** Org
+*** Org-roam
 #+begin_src emacs-lisp
-(defun toggle-maximize-buffer () "Maximize buffer"
-       (interactive)
-       (if (= 1 (length (window-list)))
-           (jump-to-register '_)
-         (progn
-           (window-configuration-to-register '_)
-           (delete-other-windows))))
-#+end_src
-
-
-I don't really use the terminal in Emacs yet. Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
-#+begin_src emacs-lisp
-(use-package! vterm
-  :after org
-  :commands vterm
-  :config
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
-  (setq vterm-shell "zsh")
-  (setq vterm-max-scrollback 10000))
-
-(use-package! term
-  :after org
-  :config
-  (setq explicit-shell-file-name "zsh")
-  (setq explicit-zsh-args '()) ; I don't know what this is for?
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
-
-#+end_src
-
-The way I remap these commands is definitely incorrect, and once I have time for it, i'll figure out the correct way.
-#+begin_src emacs-lisp
-(map! (:when (featurep! :tools lookup)
- :leader :desc "projectile find file" :r ":" #'projectile-find-file
- :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
-  #+end_src
-
-
-This bit is required in order for benchmark-init to stop complaining.
-#+begin_src emacs-lisp
-(cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
- (use-package benchmark-init
-   :config
-   (require 'benchmark-init-modes) ; explicitly required
-   (add-hook 'after-init-hook #'benchmark-init/deactivate)))
-#+end_src
-
-* Org-roam
-#+begin_src emacs-lisp
-
-
 (map! (:after org-roam
         :map org-mode-map
         :localleader
@@ -177,7 +128,7 @@ This bit is required in order for benchmark-init to stop complaining.
   :after org
   #+end_src
 
-  My daily checklists
+My daily checklists
   #+begin_src emacs-lisp
 :config
 (setq daily-template
@@ -291,7 +242,7 @@ This bit is required in order for benchmark-init to stop complaining.
          :unnarrowed t))))
 #+end_src
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package! bibtex
   :init
 (setq
@@ -343,7 +294,10 @@ This bit is required in order for benchmark-init to stop complaining.
            :unnarrowed t))))
 
 
-;;org-roam-ui support
+#+end_src
+
+Org-roam-ui is useful for viewing your notes and their connections as a graph in the browser.
+#+begin_src emacs-lisp
 (use-package! websocket
     :after org-roam)
 
@@ -354,7 +308,6 @@ This bit is required in order for benchmark-init to stop complaining.
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
-
 #+end_src
 
 
@@ -447,6 +400,7 @@ I use this shortcut a lot to make notes for my university courses
 #+end_src
 
 
+* Miscelanous
 
 Set up bindings for org-recoll
 #+end_src
@@ -520,6 +474,53 @@ Add default pdf-viewer
   (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file))))
 #+end_src
 
+From https://gist.github.com/mads-hartmann/3402786
+#+begin_src emacs-lisp
+(defun toggle-maximize-buffer () "Maximize buffer"
+       (interactive)
+       (if (= 1 (length (window-list)))
+           (jump-to-register '_)
+         (progn
+           (window-configuration-to-register '_)
+           (delete-other-windows))))
+#+end_src
+
+
+I don't really use the terminal in Emacs yet. Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
+#+begin_src emacs-lisp
+(use-package! vterm
+  :after org
+  :commands vterm
+  :config
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+  (setq vterm-shell "zsh")
+  (setq vterm-max-scrollback 10000))
+
+(use-package! term
+  :after org
+  :config
+  (setq explicit-shell-file-name "zsh")
+  (setq explicit-zsh-args '()) ; I don't know what this is for?
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+
+#+end_src
+
+The way I remap these commands is definitely incorrect, and once I have time for it, i'll figure out the correct way.
+#+begin_src emacs-lisp
+(map! (:when (featurep! :tools lookup)
+ :leader :desc "projectile find file" :r ":" #'projectile-find-file
+ :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
+  #+end_src
+
+
+This bit is required in order for benchmark-init to stop complaining.
+#+begin_src emacs-lisp
+(cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
+ (use-package benchmark-init
+   :config
+   (require 'benchmark-init-modes) ; explicitly required
+   (add-hook 'after-init-hook #'benchmark-init/deactivate)))
+#+end_src
 Configure Rust.
 #+begin_src emacs-lisp
 (after! lsp-rust

@@ -45,10 +45,9 @@ Set up multiple languages for spell-checking. See [[https://github.com/munen/ema
 ;; silently not use it.
 #+end_src
 
-* [[https://apps.ankiweb.net/][Anki]] setup
+** [[https://apps.ankiweb.net/][Anki]] setup
 
-I copied and adjusted a lot of the following Post  [[https://yiufung.net/post/anki-org/][this excellent post]].
- support.
+See [[https://yiufung.net/post/anki-org/][this excellent post]] to learn more about how to connect Anki with Emacs.
 #+begin_src emacs-lisp
 (map! :after anki-editor
       :map org-mode-map
@@ -107,70 +106,14 @@ These functions where copied from [[https://yiufung.net/post/anki-org/][this pos
 
 * TODO Fix Capture
 * TODO Enable Capture with Chrome
-These are my other capture templates. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
-Here's the bindings I set up in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures with some stolen Javascript:
-#+begin_src javascript :tangle no
-bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
-
-bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
-#+end_src
-
-From https://gist.github.com/mads-hartmann/3402786
-#+begin_src emacs-lisp
-(defun toggle-maximize-buffer () "Maximize buffer"
-       (interactive)
-       (if (= 1 (length (window-list)))
-           (jump-to-register '_)
-         (progn
-           (window-configuration-to-register '_)
-           (delete-other-windows))))
-#+end_src
 
 
-I don't really use the terminal in Emacs yet. Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
-#+begin_src emacs-lisp
-(use-package! vterm
-  :after org
-  :commands vterm
-  :config
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
-  (setq vterm-shell "zsh")
-  (setq vterm-max-scrollback 10000))
-
-(use-package! term
-  :after org
-  :config
-  (setq explicit-shell-file-name "zsh")
-  (setq explicit-zsh-args '()) ; I don't know what this is for?
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
-
-#+end_src
-
-* TODO Fix remapping space
-The way I remap these commands is definitely incorrect, and once I have time for it, i'll figure out the correct way.
-#+begin_src emacs-lisp
-(map! (:when (featurep! :tools lookup)
- :leader :desc "projectile find file" :r ":" #'projectile-find-file
- :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
-  #+end_src
-
-
-This bit is required in order for benchmark-init to stop complaining.
-#+begin_src emacs-lisp
-(cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
- (use-package benchmark-init
-   :config
-   (require 'benchmark-init-modes) ; explicitly required
-   (add-hook 'after-init-hook #'benchmark-init/deactivate)))
-#+end_src
-
-* Org-roam
+** Org
+*** Org-roam
 ** TODO Add Shortcuts for dailies
 ** TODO Repair Templates
 ** TODO Explain Org-roam configuration
 #+begin_src emacs-lisp
-
-
 (map! (:after org-roam
         :map org-mode-map
         :localleader
@@ -185,7 +128,7 @@ This bit is required in order for benchmark-init to stop complaining.
   :after org
   #+end_src
 
-  My daily checklists
+My daily checklists
   #+begin_src emacs-lisp
 :config
 (setq daily-template
@@ -228,9 +171,10 @@ This bit is required in order for benchmark-init to stop complaining.
                             "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
          :immediate-finish t
          :unnarrowed t)))
+#+end_src
 
-
-;;here come some nice but non-essential functions for org-roam:
+Some non-essential functions for org
+#+begin_src emacs-lisp
 (defun org-hide-properties ()
   "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
   (interactive)
@@ -248,18 +192,36 @@ This bit is required in order for benchmark-init to stop complaining.
   (interactive)
   (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
   (put 'org-toggle-properties-hide-state 'state 'shown))
-
-(add-hook 'org-mode-hook #'org-hide-properties)
 (defun org-toggle-properties ()
   "Toggle visibility of property drawers."
   (interactive)
   (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
       (org-show-properties)
     (org-hide-properties)))
-;;(setq org-roam-link-title-format "%s")
+#+end_src
+
+Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-files when visiting them.
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook #'org-hide-properties)
+#+end_src
+
+*** Setting up org-capture
+Trying to set up org-capture has been a nightmare for me so far. It is broken again at the moment and I haven't found the time to fix it. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
+- Update 08-09-2021: org-protocol is broken again and I haven't had the time to fix it yet.
+
+Here's the bindings I set up in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures:
+#+begin_src javascript :tangle no
+bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
+
+bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
+#+end_src
+
+These are my other capture templates.
+#+begin_src emacs-lisp
 (require 'org-roam-protocol)
 
 (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
+
 (add-to-list 'org-capture-templates
              `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
                "* [[%:link][%:description]]\n %?\n \n %i\n%T"
@@ -313,37 +275,7 @@ Org-roam-ui is useful for viewing your notes and their connections as a graph in
           org-roam-ui-open-on-start t))
 #+end_src
 
-
-I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] to get vim-surround keybindings for special these characters: |/.*$.
-#+begin_src emacs-lisp
-;; add macro for Vim surround for more characters
-;;; this macro was copied from here:2
-(defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
-  (let ((inner-name (make-symbol (concat "evil-inner-" name)))
-        (outer-name (make-symbol (concat "evil-a-" name))))
-    `(progn
-       (evil-define-text-object ,inner-name (count &optional beg end type)
-         (evil-select-paren ,start-regex ,end-regex beg end type count nil))
-       (evil-define-text-object ,outer-name (count &optional beg end type)
-         (evil-select-paren ,start-regex ,end-regex beg end type count t))
-       (define-key evil-inner-text-objects-map ,key #',inner-name)
-       (define-key evil-outer-text-objects-map ,key #',outer-name))))
-
-(define-and-bind-quoted-text-object "pipe" "|" "|" "|")
-(define-and-bind-quoted-text-object "slash" "/" "/" "/")
-(define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
-(define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
-(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
-#+end_src
-
-Enabling night-mode for pdfs
-#+begin_src emacs-lisp
-(after! pdf-tools
-  (add-hook! 'pdf-tools-enabled-hook
-    (pdf-view-midnight-minor-mode 1)))
-#+end_src
-
-Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using. But in the meantime I'll try to use org-noter.
+Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using, but in the meantime I'll try to use org-noter.
 #+begin_src emacs-lisp
 (use-package! org-noter
   :after org
@@ -404,15 +336,40 @@ I use this shortcut a lot to make notes for my university courses
 
 
 * Miscelanous
+I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] to get [[https://github.com/emacs-evil/evil-surround][vim-surround]] keybindings for these special characters: |/.*$.
+#+begin_src emacs-lisp
+(defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
+  (let ((inner-name (make-symbol (concat "evil-inner-" name)))
+        (outer-name (make-symbol (concat "evil-a-" name))))
+    `(progn
+       (evil-define-text-object ,inner-name (count &optional beg end type)
+         (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+       (evil-define-text-object ,outer-name (count &optional beg end type)
+         (evil-select-paren ,start-regex ,end-regex beg end type count t))
+       (define-key evil-inner-text-objects-map ,key #',inner-name)
+       (define-key evil-outer-text-objects-map ,key #',outer-name))))
+
+(define-and-bind-quoted-text-object "pipe" "|" "|" "|")
+(define-and-bind-quoted-text-object "slash" "/" "/" "/")
+(define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
+(define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
+(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
+#+end_src
+
+Enabling night-mode for pdfs
+#+begin_src emacs-lisp
+(after! pdf-tools
+  (add-hook! 'pdf-tools-enabled-hook
+    (pdf-view-midnight-minor-mode 1)))
+#+end_src
 
 Set up bindings for org-recoll
-#+end_src
+#+begin_src emacs-lisp
 (global-set-key (kbd "C-c g") 'org-recoll-search)
 (global-set-key (kbd "C-c u") 'org-recoll-update-index)
-#+begin_src emacs-lisp
+#+end_src
 
 backup files
-
 #+begin_src emacs-lisp
 (setq auto-save-default t
       make-backup-files t)
@@ -476,6 +433,54 @@ Add default pdf-viewer
   :config
   (openwith-mode t)
   (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file))))
+#+end_src
+
+From https://gist.github.com/mads-hartmann/3402786
+#+begin_src emacs-lisp
+(defun toggle-maximize-buffer () "Maximize buffer"
+       (interactive)
+       (if (= 1 (length (window-list)))
+           (jump-to-register '_)
+         (progn
+           (window-configuration-to-register '_)
+           (delete-other-windows))))
+#+end_src
+
+
+I don't really use the terminal in Emacs yet. Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
+#+begin_src emacs-lisp
+(use-package! vterm
+  :after org
+  :commands vterm
+  :config
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
+  (setq vterm-shell "zsh")
+  (setq vterm-max-scrollback 10000))
+
+(use-package! term
+  :after org
+  :config
+  (setq explicit-shell-file-name "zsh")
+  (setq explicit-zsh-args '()) ; I don't know what this is for?
+  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
+
+#+end_src
+
+* TODO Fix remapping space
+The way I remap these commands is definitely incorrect, and once I have time for it, i'll figure out the correct way.
+#+begin_src emacs-lisp
+(map! (:when (featurep! :tools lookup)
+ :leader :desc "projectile find file" :r ":" #'projectile-find-file
+ :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
+  #+end_src
+
+This bit is required in order for benchmark-init to stop complaining.
+#+begin_src emacs-lisp
+(cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
+ (use-package benchmark-init
+   :config
+   (require 'benchmark-init-modes) ; explicitly required
+   (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
 
 Configure Rust.
