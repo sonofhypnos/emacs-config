@@ -1,8 +1,12 @@
 #+TITLE: Doom Configuration
-* Doom-Emacs Configuration
+* Introduction
 * TODO write proper introduction
-Inspired by the Book [[https://leanpub.com/lit-config][Literate Configuration]] I decided to migrate to a literate configuration. As of now, this is still in the rough draft stage and not really readable.
+We stand on the shoulders of giants, nothing is original and all that. Here are the configurations that I've learned and [[https://www.amazon.de/dp/0761169253/ref=nosim?linkCode=gs2&tag=kleon2007d-21][stolen]] from the most:
+- [[https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/][Diego Zamboni’s emacs configuration]] including his ebook on [[https://leanpub.com/lit-config][literate configuration]].
+- [[https://github.com/tecosaur][Tecosaur’s emacs configuration]]  
 
+
+* Config
 My personal information
 #+begin_src emacs-lisp
 (setq user-full-name "Tassilo Neubauer"
@@ -18,7 +22,7 @@ Setting up my directories.
         zot-bib "~/repos/bibliography/zotLib.bib")
 #+end_src
 
-Set up multiple languages for spell-checking. This was largly stolen from [[https://github.com/munen/emacs.d ][this]] repo.
+Set up multiple languages for spell-checking. See [[https://github.com/munen/emacs.d ][this]] repo for more info.
 #+begin_src emacs-lisp
 (after! ispell
   ;; Configure `LANG`, otherwise ispell.el cannot find a 'default
@@ -37,12 +41,9 @@ Set up multiple languages for spell-checking. This was largly stolen from [[http
   (setq ispell-personal-dictionary "~/.hunspell_personal")
   (unless (file-exists-p ispell-personal-dictionary)
   (write-region "" nil ispell-personal-dictionary nil 0)))
-
 ;; The personal dictionary file has to exist, otherwise hunspell will
 ;; silently not use it.
 #+end_src
-
-#+RESULTS:
 
 * [[https://apps.ankiweb.net/][Anki]] setup
 
@@ -65,7 +66,6 @@ I copied and adjusted a lot of the following Post  [[https://yiufung.net/post/an
 keybindings for Anki.
 #+begin_src emacs-lisp
   :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
-
   #+end_src
 
   Export Mathjax instead of Latex and use org-tags
@@ -299,9 +299,6 @@ This bit is required in order for benchmark-init to stop complaining.
          :unnarrowed t))))
 #+end_src
 
-#+RESULTS:
-| r | ref | plain | %? |
-
 * TODO give credit
 #+begin_src emacs-lisp
 (use-package! bibtex
@@ -486,11 +483,8 @@ backup files
       "q" #'spray-quit)
 #+end_src
 
-Adding time-tracking modes.
-
-** TODO figure out how to load these modes late
-
-Before tangling, I remove todos from config.org and copy it to README.org
+** TODO load stuff late?
+After tangling, configuration and packages get recompiled by running ~~~doom compile~~~.
 #+begin_src emacs-lisp
 (defun pre-tangle-config ()
 
@@ -528,7 +522,7 @@ Setting the scratch buffer in doom
   (setq org-auto-tangle-default t))
 #+end_src
 
-More finegrainded undo.
+Set more finegrained undo and enable timetracking modes. I am currently using wakatime, but recently I discovered [[https://activitywatch.net/][activitywatch]], which being open source and all seems nicer than wakatime, but needs a bit more manual configuration to categorize activities.
 #+begin_src emacs-lisp
 (after! evil
   (setq evil-want-fine-undo t)
@@ -546,7 +540,7 @@ Add default pdf-viewer
   (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file))))
 #+end_src
 
-Configure Rust
+Configure Rust.
 #+begin_src emacs-lisp
 (after! lsp-rust
   (setq lsp-rust-server 'rust-analyzer))
