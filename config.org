@@ -486,16 +486,16 @@ backup files
 ** TODO load stuff late?
 After tangling, configuration and packages get recompiled by running ~~~doom compile~~~.
 #+begin_src emacs-lisp
-(defun pre-tangle-config ()
-
-  (and (file-in-directory-p
+(defun tassilo/post-tangle-config ()
+    (and (file-in-directory-p
         buffer-file-name doom-private-dir)
        (async-shell-command "yes | doom compile & cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org")))
-(defun private-enable-pre-tangle ()
-  (add-hook 'after-save-hook #'pre-tangle-config nil 'local))
+(defun tassilo/enable-post-tangle ()
+  (add-hook 'after-save-hook #'tassilo/post-tangle-config nil 'local))
 
 (after! org
-  (add-hook 'org-mode-hook #'private-enable-pre-tangle))
+  (add-hook 'org-mode-hook #'tassilo/enable-post-tangle))
+(add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
 #+end_src
 
 * Coding
