@@ -498,16 +498,6 @@ After tangling, configuration and packages get recompiled by running ~~~doom com
 (add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
 #+end_src
 
-* Coding
-Adding support for python. At the moment I not using Emacs for coding in python anyways.
-#+begin_src emacs-lisp
-(use-package! elpy
-  :defer t
-  :init
-  (advice-add 'python-mode :before 'elpy-enable))
-#+end_src
-
-
 Setting the scratch buffer in doom
 #+begin_src emacs-lisp
 (after! emacs-lisp-mode
