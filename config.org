@@ -299,60 +299,8 @@ This bit is required in order for benchmark-init to stop complaining.
          :unnarrowed t))))
 #+end_src
 
-* TODO give credit
+Org-roam-ui is useful for viewing your notes and their connections as a graph in the browser.
 #+begin_src emacs-lisp
-(use-package! bibtex
-  :init
-(setq
-   bibtex-completion-notes-path org-directory
-   bibtex-completion-bibliography zot-bib
-   bibtex-completion-pdf-field "file"
-   bibtex-completion-notes-template-multiple-files
-   (concat
-    "#+TITLE: ${title}\n"
-    "#+ROAM_KEY: cite:${=key=}\n"
-    "* TODO Notes\n"
-    ":PROPERTIES:\n"
-    ":Custom_ID: ${=key=}\n"
-    ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-    ":AUTHOR: ${author-abbrev}\n"
-    ":JOURNAL: ${journaltitle}\n"
-    ":DATE: ${date}\n"
-    ":YEAR: ${year}\n"
-    ":DOI: ${doi}\n"
-    ":URL: ${url}\n"
-    ":END:\n\n")))
-
-(use-package! org-ref
-  :after org
-  :config
-  :init
-  (setq org-ref-completion-library 'org-ref-ivy-cite
-        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
-  (setq
-   org-ref-default-bibliography (list zot-bib)
-   org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
-   org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-   org-ref-notes-directory (concat org-roam-directory "/lit")
-   org-ref-notes-function 'orb-edit-notes))
-
-(use-package! org-roam-bibtex
-  :after org-roam
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  :config
-  (setq org-roam-bibtex-preformat-keywords
-        '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
-  (setq orb-templates
-        '(("r" "ref" plain (function org-roam-capture--get-point)
-           ""
-           :file-name "${slug}"
-           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
-- keywords :: ${keywords}
-\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
-           :unnarrowed t))))
-
-
-;;org-roam-ui support
 (use-package! websocket
     :after org-roam)
 
@@ -363,7 +311,6 @@ This bit is required in order for benchmark-init to stop complaining.
           org-roam-ui-follow t
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
-
 #+end_src
 
 
@@ -456,6 +403,7 @@ I use this shortcut a lot to make notes for my university courses
 #+end_src
 
 
+* Miscelanous
 
 Set up bindings for org-recoll
 #+end_src
