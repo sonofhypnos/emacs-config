@@ -458,18 +458,19 @@ I use this shortcut a lot to make notes for my university courses
 (setq org-image-actual-width nil))
 #+end_src
 
+
+
+Set up bindings for org-recoll
+#+end_src
+(global-set-key (kbd "C-c g") 'org-recoll-search)
+(global-set-key (kbd "C-c u") 'org-recoll-update-index)
+#+begin_src emacs-lisp
+
 backup files
 
 #+begin_src emacs-lisp
 (setq auto-save-default t
       make-backup-files t)
-#+end_src
-
-#+begin_src emacs-lisp
-;; dark mode for pdfs
-(after! pdf-tools
-  (add-hook! 'pdf-tools-enabled-hook
-    (pdf-view-midnight-minor-mode 1)))
 #+end_src
 
 [[https://github.com/emacsmirror/spray][Spray]] provides Speed reading functionality for Emacs. It seemed really interesting and I see a small chance it might change my reading habits the same way as the [[https://chrome.google.com/webstore/detail/video-speed-controller/nffaoalbilbmmfgbnbgppjihopabppdk][video speed controller]] Browser extension has changed my viewing habits. So far I haven't really used it though.
