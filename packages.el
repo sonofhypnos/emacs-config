@@ -25,6 +25,7 @@
 ;;(package! helm-swoop)
 (package! benchmark-init)
 (package! format-all)
+(unpin! org-roam)
 (package! websocket)
 (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 (package! md-roam
