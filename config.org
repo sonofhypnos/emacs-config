@@ -389,7 +389,7 @@ backup files
 #+end_src
 
 ** TODO load stuff late?
-After tangling, configuration and packages get recompiled by running ~~~doom compile~~~.
+After tangling, configuration and packages get recompiled by running ```doom compile```.
 #+begin_src emacs-lisp
 (defun tassilo/post-tangle-config ()
     (and (file-in-directory-p
@@ -447,7 +447,7 @@ From https://gist.github.com/mads-hartmann/3402786
 #+end_src
 
 
-I don't really use the terminal in Emacs yet. Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
+I don't really use the terminal in Emacs (yet). Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
 #+begin_src emacs-lisp
 (use-package! vterm
   :after org
@@ -482,6 +482,20 @@ This bit is required in order for benchmark-init to stop complaining.
    (require 'benchmark-init-modes) ; explicitly required
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
+
+#+begin_src emacs-lisp
+(setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "$")
+                                       ("#+END_SRC" . "ℝ")
+                                       ("#+RESULTS:" . "↦")
+                                       ("#+begin_src" . "<<")
+                                       ("#+end_src" . ">>")))
+(setq prettify-symbols-unprettyfy-at-point 'rigth-edge)
+(add-hook 'org-mode-hook 'prettify-symbols-mode)
+#+end_src
+
+#+RESULTS:
+| er/add-org-mode-expansions | tassilo/enable-post-tangle | org-pdftools-setup-link | org-hide-properties | +lookup--init-org-mode-handlers-h | #[128 \300\301\302\303\304$\207 [add-hook before-save-hook org-encrypt-entries nil t] 6 |
+
 
 Configure Rust.
 #+begin_src emacs-lisp

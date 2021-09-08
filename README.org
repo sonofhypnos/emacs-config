@@ -102,13 +102,6 @@ These functions where copied from [[https://yiufung.net/post/anki-org/][this pos
   (anki-editor-reset-cloze-number))
   #+end_src
 
-These are my other capture templates. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
-Here's the bindings I set up in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures with some stolen Javascript:
-#+begin_src javascript :tangle no
-bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
-
-bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
-#+end_src
 
 
 ** Org
@@ -171,9 +164,10 @@ My daily checklists
                             "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
          :immediate-finish t
          :unnarrowed t)))
+#+end_src
 
-
-;;here come some nice but non-essential functions for org-roam:
+Some non-essential functions for org
+#+begin_src emacs-lisp
 (defun org-hide-properties ()
   "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
   (interactive)
@@ -191,18 +185,36 @@ My daily checklists
   (interactive)
   (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
   (put 'org-toggle-properties-hide-state 'state 'shown))
-
-(add-hook 'org-mode-hook #'org-hide-properties)
 (defun org-toggle-properties ()
   "Toggle visibility of property drawers."
   (interactive)
   (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
       (org-show-properties)
     (org-hide-properties)))
-;;(setq org-roam-link-title-format "%s")
+#+end_src
+
+Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-files when visiting them.
+#+begin_src emacs-lisp
+(add-hook 'org-mode-hook #'org-hide-properties)
+#+end_src
+
+*** Setting up org-capture
+Trying to set up org-capture has been a nightmare for me so far. It is broken again at the moment and I haven't found the time to fix it. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
+- Update 08-09-2021: org-protocol is broken again and I haven't had the time to fix it yet.
+
+Here's the bindings I set up in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures:
+#+begin_src javascript :tangle no
+bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
+
+bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
+#+end_src
+
+These are my other capture templates.
+#+begin_src emacs-lisp
 (require 'org-roam-protocol)
 
 (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
+
 (add-to-list 'org-capture-templates
              `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
                "* [[%:link][%:description]]\n %?\n \n %i\n%T"
@@ -242,60 +254,6 @@ My daily checklists
          :unnarrowed t))))
 #+end_src
 
-#+begin_src emacs-lisp :tangle no
-(use-package! bibtex
-  :init
-(setq
-   bibtex-completion-notes-path org-directory
-   bibtex-completion-bibliography zot-bib
-   bibtex-completion-pdf-field "file"
-   bibtex-completion-notes-template-multiple-files
-   (concat
-    "#+TITLE: ${title}\n"
-    "#+ROAM_KEY: cite:${=key=}\n"
-    "* TODO Notes\n"
-    ":PROPERTIES:\n"
-    ":Custom_ID: ${=key=}\n"
-    ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-    ":AUTHOR: ${author-abbrev}\n"
-    ":JOURNAL: ${journaltitle}\n"
-    ":DATE: ${date}\n"
-    ":YEAR: ${year}\n"
-    ":DOI: ${doi}\n"
-    ":URL: ${url}\n"
-    ":END:\n\n")))
-
-(use-package! org-ref
-  :after org
-  :config
-  :init
-  (setq org-ref-completion-library 'org-ref-ivy-cite
-        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
-  (setq
-   org-ref-default-bibliography (list zot-bib)
-   org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
-   org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-   org-ref-notes-directory (concat org-roam-directory "/lit")
-   org-ref-notes-function 'orb-edit-notes))
-
-(use-package! org-roam-bibtex
-  :after org-roam
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  :config
-  (setq org-roam-bibtex-preformat-keywords
-        '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
-  (setq orb-templates
-        '(("r" "ref" plain (function org-roam-capture--get-point)
-           ""
-           :file-name "${slug}"
-           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
-- keywords :: ${keywords}
-\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
-           :unnarrowed t))))
-
-
-#+end_src
-
 Org-roam-ui is useful for viewing your notes and their connections as a graph in the browser.
 #+begin_src emacs-lisp
 (use-package! websocket
@@ -310,37 +268,7 @@ Org-roam-ui is useful for viewing your notes and their connections as a graph in
           org-roam-ui-open-on-start t))
 #+end_src
 
-
-I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] to get vim-surround keybindings for special these characters: |/.*$.
-#+begin_src emacs-lisp
-;; add macro for Vim surround for more characters
-;;; this macro was copied from here:2
-(defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
-  (let ((inner-name (make-symbol (concat "evil-inner-" name)))
-        (outer-name (make-symbol (concat "evil-a-" name))))
-    `(progn
-       (evil-define-text-object ,inner-name (count &optional beg end type)
-         (evil-select-paren ,start-regex ,end-regex beg end type count nil))
-       (evil-define-text-object ,outer-name (count &optional beg end type)
-         (evil-select-paren ,start-regex ,end-regex beg end type count t))
-       (define-key evil-inner-text-objects-map ,key #',inner-name)
-       (define-key evil-outer-text-objects-map ,key #',outer-name))))
-
-(define-and-bind-quoted-text-object "pipe" "|" "|" "|")
-(define-and-bind-quoted-text-object "slash" "/" "/" "/")
-(define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
-(define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
-(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
-#+end_src
-
-Enabling night-mode for pdfs
-#+begin_src emacs-lisp
-(after! pdf-tools
-  (add-hook! 'pdf-tools-enabled-hook
-    (pdf-view-midnight-minor-mode 1)))
-#+end_src
-
-Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using. But in the meantime I'll try to use org-noter.
+Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using, but in the meantime I'll try to use org-noter.
 #+begin_src emacs-lisp
 (use-package! org-noter
   :after org
@@ -401,15 +329,40 @@ I use this shortcut a lot to make notes for my university courses
 
 
 * Miscelanous
+I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] to get [[https://github.com/emacs-evil/evil-surround][vim-surround]] keybindings for these special characters: |/.*$.
+#+begin_src emacs-lisp
+(defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
+  (let ((inner-name (make-symbol (concat "evil-inner-" name)))
+        (outer-name (make-symbol (concat "evil-a-" name))))
+    `(progn
+       (evil-define-text-object ,inner-name (count &optional beg end type)
+         (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+       (evil-define-text-object ,outer-name (count &optional beg end type)
+         (evil-select-paren ,start-regex ,end-regex beg end type count t))
+       (define-key evil-inner-text-objects-map ,key #',inner-name)
+       (define-key evil-outer-text-objects-map ,key #',outer-name))))
+
+(define-and-bind-quoted-text-object "pipe" "|" "|" "|")
+(define-and-bind-quoted-text-object "slash" "/" "/" "/")
+(define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
+(define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
+(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
+#+end_src
+
+Enabling night-mode for pdfs
+#+begin_src emacs-lisp
+(after! pdf-tools
+  (add-hook! 'pdf-tools-enabled-hook
+    (pdf-view-midnight-minor-mode 1)))
+#+end_src
 
 Set up bindings for org-recoll
-#+end_src
+#+begin_src emacs-lisp
 (global-set-key (kbd "C-c g") 'org-recoll-search)
 (global-set-key (kbd "C-c u") 'org-recoll-update-index)
-#+begin_src emacs-lisp
+#+end_src
 
 backup files
-
 #+begin_src emacs-lisp
 (setq auto-save-default t
       make-backup-files t)
@@ -428,7 +381,7 @@ backup files
       "q" #'spray-quit)
 #+end_src
 
-After tangling, configuration and packages get recompiled by running ~~~doom compile~~~.
+After tangling, configuration and packages get recompiled by running ```doom compile```.
 #+begin_src emacs-lisp
 (defun tassilo/post-tangle-config ()
     (and (file-in-directory-p
@@ -486,7 +439,11 @@ From https://gist.github.com/mads-hartmann/3402786
 #+end_src
 
 
+<<<<<<< HEAD
 I don't really use the terminal in Emacs yet. Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
+=======
+I don't really use the terminal in Emacs (yet). Most of this configuration was copied from [[https://github.com/daviwil/emacs-from-scratch/blob/f4918aadf6970b098999d28bdbc212942aa62b80/show-notes/Emacs-09.org][this repo]].
+>>>>>>> 84997a6 (Update Docs)
 #+begin_src emacs-lisp
 (use-package! vterm
   :after org
@@ -512,7 +469,6 @@ The way I remap these commands is definitely incorrect, and once I have time for
  :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
   #+end_src
 
-
 This bit is required in order for benchmark-init to stop complaining.
 #+begin_src emacs-lisp
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
@@ -521,6 +477,24 @@ This bit is required in order for benchmark-init to stop complaining.
    (require 'benchmark-init-modes) ; explicitly required
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
+
+<<<<<<< HEAD
+=======
+#+begin_src emacs-lisp
+(setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "$")
+                                       ("#+END_SRC" . "ℝ")
+                                       ("#+RESULTS:" . "↦")
+                                       ("#+begin_src" . "<<")
+                                       ("#+end_src" . ">>")))
+(setq prettify-symbols-unprettyfy-at-point 'rigth-edge)
+(add-hook 'org-mode-hook 'prettify-symbols-mode)
+#+end_src
+
+#+RESULTS:
+| er/add-org-mode-expansions | tassilo/enable-post-tangle | org-pdftools-setup-link | org-hide-properties | +lookup--init-org-mode-handlers-h | #[128 \300\301\302\303\304$\207 [add-hook before-save-hook org-encrypt-entries nil t] 6 |
+
+
+>>>>>>> 84997a6 (Update Docs)
 Configure Rust.
 #+begin_src emacs-lisp
 (after! lsp-rust
