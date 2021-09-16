@@ -444,11 +444,13 @@ backup files
 #+end_src
 
 After tangling, configuration and packages get recompiled by running ```doom compile```.
+* TODO Stop opening side-window when tangling
 #+begin_src emacs-lisp
 (defun tassilo/post-tangle-config ()
     (and (file-in-directory-p
         buffer-file-name doom-private-dir)
        (async-shell-command "yes | doom compile & cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org")))
+(add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
 (defun tassilo/enable-post-tangle ()
   (add-hook 'after-save-hook #'tassilo/post-tangle-config nil 'local))
 
