@@ -19,6 +19,7 @@
            :repo "abrochard/emacs-todoist"))
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
+(unpin! helm-bibtex)
 (package! spray)
 (package! openwith)
 (package! org-recoll)

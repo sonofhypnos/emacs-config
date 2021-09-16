@@ -7,6 +7,7 @@ We stand on the shoulders of giants, nothing is original and all that. Here are 
 
 
 * Config
+
 My personal information
 #+begin_src emacs-lisp
 (setq user-full-name "Tassilo Neubauer"
@@ -106,8 +107,6 @@ These functions where copied from [[https://yiufung.net/post/anki-org/][this pos
 
 * TODO Fix Capture
 * TODO Enable Capture with Chrome
-
-
 ** Org
 *** Org-roam
 ** TODO Add Shortcuts for dailies
@@ -216,6 +215,7 @@ bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ e
 bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
 #+end_src
 
+
 These are my other capture templates.
 #+begin_src emacs-lisp
 (require 'org-roam-protocol)
@@ -244,7 +244,7 @@ These are my other capture templates.
 (add-to-list 'org-capture-templates
              '("L" "Protocol Link" entry
                (file+headline +org-capture-notes-file "Inbox")
-               "* [[%:link][%:description]] \n \n %? \n%i \n %T"
+               "* [[%:link][%:description]] \n \n \n%i \n %T"
                :prepend t))
 (add-to-list 'org-capture-templates
              '("S" "Todo Protocoll" entry
@@ -261,6 +261,7 @@ These are my other capture templates.
          :unnarrowed t))))
 #+end_src
 
+
 Org-roam-ui is useful for viewing your notes and their connections as a graph in the browser.
 #+begin_src emacs-lisp
 (use-package! websocket
@@ -275,12 +276,66 @@ Org-roam-ui is useful for viewing your notes and their connections as a graph in
           org-roam-ui-open-on-start t))
 #+end_src
 
+
 Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using, but in the meantime I'll try to use org-noter.
 #+begin_src emacs-lisp
 (use-package! org-noter
   :after org
   :config
   (setq org-noter-notes-search-path '("~/org-roam/")))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package! bibtex
+  :init
+(setq
+   bibtex-completion-notes-path org-directory
+   bibtex-completion-bibliography zot-bib
+   bibtex-completion-pdf-field "file"
+   bibtex-completion-notes-template-multiple-files
+   (concat
+    "#+TITLE: ${title}\n"
+    "#+ROAM_KEY: cite:${=key=}\n"
+    "* TODO Notes\n"
+    ":PROPERTIES:\n"
+    ":Custom_ID: ${=key=}\n"
+    ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+    ":AUTHOR: ${author-abbrev}\n"
+    ":JOURNAL: ${journaltitle}\n"
+    ":DATE: ${date}\n"
+    ":YEAR: ${year}\n"
+    ":DOI: ${doi}\n"
+    ":URL: ${url}\n"
+    ":END:\n\n")))
+
+(use-package! org-ref
+  :after org
+  :config
+  :init
+  (setq org-ref-completion-library 'org-ref-ivy-cite
+        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
+  (setq
+   org-ref-default-bibliography (list zot-bib)
+   org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
+   org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+   org-ref-notes-directory (concat org-roam-directory "/lit")
+   org-ref-notes-function 'orb-edit-notes))
+
+(use-package! org-roam-bibtex
+  :after org-roam
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :config
+  (setq org-roam-bibtex-preformat-keywords
+        '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
+  (setq orb-templates
+        '(("r" "ref" plain (function org-roam-capture--get-point)
+           ""
+           :file-name "${slug}"
+           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
+- keywords :: ${keywords}
+\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
+           :unnarrowed t))))
+
 #+end_src
 
 #+begin_src emacs-lisp
@@ -336,7 +391,7 @@ I use this shortcut a lot to make notes for my university courses
 
 
 * Miscelanous
-I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] to get [[https://github.com/emacs-evil/evil-surround][vim-surround]] keybindings for these special characters: |/.*$.
+I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] to get [[https://github.com/emacs-evil/evil-surround][evil-surround]] keybindings for these special characters: |/.*$.
 #+begin_src emacs-lisp
 (defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
   (let ((inner-name (make-symbol (concat "evil-inner-" name)))
@@ -388,7 +443,6 @@ backup files
       "q" #'spray-quit)
 #+end_src
 
-** TODO load stuff late?
 After tangling, configuration and packages get recompiled by running ```doom compile```.
 #+begin_src emacs-lisp
 (defun tassilo/post-tangle-config ()
