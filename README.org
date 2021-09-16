@@ -6,6 +6,7 @@ We stand on the shoulders of giants, nothing is original and all that. Here are 
 
 
 * Config
+
 My personal information
 #+begin_src emacs-lisp
 (setq user-full-name "Tassilo Neubauer"
@@ -102,8 +103,6 @@ These functions where copied from [[https://yiufung.net/post/anki-org/][this pos
   (anki-editor-reset-cloze-number))
   #+end_src
 
-
-
 ** Org
 *** Org-roam
 #+begin_src emacs-lisp
@@ -198,6 +197,26 @@ Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-f
 (add-hook 'org-mode-hook #'org-hide-properties)
 #+end_src
 
+#+begin_src emacs-lisp
+
+(defun tassilo/scratch-window-p ()
+  (string= (substring-no-properties (cdr (assoc 'name (frame-parameters))))
+                                    "_emacs scratchpad_"))
+(defun tassilo/org-capture-cleanup ()
+  "Delete capture windows if it is a scratch window"
+  (and (tassilo/scratch-window-p)
+       ;for some weird reason this worked better for me than just (delete-frame), so as long as it works I won't touch it.
+      (progn
+        (progn
+     (delete-frame))
+     nil)))
+(add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
+
+(defun tassilo/org-capture-setup ()
+  (and (tassilo/scratch-window-p) (delete-other-windows))) ;no idea why this is not working.
+(add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
+#+end_src
+
 *** Setting up org-capture
 Trying to set up org-capture has been a nightmare for me so far. It is broken again at the moment and I haven't found the time to fix it. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
 - Update 08-09-2021: org-protocol is broken again and I haven't had the time to fix it yet.
@@ -208,6 +227,7 @@ bind rr js javascript:location.href ='org-protocol://capture?template=L&url='+ e
 
 bind rl js javascript:location.href = 'org-protocol://roam-ref?template=r&ref=' + encodeURIComponent(location.href) + '&title=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(window.getSelection())
 #+end_src
+
 
 These are my other capture templates.
 #+begin_src emacs-lisp
@@ -237,7 +257,7 @@ These are my other capture templates.
 (add-to-list 'org-capture-templates
              '("L" "Protocol Link" entry
                (file+headline +org-capture-notes-file "Inbox")
-               "* [[%:link][%:description]] \n \n %? \n%i \n %T"
+               "* [[%:link][%:description]] \n \n \n%i \n %T"
                :prepend t))
 (add-to-list 'org-capture-templates
              '("S" "Todo Protocoll" entry
@@ -254,6 +274,7 @@ These are my other capture templates.
          :unnarrowed t))))
 #+end_src
 
+
 Org-roam-ui is useful for viewing your notes and their connections as a graph in the browser.
 #+begin_src emacs-lisp
 (use-package! websocket
@@ -268,12 +289,66 @@ Org-roam-ui is useful for viewing your notes and their connections as a graph in
           org-roam-ui-open-on-start t))
 #+end_src
 
+
 Org-noter for pdfs. I am still searching for the pdf-annotation tool that I actually like using, but in the meantime I'll try to use org-noter.
 #+begin_src emacs-lisp
 (use-package! org-noter
   :after org
   :config
   (setq org-noter-notes-search-path '("~/org-roam/")))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package! bibtex
+  :init
+(setq
+   bibtex-completion-notes-path org-directory
+   bibtex-completion-bibliography zot-bib
+   bibtex-completion-pdf-field "file"
+   bibtex-completion-notes-template-multiple-files
+   (concat
+    "#+TITLE: ${title}\n"
+    "#+ROAM_KEY: cite:${=key=}\n"
+    "* TODO Notes\n"
+    ":PROPERTIES:\n"
+    ":Custom_ID: ${=key=}\n"
+    ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
+    ":AUTHOR: ${author-abbrev}\n"
+    ":JOURNAL: ${journaltitle}\n"
+    ":DATE: ${date}\n"
+    ":YEAR: ${year}\n"
+    ":DOI: ${doi}\n"
+    ":URL: ${url}\n"
+    ":END:\n\n")))
+
+(use-package! org-ref
+  :after org
+  :config
+  :init
+  (setq org-ref-completion-library 'org-ref-ivy-cite
+        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
+  (setq
+   org-ref-default-bibliography (list zot-bib)
+   org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
+   org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
+   org-ref-notes-directory (concat org-roam-directory "/lit")
+   org-ref-notes-function 'orb-edit-notes))
+
+(use-package! org-roam-bibtex
+  :after org-roam
+  :hook (org-roam-mode . org-roam-bibtex-mode)
+  :config
+  (setq org-roam-bibtex-preformat-keywords
+        '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
+  (setq orb-templates
+        '(("r" "ref" plain (function org-roam-capture--get-point)
+           ""
+           :file-name "${slug}"
+           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
+- keywords :: ${keywords}
+\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
+           :unnarrowed t))))
+
 #+end_src
 
 #+begin_src emacs-lisp
@@ -329,7 +404,7 @@ I use this shortcut a lot to make notes for my university courses
 
 
 * Miscelanous
-I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] to get [[https://github.com/emacs-evil/evil-surround][vim-surround]] keybindings for these special characters: |/.*$.
+I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] to get [[https://github.com/emacs-evil/evil-surround][evil-surround]] keybindings for these special characters: |/.*$.
 #+begin_src emacs-lisp
 (defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
   (let ((inner-name (make-symbol (concat "evil-inner-" name)))
@@ -387,6 +462,7 @@ After tangling, configuration and packages get recompiled by running ```doom com
     (and (file-in-directory-p
         buffer-file-name doom-private-dir)
        (async-shell-command "yes | doom compile & cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org")))
+(add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
 (defun tassilo/enable-post-tangle ()
   (add-hook 'after-save-hook #'tassilo/post-tangle-config nil 'local))
 
@@ -484,8 +560,24 @@ This bit is required in order for benchmark-init to stop complaining.
 (add-hook 'org-mode-hook 'prettify-symbols-mode)
 #+end_src
 
-#+RESULTS:
-| er/add-org-mode-expansions | tassilo/enable-post-tangle | org-pdftools-setup-link | org-hide-properties | +lookup--init-org-mode-handlers-h | #[128 \300\301\302\303\304$\207 [add-hook before-save-hook org-encrypt-entries nil t] 6 |
+Add refactoring shortcut.
+#+begin_src emacs-lisp
+(after! emr (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu))
+#+end_src
+
+See https://opensource.com/article/20/3/blog-emacs
+#+begin_src emacs-lisp
+(defun create-blog-post ()
+        "Create an org file in ~/source/myblog/posts."
+        (interactive)
+        (let ((name (read-string "Filename: ")))
+        (expand-file-name (format "%s.org" name) "~/source/myblog/posts/")))
+
+(setq org-capture-templates
+        '(("p" "Post" plain
+                (file create-blog-post)
+                (file "~/.emacs.d/org-templates/post.orgcaptmpl"))))
+#+end_src
 
 
 Configure Rust.
