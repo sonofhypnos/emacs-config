@@ -591,6 +591,25 @@ See https://opensource.com/article/20/3/blog-emacs
                 (file "~/.emacs.d/org-templates/post.orgcaptmpl"))))
 #+end_src
 
+Add refactoring shortcut.
+#+begin_src emacs-lisp
+(after! emr (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu))
+#+end_src
+
+See https://opensource.com/article/20/3/blog-emacs
+#+begin_src emacs-lisp
+(defun create-blog-post ()
+        "Create an org file in ~/source/myblog/posts."
+        (interactive)
+        (let ((name (read-string "Filename: ")))
+        (expand-file-name (format "%s.org" name) "~/source/myblog/posts/")))
+
+(setq org-capture-templates
+        '(("p" "Post" plain
+                (file create-blog-post)
+                (file "~/.emacs.d/org-templates/post.orgcaptmpl"))))
+#+end_src
+
 
 Configure Rust.
 #+begin_src emacs-lisp
