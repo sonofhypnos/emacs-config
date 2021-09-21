@@ -243,17 +243,17 @@ These are my other capture templates.
             '("a" "Anki basic"
                 entry
                 (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
+                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
 (add-to-list 'org-capture-templates
             '("A" "Anki cloze"
                 entry
                 (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
+                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
 (add-to-list 'org-capture-templates
             '("T" "Anki type"
                 entry
                 (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
+                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
 (add-to-list 'org-capture-templates
              '("L" "Protocol Link" entry
                (file+headline +org-capture-notes-file "Inbox")
@@ -550,7 +550,8 @@ This bit is required in order for benchmark-init to stop complaining.
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
 
-#+begin_src emacs-lisp
+I have this to make code blocks look nicer in org-mode
+#+BEGIN_SRC emacs-lisp
 (setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "$")
                                        ("#+END_SRC" . "ℝ")
                                        ("#+RESULTS:" . "↦")
