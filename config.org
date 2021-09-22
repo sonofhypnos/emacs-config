@@ -204,10 +204,9 @@ Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-f
 (add-hook 'org-mode-hook #'org-hide-properties)
 #+end_src
 
-* TODO Figure out why file isn't closing.
+* TODO Figure out how to enlarge window
 * TODO Figure out why capture still isn't full screen
 #+begin_src emacs-lisp
-
 (defun tassilo/scratch-window-p ()
   (string= (substring-no-properties (cdr (assoc 'name (frame-parameters))))
                                     "_emacs scratchpad_"))
@@ -217,14 +216,19 @@ Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-f
        ;for some weird reason this worked better for me than just (delete-frame), so as long as it works I won't touch it.
       (progn
         (progn
+    (start-process "i3-msg" "*i3-msg*" "i3-msg" "scratchpad show")
+    (org-roam-db-sync)
      (delete-frame))
      nil)))
 (add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
 
 (defun tassilo/org-capture-setup ()
-  (and (tassilo/scratch-window-p) (delete-other-windows))) ;no idea why this is not working.
+  (and (tassilo/scratch-window-p)
+       (message "tassilo/org-capture-setup was called by org-capture hook as expected")
+       (delete-other-windows))) ;no idea why this is not working.
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
 #+end_src
+
 
 *** Setting up org-capture
 Trying to set up org-capture has been a nightmare for me so far. It is broken again at the moment and I haven't found the time to fix it. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
@@ -471,8 +475,8 @@ After tangling, configuration and packages get recompiled by running ```doom com
 (defun tassilo/post-tangle-config ()
     (and (file-in-directory-p
         buffer-file-name doom-private-dir)
-       (async-shell-command "yes | doom compile & cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org")))
-(add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
+       (async-shell-command "yes | doom compile & cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org" "*config-update*")))
+(add-to-list 'display-buffer-alist '("*config-update*" display-buffer-no-window (nil)))
 (defun tassilo/enable-post-tangle ()
   (add-hook 'after-save-hook #'tassilo/post-tangle-config nil 'local))
 
@@ -561,8 +565,8 @@ This bit is required in order for benchmark-init to stop complaining.
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
 
-#+begin_src emacs-lisp
 I have this to make code blocks look nicer in org-mode
+#+begin_src emacs-lisp
 (setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "$")
                                        ("#+END_SRC" . "ℝ")
                                        ("#+RESULTS:" . "↦")
