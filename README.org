@@ -65,7 +65,6 @@ keybindings for Anki.
 #+begin_src emacs-lisp
   :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
   #+end_src
-
   Export Mathjax instead of Latex and use org-tags
   #+begin_src emacs-lisp
   :config
@@ -604,4 +603,8 @@ Configure Rust.
 #+begin_src emacs-lisp
 (after! lsp-rust
   (setq lsp-rust-server 'rust-analyzer))
+#+end_src
+
+#+begin_src emacs-lisp
+(remove-hook 'text-mode-hook #'spell-fu-mode)
 #+end_src
