@@ -5,7 +5,6 @@ We stand on the shoulders of giants, nothing is original and all that. Here are 
 - [[https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/][Diego Zamboni’s emacs configuration]] including his ebook on [[https://leanpub.com/lit-config][literate configuration]].
 - [[https://github.com/tecosaur][Tecosaur’s emacs configuration]]  
 
-
 * Config
 
 My personal information
@@ -229,9 +228,8 @@ Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-f
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
 #+end_src
 
-*** Setting up org-capture
-Trying to set up org-capture has been a nightmare for me so far. It is broken again at the moment and I haven't found the time to fix it. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
-- Update 08-09-2021: org-protocol is broken again and I haven't had the time to fix it yet.
+*** Setting up org-protocol for capture
+I use org-protocol to take notes for the blog-posts/articles I am reading in the browser. I really like this workflow, but my problem with this is that it already broke time and time again and it was a real pain to find the culprit every time. Since then I have some Snippets ready in my config, if it is not working again for some reason which has been really helpful in debugging.
 
 Here's the bindings I set up in [[https://github.com/tridactyl/tridactyl][tridactyl]] to trigger captures:
 #+begin_src javascript :tangle no
@@ -470,11 +468,12 @@ backup files
 
 After tangling, configuration and packages get recompiled by running ```doom compile```.
 * TODO Stop opening side-window when tangling
+
 #+begin_src emacs-lisp
 (defun tassilo/post-tangle-config ()
     (and (file-in-directory-p
         buffer-file-name doom-private-dir)
-       (async-shell-command "yes | doom compile & cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org" "*config-update*")))
+       (start-process "compile-config" "*compile-config*" "compile-config.sh" "~/.doom.d")))
 (defun tassilo/enable-post-tangle ()
   (add-hook 'after-save-hook #'tassilo/post-tangle-config nil 'local))
 
@@ -611,7 +610,6 @@ See https://opensource.com/article/20/3/blog-emacs
                 (file create-blog-post)
                 (file "~/.emacs.d/org-templates/post.orgcaptmpl"))))
 #+end_src
-
 
 Configure Rust.
 #+begin_src emacs-lisp
