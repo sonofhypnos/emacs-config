@@ -203,7 +203,7 @@ Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-f
 (defun tassilo/org-capture-cleanup ()
   "Delete capture windows if it is a scratch window"
   (and (tassilo/scratch-window-p)
-       ;for some weird reason this worked better for me than just (delete-frame), so as long as it works I won't touch it.
+       ;This worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
       (progn
         (progn
     (start-process "i3-msg" "*i3-msg*" "i3-msg" "scratchpad show")
@@ -214,11 +214,10 @@ Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-f
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
-       (message "tassilo/org-capture-setup was called by org-capture hook as expected")
-       (delete-other-windows))) ;no idea why this is not working.
+       (progn
+         (delete-other-windows)))) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
 #+end_src
-
 
 *** Setting up org-capture
 Trying to set up org-capture has been a nightmare for me so far. It is broken again at the moment and I haven't found the time to fix it. It took me quite some time to finally get org-capture to behave nicely with my browser (Firefox) on Ubuntu.
@@ -465,7 +464,6 @@ After tangling, configuration and packages get recompiled by running ```doom com
     (and (file-in-directory-p
         buffer-file-name doom-private-dir)
        (async-shell-command "yes | doom compile & cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org" "*config-update*")))
-(add-to-list 'display-buffer-alist '("*config-update*" display-buffer-no-window (nil)))
 (defun tassilo/enable-post-tangle ()
   (add-hook 'after-save-hook #'tassilo/post-tangle-config nil 'local))
 
@@ -609,6 +607,7 @@ Configure Rust.
   (setq lsp-rust-server 'rust-analyzer))
 #+end_src
 
+For some reason that I haven't figured out yet, spell-fu is highlighting every single word. In order to avoid this problem I've just completly disabled it for now.
 #+begin_src emacs-lisp
 (remove-hook 'text-mode-hook #'spell-fu-mode)
 #+end_src
