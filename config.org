@@ -144,7 +144,8 @@ My daily checklists
        "\n - [ ] Check Habits/Beeminder"
        "\n - [ ] Tasks Reviewed"
        "\n - [ ] Timetracking Reviewed"
-       "\n - [ ] Ask Journal Questions"
+       "\n - [ ] Anwer Journal Questions"
+       "\n - [ ] Do active questions"
        "\n - [ ] Review Anki"
        "\n - [ ] Brush Teeth"
        "\n* Inbox"
@@ -201,6 +202,13 @@ Some non-essential functions for org
 Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-files when visiting them.
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook #'org-hide-properties)
+#+end_src
+
+Make completion case insensitive in org-mode (and others, don't know how to make it org-mode-specific yet).
+#+begin_src emacs-lisp
+(defun completion-ignore-case-enable ()
+    (setq completion-ignore-case t))
+(add-hook 'org-mode-hook #'completion-ignore-case-enable)
 #+end_src
 
 * TODO Figure out how to enlarge window
