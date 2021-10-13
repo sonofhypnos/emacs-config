@@ -607,3 +607,8 @@ For some reason that I haven't figured out yet, spell-fu is highlighting every s
 #+begin_src emacs-lisp
 (remove-hook 'text-mode-hook #'spell-fu-mode)
 #+end_src
+
+#+begin_src emacs-lisp
+(add-hook 'focus-out-hook
+        (lambda () (org-save-all-org-buffers)))
+#+end_src
