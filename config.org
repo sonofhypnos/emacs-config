@@ -594,7 +594,7 @@ I have this to make code blocks look nicer in org-mode
 
 Add refactoring shortcut.
 #+begin_src emacs-lisp
-(after! emr (define-key prog-mode-map (kbd "M-RET") 'emr-show-refactor-menu))
+(after! emr (define-key prog-mode-map (kbd "M-RET") 'em2r-show-refactor-menu))
 #+end_src
 
 Configure Rust.
