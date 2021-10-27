@@ -530,7 +530,20 @@ Add default pdf-viewer
   :after-call pre-command-hook
   :config
   (openwith-mode t)
-  (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file))))
+  (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file)))
+  #+end_src
+
+  The following is needed to keep openwith-mode from interfering with org-display-inline-images. See [[https://emacs.stackexchange.com/questions/3180/org-mode-cant-display-inline-images-when-openwith-mode-is-turned-on][this stackexchange question]] for more info.
+  #+begin_src emacs-lisp
+    (defadvice org-display-inline-images
+    (around handle-openwith
+            (&optional include-linked refresh beg end) activate compile)
+    (if openwith-mode
+        (progn
+            (openwith-mode -1)
+            ad-do-it
+            (openwith-mode 1))
+        ad-do-it)))
 #+end_src
 
 From https://gist.github.com/mads-hartmann/3402786
