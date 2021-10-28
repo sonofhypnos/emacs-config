@@ -18,7 +18,7 @@ Setting up my directories.
 #+begin_src emacs-lisp
 (setq   org-directory "~/org"
         org-roam-directory "~/org-roam"
-        projectile-project-search-path '("~/repos")
+        projectile-project-search-path '("~/repos" "~/Dropbox/")
         zot-bib "~/repos/bibliography/zotLib.bib")
 #+end_src
 
@@ -529,7 +529,7 @@ Add default pdf-viewer
 (use-package! openwith
   :after-call pre-command-hook
   :config
-  (openwith-mode t)
+ ;; (openwith-mode t) ;keeping openwith-mode disabled until I've found a solution for inline images
   (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file)))
   #+end_src
 
