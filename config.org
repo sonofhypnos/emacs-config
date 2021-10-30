@@ -625,3 +625,12 @@ For some reason that I haven't figured out yet, spell-fu is highlighting every s
 (add-hook 'focus-out-hook
         (lambda () (org-save-all-org-buffers)))
 #+end_src
+
+Finally getting around to adding some auto-completion. For now just copy pasted from [[https://codingstruggles.com/emacs,/tabnine/setting-tabnine-emacs.html][this tutorial]].
+#+begin_src emacs-lisp
+(after! company
+  (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
+  (setq company-show-numbers t)
+  (setq company-idle-delay 0)
+)
+#+end_src

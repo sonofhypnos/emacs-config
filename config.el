@@ -469,3 +469,9 @@ With a prefix ARG, remove start location."
 
 (add-hook 'focus-out-hook
         (lambda () (org-save-all-org-buffers)))
+
+(after! company
+  (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
+  (setq company-show-numbers t)
+  (setq company-idle-delay 0)
+)

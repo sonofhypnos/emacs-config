@@ -1,16 +1,24 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
+;tracking
 (package! activity-watch-mode)
 (package! wakatime-mode)
+
+;autocompletion
+(package! company-tabnine
+  :recipe (:host github :repo "TommyX12/company-tabnine"))
+
+;org
 (package! org-mode :recipe (:repo "https://code.orgmode.org/bzg/org-mode.git")) ;see https://github.com/hlissner/doom-emacs/issues/4534
 (package! org-ref)
 (package! org-noter)
 (package! org-habit-plus
   :recipe (:host github
            :repo "myshevchuk/org-habit-plus"))
-(package! elpy)
 (package! org-mind-map)
+
+(package! elpy)
 (package! real-auto-save
   :recipe (:host github
            :repo "ChillarAnand/real-auto-save"))
@@ -47,12 +55,13 @@
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! anki-editor)
-(package! emr)
 
 (package! vimgolf)
 (package! pdf-tools)
 (package! zotxt)
 
+;testing out
+(package! emr)
 
 ;; To install a package with Doom you must declare them here and run 'doom sync'
 ;; on the command line, then restart Emacs for the changes to take effect -- or
