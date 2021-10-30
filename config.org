@@ -120,7 +120,10 @@ These functions where copied from [[https://yiufung.net/post/anki-org/][this pos
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
 (after! org
   :config
-  (setq org-export-with-tasks nil))
+  (setq org-export-with-tasks nil)
+  (add-hook 'focus-out-hook
+        (lambda () (org-save-all-org-buffers))))
+
 
 (use-package! org-roam
   :after org
@@ -622,8 +625,6 @@ For some reason that I haven't figured out yet, spell-fu is highlighting every s
 #+end_src
 
 #+begin_src emacs-lisp
-(add-hook 'focus-out-hook
-        (lambda () (org-save-all-org-buffers)))
 #+end_src
 
 Finally getting around to adding some auto-completion. For now just copy pasted from [[https://codingstruggles.com/emacs,/tabnine/setting-tabnine-emacs.html][this tutorial]].

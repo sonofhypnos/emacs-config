@@ -77,7 +77,10 @@
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
 (after! org
   :config
-  (setq org-export-with-tasks nil))
+  (setq org-export-with-tasks nil)
+  (add-hook 'focus-out-hook
+        (lambda () (org-save-all-org-buffers))))
+
 
 (use-package! org-roam
   :after org
@@ -467,8 +470,7 @@ With a prefix ARG, remove start location."
 
 (remove-hook 'text-mode-hook #'spell-fu-mode)
 
-(add-hook 'focus-out-hook
-        (lambda () (org-save-all-org-buffers)))
+
 
 (after! company
   (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
