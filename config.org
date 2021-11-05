@@ -146,7 +146,7 @@ My daily checklists
        "\n* Evening Routine"
        "\n - [ ] Check Habits/Beeminder"
        "\n - [ ] Tasks Reviewed"
-       "\n - [ ] Timetracking Reviewed"
+       "\n - [ ] Timetracking Reviewed ([[id:4d96fd27-2523-475a-a791-a67f9996e5a4][Enter Deep Work]])"
        "\n - [ ] Anwer Journal Questions"
        "\n - [ ] Do active questions"
        "\n - [ ] Review Anki"
@@ -624,8 +624,16 @@ For some reason that I haven't figured out yet, spell-fu is highlighting every s
 (remove-hook 'text-mode-hook #'spell-fu-mode)
 #+end_src
 
+Enable evil-insert in monkeytype-mode
 #+begin_src emacs-lisp
+;;(defun my/monkeytype-mode-hook ()
+;;  "Hooks for monkeytype-mode."
+;;  (centered-cursor-mode)
+;;  (evil-escape-mode -1)
+;;  (evil-insert -1))
+;;(add-hook 'monkeytype-mode-hook #'my/monkeytype-mode-hook)
 #+end_src
+
 
 Finally getting around to adding some auto-completion. For now just copy pasted from [[https://codingstruggles.com/emacs,/tabnine/setting-tabnine-emacs.html][this tutorial]].
 #+begin_src emacs-lisp

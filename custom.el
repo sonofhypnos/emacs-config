@@ -12,6 +12,8 @@
  '(jdee-db-requested-breakpoint-face-colors (cons "#073642" "#859900"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#073642" "#56697A"))
  '(objed-cursor-color "#dc322f")
+ '(org-agenda-files
+   '("~/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org/journal.org" "/home/tassilo/org/notes.org" "/home/tassilo/org/someday_maybe.org" "/home/tassilo/org/todos.org"))
  '(pdf-view-midnight-colors (cons "#839496" "#002b36"))
  '(rustic-ansi-faces
    ["#002b36" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])

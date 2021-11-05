@@ -100,7 +100,7 @@
        "\n* Evening Routine"
        "\n - [ ] Check Habits/Beeminder"
        "\n - [ ] Tasks Reviewed"
-       "\n - [ ] Timetracking Reviewed"
+       "\n - [ ] Timetracking Reviewed ([[id:4d96fd27-2523-475a-a791-a67f9996e5a4][Enter Deep Work]])"
        "\n - [ ] Anwer Journal Questions"
        "\n - [ ] Do active questions"
        "\n - [ ] Review Anki"
@@ -470,7 +470,12 @@ With a prefix ARG, remove start location."
 
 (remove-hook 'text-mode-hook #'spell-fu-mode)
 
-
+;;(defun my/monkeytype-mode-hook ()
+;;  "Hooks for monkeytype-mode."
+;;  (centered-cursor-mode)
+;;  (evil-escape-mode -1)
+;;  (evil-insert -1))
+;;(add-hook 'monkeytype-mode-hook #'my/monkeytype-mode-hook)
 
 (after! company
   (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
