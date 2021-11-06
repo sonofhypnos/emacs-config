@@ -1,8 +1,8 @@
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
-(setq   org-directory "~/org"
-        org-roam-directory "~/org-roam"
+(setq   org-directory "~/org/"
+        org-roam-directory "~/org-roam/"
         projectile-project-search-path '("~/repos" "~/Dropbox/")
         zot-bib "~/repos/bibliography/zotLib.bib")
 
