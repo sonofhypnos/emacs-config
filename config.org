@@ -585,7 +585,8 @@ The way I remap these commands is definitely incorrect, and once I have time for
 #+begin_src emacs-lisp
 (map! (:when (featurep! :tools lookup)
  :leader :desc "projectile find file" :r ":" #'projectile-find-file
- :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
+ :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command
+ :leader :desc "helm-projectile-rg" :r "l" #'helm-projectile-rg))
   #+end_src
 
 This bit is required in order for benchmark-init to stop complaining.

@@ -447,7 +447,8 @@ With a prefix ARG, remove start location."
 
 (map! (:when (featurep! :tools lookup)
  :leader :desc "projectile find file" :r ":" #'projectile-find-file
- :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
+ :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command
+ :leader :desc "helm-projectile-rg" :r "l" #'helm-projectile-rg))
 
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
  (use-package benchmark-init
