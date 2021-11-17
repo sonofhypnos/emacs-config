@@ -492,6 +492,8 @@ After tangling, configuration and packages get recompiled by running ```doom com
 * TODO Stop opening side-window when tangling
 
 #+begin_src emacs-lisp
+
+
 (defun tassilo/post-tangle-config ()
     (and (file-in-directory-p
         buffer-file-name doom-private-dir)
@@ -502,6 +504,21 @@ After tangling, configuration and packages get recompiled by running ```doom com
 (after! org
   (add-hook 'org-mode-hook #'tassilo/enable-post-tangle))
 (add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
+#+end_src
+
+Add custom confusion keyword to org-todo-keywords
+
+#+begin_src emacs-lisp
+(after! org-roam
+(custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "") ;; see dooms org module for more examples of how to do this.
+(setq
+  org-todo-kewords (append org-todo-keywords '(sequence "[??](l)"))
+  org-todo-keyword-faces (append org-todo-keyword-faces '(("[??]" . +org-todo-cancel)))))
+#+end_src
+
+
+#+begin_src emacs-lisp :tangle no
+(custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "")
 #+end_src
 
 Setting the scratch buffer in doom
@@ -537,7 +554,7 @@ Add default pdf-viewer
   #+end_src
 
   The following is needed to keep openwith-mode from interfering with org-display-inline-images. See [[https://emacs.stackexchange.com/questions/3180/org-mode-cant-display-inline-images-when-openwith-mode-is-turned-on][this stackexchange question]] for more info.
-  #+begin_src emacs-lisp
+#+begin_src emacs-lisp
     (defadvice org-display-inline-images
     (around handle-openwith
             (&optional include-linked refresh beg end) activate compile)
@@ -598,6 +615,9 @@ This bit is required in order for benchmark-init to stop complaining.
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
 #+end_src
 
+This is to add a confusion marker in my notes.
+
+
 I have this to make code blocks look nicer in org-mode
 #+begin_src emacs-lisp
 (setq-default prettify-symbols-alist '(("#+BEGIN_SRC" . "$")
@@ -626,6 +646,7 @@ For some reason that I haven't figured out yet, spell-fu is highlighting every s
 #+end_src
 
 Enable evil-insert in monkeytype-mode
+
 #+begin_src emacs-lisp
 ;;(defun my/monkeytype-mode-hook ()
 ;;  "Hooks for monkeytype-mode."
@@ -646,10 +667,3 @@ Finally getting around to adding some auto-completion. For now just copy pasted 
 #+end_src
 
 Experimenting with configuring org-agenda
-#+begin_src emacs-lisp
-(setq org-agenda-custom-commands
-      '(("cx" "TODOs sorted by state, priority, effort"
-         todo "*"
-         ((org-agenda-overriding-header "\nTODOs sorted by state, priority, effort")
-          (org-agenda-sorting-strategy '(todo-state-down priority-down effort-up))))))
-#+end_src

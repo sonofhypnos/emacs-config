@@ -391,6 +391,12 @@ With a prefix ARG, remove start location."
   (add-hook 'org-mode-hook #'tassilo/enable-post-tangle))
 (add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
 
+(after! org-roam
+(custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "") ;; see dooms org module for more examples of how to do this.
+(setq
+  org-todo-kewords (append org-todo-keywords '(sequence "[??](l)"))
+  org-todo-keyword-faces (append org-todo-keyword-faces '(("[??]" . +org-todo-cancel)))))
+
 (after! emacs-lisp-mode
   (setq doom-scratch-initial-major-mode emacs-lisp-mode))
 
@@ -483,9 +489,3 @@ With a prefix ARG, remove start location."
   (setq company-show-numbers t)
   (setq company-idle-delay 0)
 )
-
-(setq org-agenda-custom-commands
-      '(("cx" "TODOs sorted by state, priority, effort"
-         todo "*"
-         ((org-agenda-overriding-header "\nTODOs sorted by state, priority, effort")
-          (org-agenda-sorting-strategy '(todo-state-down priority-down effort-up))))))
