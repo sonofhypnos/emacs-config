@@ -483,3 +483,9 @@ With a prefix ARG, remove start location."
   (setq company-show-numbers t)
   (setq company-idle-delay 0)
 )
+
+(setq org-agenda-custom-commands
+      '(("cx" "TODOs sorted by state, priority, effort"
+         todo "*"
+         ((org-agenda-overriding-header "\nTODOs sorted by state, priority, effort")
+          (org-agenda-sorting-strategy '(todo-state-down priority-down effort-up))))))

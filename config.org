@@ -644,3 +644,12 @@ Finally getting around to adding some auto-completion. For now just copy pasted 
   (setq company-idle-delay 0)
 )
 #+end_src
+
+Experimenting with configuring org-agenda
+#+begin_src emacs-lisp
+(setq org-agenda-custom-commands
+      '(("cx" "TODOs sorted by state, priority, effort"
+         todo "*"
+         ((org-agenda-overriding-header "\nTODOs sorted by state, priority, effort")
+          (org-agenda-sorting-strategy '(todo-state-down priority-down effort-up))))))
+#+end_src
