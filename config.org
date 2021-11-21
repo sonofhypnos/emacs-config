@@ -148,7 +148,7 @@ In the end I just copied the stuff from the org-module and added my own keywords
            "[?](W)"   ; Task is being held up or paused
            "[??](C)"  ; Confusion marker in notes
            "PRO(p)"  ; Pro in pro-con list
-           "CON(C)"  ; Con in pro and con list
+           "CON(c)"  ; Con in pro and con list
            "|"
            "[X](D)")  ; Task was completed
           (sequence

@@ -36,86 +36,86 @@
 (use-package! anki-editor
   :after org-roam
 
-  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+:hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
-  :config
-  (setq-default anki-editor-use-math-jax t)
-  (setq anki-editor-org-tags-as-anki-tags t)
+:config
+(setq-default anki-editor-use-math-jax t)
+(setq anki-editor-org-tags-as-anki-tags t)
 
-  (defun anki-editor-cloze-region-auto-incr (&optional arg)
-    "Cloze region without hint and increase card number."
-    (interactive)
-    (anki-editor-cloze-region my-anki-editor-cloze-number "")
-    (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-    (forward-sexp))
-  (defun anki-editor-cloze-region-dont-incr (&optional arg)
-    "Cloze region without hint using the previous card number."
-    (interactive)
-    (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
-                                     (progn
-                                       (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-                                       1))
-                                    (t (1- my-anki-editor-cloze-number))) "")
-    (forward-sexp))
-  (defun anki-editor-reset-cloze-number (&optional arg)
-    "Reset cloze number to ARG or 1"
-    (interactive)
-    (setq my-anki-editor-cloze-number (or arg 1)))
-  (defun anki-editor-push-tree ()
-    "Push all notes under a tree."
-    (interactive)
-    (anki-editor-push-notes '(4))
-    (anki-editor-reset-cloze-number))
-  ;; Initialize
+(defun anki-editor-cloze-region-auto-incr (&optional arg)
+  "Cloze region without hint and increase card number."
+  (interactive)
+  (anki-editor-cloze-region my-anki-editor-cloze-number "")
+  (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+  (forward-sexp))
+(defun anki-editor-cloze-region-dont-incr (&optional arg)
+  "Cloze region without hint using the previous card number."
+  (interactive)
+  (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
+                                   (progn
+                                     (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+                                     1))
+                                  (t (1- my-anki-editor-cloze-number))) "")
+  (forward-sexp))
+(defun anki-editor-reset-cloze-number (&optional arg)
+  "Reset cloze number to ARG or 1"
+  (interactive)
+  (setq my-anki-editor-cloze-number (or arg 1)))
+(defun anki-editor-push-tree ()
+  "Push all notes under a tree."
+  (interactive)
+  (anki-editor-push-notes '(4))
   (anki-editor-reset-cloze-number))
+;; Initialize
+(anki-editor-reset-cloze-number))
 
 (after! org
   (with-no-warnings
   (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "") ;; see dooms org module for more examples of how to do this.
   (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) ""))
 
-  (with-no-warnings
-    (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
-    (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
-    (custom-declare-face '+org-todo-onhold  '((t (:inherit (bold warning org-todo)))) "")
-    (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) ""))
-  (setq org-todo-keywords
-        '((sequence   ; Not sure what the sequence is doing here (where it gets evaluated?)
-           "TODO(t)"  ; A task that needs doing & is ready to do
-           "PROJ(P)"  ; A project, which usually contains other tasks
-           "LOOP(r)"  ; A recurring task
-           "STRT(s)"  ; A task that is in progress
-           "WAIT(w)"  ; Something external is holding up this task
-           "HOLD(h)"  ; This task is paused/on hold because of me
-           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
-           "|"
-           "DONE(d)"  ; Task successfully completed
-           "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
-          (sequence
-           "[ ](T)"   ; A task that needs doing
-           "[-](S)"   ; Task is in progress
-           "[?](W)"   ; Task is being held up or paused
-           "[??](C)"  ; Confusion marker in notes
-           "PRO(p)"  ; Pro in pro-con list
-           "CON(C)"  ; Con in pro and con list
-           "|"
-           "[X](D)")  ; Task was completed
-          (sequence
-           "|"
-           "OKAY(o)"
-           "YES(y)"
-           "NO(n)"))
-        org-todo-keyword-faces
-        '(("[-]"  . +org-todo-active)
-          ("STRT" . +org-todo-active)
-          ("[?]"  . +org-todo-onhold)
-          ("WAIT" . +org-todo-onhold)
-          ("HOLD" . +org-todo-onhold)
-          ("PRO" . +org-todo-onhold)
-          ("CON" . +org-todo-cancel)
-          ("PROJ" . +org-todo-project)
-          ("NO"   . +org-todo-cancel)
-          ("KILL" . +org-todo-cancel))))
+(with-no-warnings
+  (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
+  (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
+  (custom-declare-face '+org-todo-onhold  '((t (:inherit (bold warning org-todo)))) "")
+  (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) ""))
+(setq org-todo-keywords
+      '((sequence   ; Not sure what the sequence is doing here (where it gets evaluated?)
+         "TODO(t)"  ; A task that needs doing & is ready to do
+         "PROJ(P)"  ; A project, which usually contains other tasks
+         "LOOP(r)"  ; A recurring task
+         "STRT(s)"  ; A task that is in progress
+         "WAIT(w)"  ; Something external is holding up this task
+         "HOLD(h)"  ; This task is paused/on hold because of me
+         "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+         "|"
+         "DONE(d)"  ; Task successfully completed
+         "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
+        (sequence
+         "[ ](T)"   ; A task that needs doing
+         "[-](S)"   ; Task is in progress
+         "[?](W)"   ; Task is being held up or paused
+         "[??](C)"  ; Confusion marker in notes
+         "PRO(p)"  ; Pro in pro-con list
+         "CON(c)"  ; Con in pro and con list
+         "|"
+         "[X](D)")  ; Task was completed
+        (sequence
+         "|"
+         "OKAY(o)"
+         "YES(y)"
+         "NO(n)"))
+      org-todo-keyword-faces
+      '(("[-]"  . +org-todo-active)
+        ("STRT" . +org-todo-active)
+        ("[?]"  . +org-todo-onhold)
+        ("WAIT" . +org-todo-onhold)
+        ("HOLD" . +org-todo-onhold)
+        ("PRO" . +org-todo-onhold)
+        ("CON" . +org-todo-cancel)
+        ("PROJ" . +org-todo-project)
+        ("NO"   . +org-todo-cancel)
+        ("KILL" . +org-todo-cancel))))
 
 (map! (:after org-roam
         :map org-mode-map
