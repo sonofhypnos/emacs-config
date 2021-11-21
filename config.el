@@ -393,9 +393,10 @@ With a prefix ARG, remove start location."
 
 (after! org-roam
 (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "") ;; see dooms org module for more examples of how to do this.
-(setq
-  org-todo-kewords (append org-todo-keywords '(sequence "[??](l)"))
-  org-todo-keyword-faces (append org-todo-keyword-faces '(("[??]" . +org-todo-cancel)))))
+(setq org-todo-kewords (append org-todo-keywords '(sequence "[??](l)"))
+  org-todo-keyword-faces (append org-todo-keyword-faces '(("[??]" . +org-todo-cancel))))
+(setq org-todo-kewords (append org-todo-keywords '(sequence "[!!!](j)"))
+  org-todo-keyword-faces (append org-todo-keyword-faces '(("[!!!]" . +org-todo-cancel)))))
 
 (after! emacs-lisp-mode
   (setq doom-scratch-initial-major-mode emacs-lisp-mode))
