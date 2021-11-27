@@ -119,9 +119,10 @@ Add custom confusion keyword to org-todo-keywords
  The following seemed like something that should work but didn't. I suspect it has something to do with the fact that the lists defined in dooms org module are immutable.
 
 #+begin_src emacs-lisp :tangle no
-(setcar org-todo-keywords (append (car org-todo-keywords) '("CON(c)"))) ;this code does not work!
+(setcar org-todo-keywords (append (car org-todo-keywords) '("CON(c)"))) ;this code seems to change the list, but has no affect on org-settings. I don't know why though.
 (add-to-list 'org-todo-keyword-faces '("CON" . +org-todo-cancel))
 #+end_src
+
 
 In the end I just copied the stuff from the org-module and added my own keywords.
 #+begin_src emacs-lisp
@@ -140,6 +141,8 @@ In the end I just copied the stuff from the org-module and added my own keywords
            "HOLD(h)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
            "|"
+           "PRO(p)"  ; Pro in pro-con list
+           "CON(c)"  ; Con in pro and con list
            "DONE(d)"  ; Task successfully completed
            "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
@@ -147,8 +150,6 @@ In the end I just copied the stuff from the org-module and added my own keywords
            "[-](S)"   ; Task is in progress
            "[?](W)"   ; Task is being held up or paused
            "[??](C)"  ; Confusion marker in notes
-           "PRO(p)"  ; Pro in pro-con list
-           "CON(c)"  ; Con in pro and con list
            "|"
            "[X](D)")  ; Task was completed
           (sequence
@@ -160,6 +161,7 @@ In the end I just copied the stuff from the org-module and added my own keywords
         '(("[-]"  . +org-todo-active)
           ("STRT" . +org-todo-active)
           ("[?]"  . +org-todo-onhold)
+          ("[??]" . +org-todo-cancel)  ; Confusion marker in notes
           ("WAIT" . +org-todo-onhold)
           ("HOLD" . +org-todo-onhold)
           ("PRO" . +org-todo-onhold)
@@ -171,7 +173,6 @@ In the end I just copied the stuff from the org-module and added my own keywords
 
 ** TODO Fix Capture
 ** TODO Enable Capture with Chrome
-
 ** Org-roam
 ** TODO Add Shortcuts for dailies
 ** TODO Repair Templates

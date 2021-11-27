@@ -89,6 +89,8 @@
            "HOLD(h)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
            "|"
+           "PRO(p)"  ; Pro in pro-con list
+           "CON(c)"  ; Con in pro and con list
            "DONE(d)"  ; Task successfully completed
            "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
@@ -96,8 +98,6 @@
            "[-](S)"   ; Task is in progress
            "[?](W)"   ; Task is being held up or paused
            "[??](C)"  ; Confusion marker in notes
-           "PRO(p)"  ; Pro in pro-con list
-           "CON(c)"  ; Con in pro and con list
            "|"
            "[X](D)")  ; Task was completed
           (sequence
@@ -109,6 +109,7 @@
         '(("[-]"  . +org-todo-active)
           ("STRT" . +org-todo-active)
           ("[?]"  . +org-todo-onhold)
+          ("[??]" . +org-todo-cancel)  ; Confusion marker in notes
           ("WAIT" . +org-todo-onhold)
           ("HOLD" . +org-todo-onhold)
           ("PRO" . +org-todo-onhold)
