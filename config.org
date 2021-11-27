@@ -1,7 +1,8 @@
 #+TITLE: Doom Configuration
 * Introduction
 * TODO write proper introduction
-We stand on the shoulders of giants, nothing is original and all that. Here are the configurations that I've learned and [[https://www.amazon.de/dp/0761169253/ref=nosim?linkCode=gs2&tag=kleon2007d-21][stolen]] from the most:
+Welcome to my emacs configuration. I'd discourage emacs to just fork this configuration (Feel free to copy what seems useful to you though).
+Here are the configurations that I've learned and [[https://www.amazon.de/dp/0761169253/ref=nosim?linkCode=gs2&tag=kleon2007d-21][stolen]] from the most:
 - [[https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/][Diego Zamboni’s emacs configuration]] including his ebook on [[https://leanpub.com/lit-config][literate configuration]].
 - [[https://github.com/tecosaur][Tecosaur’s emacs configuration]]  
 
