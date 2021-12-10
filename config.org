@@ -5,7 +5,6 @@ Welcome to my emacs configuration. I'd discourage emacs to just fork this config
 Here are the configurations that I've learned and [[https://www.amazon.de/dp/0761169253/ref=nosim?linkCode=gs2&tag=kleon2007d-21][stolen]] from the most:
 - [[https://zzamboni.org/post/my-doom-emacs-configuration-with-commentary/][Diego Zamboni’s emacs configuration]] including his ebook on [[https://leanpub.com/lit-config][literate configuration]].
 - [[https://github.com/tecosaur][Tecosaur’s emacs configuration]]  
-
 * Config
 
 My personal information
@@ -203,6 +202,7 @@ My daily checklists
       (concat
        "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
        "\n* Morgenroutine"
+       "\n - [ ] Lüften!"
        "\n - [ ] Kalender angesehen"
        "\n - [ ] Start tracking"
        "\n - [ ] Medis genommen"
@@ -218,6 +218,7 @@ My daily checklists
        "\n - [ ] Do active questions"
        "\n - [ ] Review Anki"
        "\n - [ ] Brush Teeth"
+       "\n - [ ] Prepare Backpack"
        "\n* Inbox"
        "\n* Journal"
        "\n* Evening Journal"
@@ -361,15 +362,15 @@ These are my other capture templates.
                             "#+title: ${title}\n#+author:\n")
          :unnarrowed t))))
 
- (defun make-capture-frame ()
-     "Create a new frame and run org-capture."
-     (interactive)
-     (make-frame '((name . "capture")))
-     (require 'noflet)
-     (select-frame-by-name "capture")
-     (delete-other-windows)
-     (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
-       (org-capture)))
+(defun make-capture-frame ()
+    "Create a new frame and run org-capture."
+    (interactive)
+    (make-frame '((name . "capture")))
+    (require 'noflet)
+    (select-frame-by-name "capture")
+    (delete-other-windows)
+    (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
+    (org-capture)))
 
 #+end_src
 
