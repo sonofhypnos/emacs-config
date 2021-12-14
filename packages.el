@@ -63,6 +63,7 @@
 ;testing out
 (package! monkeytype)
 (package! lispy)
+(package! nyan-mode)
 (package! evil-motion-trainer
   :recipe (:host github
            :repo "/martinbaillie/evil-motion-trainer"))
