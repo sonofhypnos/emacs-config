@@ -1,10 +1,13 @@
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
-(setq   org-directory "~/org/"
+(setq   org-directory "~/org-roam/"
         org-roam-directory "~/org-roam/"
         projectile-project-search-path '("~/repos" "~/Dropbox/")
         zot-bib "~/repos/bibliography/zotLib.bib")
+
+(setq org-agenda-files
+'("~/org-roam/to-read.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org"))
 
 (after! ispell
   ;; Configure `LANG`, otherwise ispell.el cannot find a 'default
@@ -74,6 +77,20 @@
   (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "") ;; see dooms org module for more examples of how to do this.
   (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) ""))
 
+  (global-evil-motion-trainer-mode 1)
+  (setq evil-motion-trainer-threshold 6)
+  (emt-add-suggestion 'evil-next-line 'evil-avy-goto-char-timer)
+;; See also: (emt-add-suggestions)
+
+(add-hook 'python-mode-hook
+  (lambda ()
+    (make-variable-buffer-local 'evil-snipe-aliases)
+    (push '(?: "def .+:") evil-snip(add-hook 'python-mode-hook
+  (lambda ()
+    (make-variable-buffer-local 'evil-snipe-aliases)
+    (push '(?: "def .+:") evil-snipe-aliases)))
+e-aliases)))
+
   (with-no-warnings
     (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
     (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
@@ -81,7 +98,7 @@
     (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) ""))
   (setq org-todo-keywords
         '((sequence   ; Not sure what the sequence is doing here (where it gets evaluated?)
-           "TODO(t)"  ; A task that needs doing & is ready to do
+           "TODO(t)"  ; A task that needs doin            g & is ready to do
            "PROJ(P)"  ; A project, which usually contains other tasks
            "LOOP(r)"  ; A recurring task
            "STRT(s)"  ; A task that is in progress
@@ -89,8 +106,8 @@
            "HOLD(h)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
            "|"
-           "PRO(p)"  ; Pro in pro-con list
-           "CON(c)"  ; Con in pro and con list
+           "PRO(p)"   ; Pro in pro-con list
+           "CON(c)"   ; Con in pro and con list
            "DONE(d)"  ; Task successfully completed
            "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
@@ -409,7 +426,9 @@ With a prefix ARG, remove start location."
 (define-and-bind-quoted-text-object "slash" "/" "/" "/")
 (define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
 (define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
-(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; sometimes your have to escape the regex
+(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; You don't have to
+(define-and-bind-quoted-text-object "code" "ℝ" "\\#\\+BEGIN_SRC" "\\#\\+END_SRC")
+(define-and-bind-quoted-text-object "code2" "Π" "\\#\\+begin_src" "\\#\\+end_src")
 
 (after! pdf-tools
   (add-hook! 'pdf-tools-enabled-hook
@@ -536,3 +555,6 @@ With a prefix ARG, remove start location."
   (setq company-show-numbers t)
   (setq company-idle-delay 0)
 )
+
+(use-package! nyan-mode
+  :hook (doom-modeline-mode . nyan-mode))
