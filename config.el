@@ -151,6 +151,8 @@ e-aliases)))
 (use-package! org-roam
   :after org
 
+(setq +org-roam-open-buffer-on-find-file nil)
+
 :config
 (setq daily-template
       (concat
