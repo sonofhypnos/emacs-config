@@ -7,7 +7,9 @@
         zot-bib "~/repos/bibliography/zotLib.bib")
 
 (setq org-agenda-files
-'("~/org-roam/to-read.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org"))
+'("~/org-roam/to-read.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org"
+"~/org-roam/20210606205702-emacs_improvement_list.org" "/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/rechnerorganisation.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"
+                ))
 
 (after! ispell
   ;; Configure `LANG`, otherwise ispell.el cannot find a 'default
@@ -82,14 +84,21 @@
   (emt-add-suggestion 'evil-next-line 'evil-avy-goto-char-timer)
 ;; See also: (emt-add-suggestions)
 
+(setq org-tag-persistent-alist '(("@unterwegs") ("anki" . ?a) ("logbook")
+("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
+("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus")
+("Brainstorm" . ?b) ("@pc" . ?p) ("uni" . ?u) ("Computergrafik") ("laughing") ("projekt")
+("@zuhause" . ?z)))
+
+(setq org-track-ordered-property-with-tag t)
+
 (add-hook 'python-mode-hook
   (lambda ()
     (make-variable-buffer-local 'evil-snipe-aliases)
-    (push '(?: "def .+:") evil-snip(add-hook 'python-mode-hook
+    (push '(?: "def .+:") evil-snipe-aliases))
   (lambda ()
     (make-variable-buffer-local 'evil-snipe-aliases)
     (push '(?: "def .+:") evil-snipe-aliases)))
-e-aliases)))
 
   (with-no-warnings
     (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
@@ -105,9 +114,9 @@ e-aliases)))
            "WAIT(w)"  ; Something external is holding up this task
            "HOLD(h)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
-           "|"
            "PRO(p)"   ; Pro in pro-con list
            "CON(c)"   ; Con in pro and con list
+           "|"
            "DONE(d)"  ; Task successfully completed
            "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
@@ -170,7 +179,7 @@ e-aliases)))
        "\n - [ ] Check Habits/Beeminder"
        "\n - [ ] Tasks Reviewed"
        "\n - [ ] Timetracking Reviewed ([[id:4d96fd27-2523-475a-a791-a67f9996e5a4][Enter Deep Work]])"
-       "\n - [ ] Anwer Journal Questions"
+       "\n - [ ] Answer Journal Questions (Look at prompts on vocab cards)"
        "\n - [ ] Do active questions"
        "\n - [ ] Review Anki"
        "\n - [ ] Brush Teeth"

@@ -126,18 +126,29 @@ Add custom confusion keyword to org-todo-keywords
   (setq evil-motion-trainer-threshold 6)
   (emt-add-suggestion 'evil-next-line 'evil-avy-goto-char-timer)
 ;; See also: (emt-add-suggestions)
-
 #+end_src
+
+#+begin_src emacs-lisp
+(setq org-tag-persistent-alist '(("@unterwegs") ("anki" . ?a) ("logbook")
+("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
+("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus")
+("Brainstorm" . ?b) ("@pc" . ?p) ("uni" . ?u) ("Computergrafik") ("laughing") ("projekt")
+("@zuhause" . ?z)))
+#+end_src
+
+#+begin_src emacs-lisp
+(setq org-track-ordered-property-with-tag t)
+#+end_src
+
 Customize evil-snipe
 #+begin_src emacs-lisp
 (add-hook 'python-mode-hook
   (lambda ()
     (make-variable-buffer-local 'evil-snipe-aliases)
-    (push '(?: "def .+:") evil-snip(add-hook 'python-mode-hook
+    (push '(?: "def .+:") evil-snipe-aliases))
   (lambda ()
     (make-variable-buffer-local 'evil-snipe-aliases)
     (push '(?: "def .+:") evil-snipe-aliases)))
-e-aliases)))
 #+end_src
 
 ** TODO Figure out why setting single stuff doesn't work?
@@ -165,9 +176,9 @@ In the end I just copied the stuff from the org-module and added my own keywords
            "WAIT(w)"  ; Something external is holding up this task
            "HOLD(h)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
-           "|"
            "PRO(p)"   ; Pro in pro-con list
            "CON(c)"   ; Con in pro and con list
+           "|"
            "DONE(d)"  ; Task successfully completed
            "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
