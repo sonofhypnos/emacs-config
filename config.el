@@ -202,7 +202,7 @@ e-aliases)))
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward
-            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:" nil t)
       (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
         (overlay-put ov_this 'display "")
         (overlay-put ov_this 'hidden-prop-drawer t))))
@@ -220,7 +220,7 @@ e-aliases)))
       (org-show-properties)
     (org-hide-properties)))
 
-(add-hook 'org-mode-hook #'org-hide-properties)
+(add-hook 'org-roam-mode-hook #'org-hide-properties)
 
 (defun completion-ignore-case-enable ()
     (setq completion-ignore-case t))

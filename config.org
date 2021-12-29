@@ -22,7 +22,9 @@ Setting up my directories and org files.
         zot-bib "~/repos/bibliography/zotLib.bib")
 
 (setq org-agenda-files
-'("~/org-roam/to-read.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org"))
+'("~/org-roam/to-read.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org"
+"~/org-roam/20210606205702-emacs_improvement_list.org" "/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/rechnerorganisation.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"
+                ))
 #+end_src
 
 Set up multiple languages for spell-checking. See [[https://github.com/munen/emacs.d ][this]] repo for more info.
@@ -237,7 +239,7 @@ My daily checklists
        "\n - [ ] Check Habits/Beeminder"
        "\n - [ ] Tasks Reviewed"
        "\n - [ ] Timetracking Reviewed ([[id:4d96fd27-2523-475a-a791-a67f9996e5a4][Enter Deep Work]])"
-       "\n - [ ] Anwer Journal Questions"
+       "\n - [ ] Answer Journal Questions (Look at prompts on vocab cards)"
        "\n - [ ] Do active questions"
        "\n - [ ] Review Anki"
        "\n - [ ] Brush Teeth"
@@ -274,7 +276,7 @@ Some non-essential functions for org
   (save-excursion
     (goto-char (point-min))
     (while (re-search-forward
-            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:\n" nil t)
+            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:" nil t)
       (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
         (overlay-put ov_this 'display "")
         (overlay-put ov_this 'hidden-prop-drawer t))))
@@ -295,7 +297,7 @@ Some non-essential functions for org
 
 Adding org-hide-properties to the org-mode-hook, to hide properties of orgmode-files when visiting them.
 #+begin_src emacs-lisp
-(add-hook 'org-mode-hook #'org-hide-properties)
+(add-hook 'org-roam-mode-hook #'org-hide-properties)
 #+end_src
 
 Make completion case insensitive in org-mode (and others, don't know how to make it org-mode-specific yet).

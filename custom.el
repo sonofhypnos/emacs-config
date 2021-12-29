@@ -12,8 +12,6 @@
  '(jdee-db-requested-breakpoint-face-colors (cons "#073642" "#859900"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#073642" "#56697A"))
  '(objed-cursor-color "#dc322f")
- '(org-agenda-files
-   '("~/org-roam/rechnerorganisation.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"))
  '(package-selected-packages '(debbugs))
  '(pdf-view-midnight-colors (cons "#839496" "#002b36"))
  '(rustic-ansi-faces
