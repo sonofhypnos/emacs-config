@@ -229,16 +229,12 @@ In the end I just copied the stuff from the org-module and added my own keywords
 
 (use-package! org-roam
   :after org
+  :config
   #+end_src
 
-  Turning off the backlink buffers by default. See https://github.com/org-roam/org-roam/issues/1286
-  #+begin_src emacs-lisp
-(setq +org-roam-open-buffer-on-find-file nil)
-  #+end_src
 
 My daily checklists
   #+begin_src emacs-lisp
-:config
 (setq daily-template
       (concat
        "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -283,6 +279,12 @@ My daily checklists
          :immediate-finish t
          :unnarrowed t)))
 #+end_src
+
+  Turning off the backlink buffers by default. See https://github.com/org-roam/org-roam/issues/1286
+  #+begin_src emacs-lisp
+(setq +org-roam-open-buffer-on-find-file nil)
+  #+end_src
+
 
 Some non-essential functions for org
 #+begin_src emacs-lisp

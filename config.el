@@ -159,10 +159,8 @@
 
 (use-package! org-roam
   :after org
+  :config
 
-(setq +org-roam-open-buffer-on-find-file nil)
-
-:config
 (setq daily-template
       (concat
        "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -206,6 +204,8 @@
                             "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
          :immediate-finish t
          :unnarrowed t)))
+
+(setq +org-roam-open-buffer-on-find-file nil)
 
 (defun org-hide-properties ()
   "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
