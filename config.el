@@ -1,3 +1,5 @@
+;;; config.el -*- lexical-binding: t; -*-
+
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
@@ -41,45 +43,45 @@
 (use-package! anki-editor
   :after org-roam
 
-:hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
-:config
-(setq-default anki-editor-use-math-jax t)
-(setq anki-editor-org-tags-as-anki-tags t)
+  :config
+  (setq-default anki-editor-use-math-jax t)
+  (setq anki-editor-org-tags-as-anki-tags t)
 
-(defun anki-editor-cloze-region-auto-incr (&optional arg)
-  "Cloze region without hint and increase card number."
-  (interactive)
-  (anki-editor-cloze-region my-anki-editor-cloze-number "")
-  (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-  (forward-sexp))
-(defun anki-editor-cloze-region-dont-incr (&optional arg)
-  "Cloze region without hint using the previous card number."
-  (interactive)
-  (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
-                                   (progn
-                                     (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-                                     1))
-                                  (t (1- my-anki-editor-cloze-number))) "")
-  (forward-sexp))
-(defun anki-editor-reset-cloze-number (&optional arg)
-  "Reset cloze number to ARG or 1"
-  (interactive)
-  (setq my-anki-editor-cloze-number (or arg 1)))
-(defun anki-editor-push-tree ()
-  "Push all notes under a tree."
-  (interactive)
-  (anki-editor-push-notes '(4))
+  (defun anki-editor-cloze-region-auto-incr (&optional arg)
+    "Cloze region without hint and increase card number."
+    (interactive)
+    (anki-editor-cloze-region my-anki-editor-cloze-number "")
+    (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+    (forward-sexp))
+  (defun anki-editor-cloze-region-dont-incr (&optional arg)
+    "Cloze region without hint using the previous card number."
+    (interactive)
+    (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
+                                     (progn
+                                       (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+                                       1))
+                                    (t (1- my-anki-editor-cloze-number))) "")
+    (forward-sexp))
+  (defun anki-editor-reset-cloze-number (&optional arg)
+    "Reset cloze number to ARG or 1"
+    (interactive)
+    (setq my-anki-editor-cloze-number (or arg 1)))
+  (defun anki-editor-push-tree ()
+    "Push all notes under a tree."
+    (interactive)
+    (anki-editor-push-notes '(4))
+    (anki-editor-reset-cloze-number))
+  ;; Initialize
   (anki-editor-reset-cloze-number))
-;; Initialize
-(anki-editor-reset-cloze-number))
 
 (after! org
   (with-no-warnings
   (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "") ;; see dooms org module for more examples of how to do this.
   (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) ""))
 
-(global-evil-motion-trainer-mode 1)
+  (global-evil-motion-trainer-mode 1)
   (setq evil-motion-trainer-threshold 6)
   (emt-add-suggestion 'evil-next-line 'evil-avy-goto-char-timer)
 ;; See also: (emt-add-suggestions)
@@ -100,49 +102,49 @@
     (make-variable-buffer-local 'evil-snipe-aliases)
     (push '(?: "def .+:") evil-snipe-aliases)))
 
-(with-no-warnings
-  (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
-  (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
-  (custom-declare-face '+org-todo-onhold  '((t (:inherit (bold warning org-todo)))) "")
-  (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) ""))
-(setq org-todo-keywords
-      '((sequence   ; Not sure what the sequence is doing here (where it gets evaluated?)
-         "TODO(t)"  ; A task that needs doin            g & is ready to do
-         "PROJ(P)"  ; A project, which usually contains other tasks
-         "LOOP(r)"  ; A recurring task
-         "STRT(s)"  ; A task that is in progress
-         "WAIT(w)"  ; Something external is holding up this task
-         "HOLD(h)"  ; This task is paused/on hold because of me
-         "IDEA(i)"  ; An unconfirmed and unapproved task or notion
-         "PRO(p)"   ; Pro in pro-con list
-         "CON(c)"   ; Con in pro and con list
-         "|"
-         "DONE(d)"  ; Task successfully completed
-         "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
-        (sequence
-         "[ ](T)"   ; A task that needs doing
-         "[-](S)"   ; Task is in progress
-         "[?](W)"   ; Task is being held up or paused
-         "[??](C)"  ; Confusion marker in notes
-         "|"
-         "[X](D)")  ; Task was completed
-        (sequence
-         "|"
-         "OKAY(o)"
-         "YES(y)"
-         "NO(n)"))
-      org-todo-keyword-faces
-      '(("[-]"  . +org-todo-active)
-        ("STRT" . +org-todo-active)
-        ("[?]"  . +org-todo-onhold)
-        ("[??]" . +org-todo-cancel)  ; Confusion marker in notes
-        ("WAIT" . +org-todo-onhold)
-        ("HOLD" . +org-todo-onhold)
-        ("PRO" . +org-todo-onhold)
-        ("CON" . +org-todo-cancel)
-        ("PROJ" . +org-todo-project)
-        ("NO"   . +org-todo-cancel)
-        ("KILL" . +org-todo-cancel))))
+  (with-no-warnings
+    (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
+    (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
+    (custom-declare-face '+org-todo-onhold  '((t (:inherit (bold warning org-todo)))) "")
+    (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) ""))
+  (setq org-todo-keywords
+        '((sequence   ; Not sure what the sequence is doing here (where it gets evaluated?)
+           "TODO(t)"  ; A task that needs doin            g & is ready to do
+           "PROJ(P)"  ; A project, which usually contains other tasks
+           "LOOP(r)"  ; A recurring task
+           "STRT(s)"  ; A task that is in progress
+           "WAIT(w)"  ; Something external is holding up this task
+           "HOLD(h)"  ; This task is paused/on hold because of me
+           "IDEA(i)"  ; An unconfirmed and unapproved task or notion
+           "PRO(p)"   ; Pro in pro-con list
+           "CON(c)"   ; Con in pro and con list
+           "|"
+           "DONE(d)"  ; Task successfully completed
+           "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
+          (sequence
+           "[ ](T)"   ; A task that needs doing
+           "[-](S)"   ; Task is in progress
+           "[?](W)"   ; Task is being held up or paused
+           "[??](C)"  ; Confusion marker in notes
+           "|"
+           "[X](D)")  ; Task was completed
+          (sequence
+           "|"
+           "OKAY(o)"
+           "YES(y)"
+           "NO(n)"))
+        org-todo-keyword-faces
+        '(("[-]"  . +org-todo-active)
+          ("STRT" . +org-todo-active)
+          ("[?]"  . +org-todo-onhold)
+          ("[??]" . +org-todo-cancel)  ; Confusion marker in notes
+          ("WAIT" . +org-todo-onhold)
+          ("HOLD" . +org-todo-onhold)
+          ("PRO" . +org-todo-onhold)
+          ("CON" . +org-todo-cancel)
+          ("PROJ" . +org-todo-project)
+          ("NO"   . +org-todo-cancel)
+          ("KILL" . +org-todo-cancel))))
 
 (map! (:after org-roam
         :map org-mode-map
@@ -255,18 +257,24 @@
                         (cons "If you could plan one nearly perfect (but still actually realistic) day for yourself, what would you spend that day doing? Describe that day, from when you wake up until you go to sleep." (cons 1 1))
                         (cons "When is the soonest that you can treat yourself to this perfect day, or to another day that you'll really enjoy and remember?" (cons 1 1))
                         ))
-(defun t/random-phrase
+
+(defun t/random-phrase ()
     (interactive)
-    (setq t/last (car (seq-random-elt phrases)))
-    (insert t/last))
-(defun incr-last ()
+      (while (progn
+               (setq t/last (seq-random-elt t/phrases))
+               (< (* (car (cdr (calcFunc-random '(float 1 0)))) (expt 10 -12))
+                                (/(car (last t/last))
+                        (float (+ (car (last t/last))
+                                  (cdr (last t/last)))))) ;s+1 / n+2 see laplace rule of succession.
+    (insert (car t/last)))))
+(defun t/incr-last ()
         (interactive)
-        (setcar (car t/last)
-        (1+ (car t/last))))
-(defun incr-second ()
+        (setcar (last t/last)
+        (1+ (car (last t/last)))))
+(defun t/decr-last ()
         (interactive)
-        (setcdr (t/last)
-        (1+ (cdr (t/last)))))
+        (setcdr (last t/last)
+        (1+ (cdr (last t/last)))))
 
 
 (setq desktop-globals-to-save
@@ -526,7 +534,7 @@ With a prefix ARG, remove start location."
 (define-and-bind-quoted-text-object "slash" "/" "/" "/")
 (define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
 (define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
-(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; You don't have to
+(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$")
 (define-and-bind-quoted-text-object "code" "ℝ" "\\#\\+BEGIN_SRC" "\\#\\+END_SRC")
 (define-and-bind-quoted-text-object "code2" "Π" "\\#\\+begin_src" "\\#\\+end_src")
 
@@ -540,6 +548,7 @@ With a prefix ARG, remove start location."
 (setq auto-save-default t
       make-backup-files t)
 
+
 (map! :after spray
       :map spray-mode-map
       "s" #'spray-slower
@@ -550,17 +559,6 @@ With a prefix ARG, remove start location."
       "SPC" #'spray-stop
       "q" #'spray-quit)
 
-(defun tassilo/post-tangle-config ()
-    (and (file-in-directory-p
-        buffer-file-name doom-private-dir)
-       (async-shell-command "cp config.org README.org && sed -i '/^[^\"]*TODO[^\"]*$/d' README.org")
-       (start-process "compile-config" "*compile-config*" "compile-config.sh" "~/.doom.d")))
-
-(defun tassilo/enable-post-tangle ()
-  (add-hook 'after-save-hook #'tassilo/post-tangle-config nil 'local))
-
-(after! org
-  (add-hook 'org-mode-hook #'tassilo/enable-post-tangle))
 (add-to-list 'display-buffer-alist '("*Async Shell Command*" display-buffer-no-window (nil)))
 
 (after! emacs-lisp-mode
@@ -584,15 +582,15 @@ With a prefix ARG, remove start location."
  ;; (openwith-mode t) ;keeping openwith-mode disabled until I've found a solution for inline images
   (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file)))
 
-(defadvice org-display-inline-images
-(around handle-openwith
-        (&optional include-linked refresh beg end) activate compile)
-(if openwith-mode
-    (progn
-        (openwith-mode -1)
-        ad-do-it
-        (openwith-mode 1))
-    ad-do-it)))
+    (defadvice org-display-inline-images
+    (around handle-openwith
+            (&optional include-linked refresh beg end) activate compile)
+    (if openwith-mode
+        (progn
+            (openwith-mode -1)
+            ad-do-it
+            (openwith-mode 1))
+        ad-do-it)))
 
 (defun toggle-maximize-buffer () "Maximize buffer"
        (interactive)
@@ -653,8 +651,7 @@ With a prefix ARG, remove start location."
 (after! company
   (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
   (setq company-show-numbers t)
-  (setq company-idle-delay 0)
-)
+  (setq company-idle-delay 0))
 
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))

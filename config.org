@@ -62,6 +62,8 @@ See [[https://yiufung.net/post/anki-org/][this excellent post]] to learn more ab
         "<f9>"   #'anki-editor-push-tree)
 #+end_src
 
+#+RESULTS:
+
 #+begin_src emacs-lisp
 (use-package! anki-editor
   :after org-roam
@@ -268,7 +270,7 @@ My daily checklists
 I made this function to spice up daily journaling
 
 * TODO Things to implement next
-* TODO Make it possible to increment the last question positively or negatively (so I need to save the last question position?)
+* TODO Make it possible to select something, because I want it
 #+begin_src emacs-lisp
 (defvar t/phrases (list
                         (cons "What meaningfull or important thing should you tell a particular person that you havent't said to them yet?" (cons 1 1))
@@ -335,18 +337,24 @@ I made this function to spice up daily journaling
                         (cons "If you could plan one nearly perfect (but still actually realistic) day for yourself, what would you spend that day doing? Describe that day, from when you wake up until you go to sleep." (cons 1 1))
                         (cons "When is the soonest that you can treat yourself to this perfect day, or to another day that you'll really enjoy and remember?" (cons 1 1))
                         ))
-(defun t/random-phrase
+
+(defun t/random-phrase ()
     (interactive)
-    (setq t/last (car (seq-random-elt phrases)))
-    (insert t/last))
-(defun incr-last ()
+      (while (progn
+               (setq t/last (seq-random-elt t/phrases))
+               (< (* (car (cdr (calcFunc-random '(float 1 0)))) (expt 10 -12))
+                                (/(car (last t/last))
+                        (float (+ (car (last t/last))
+                                  (cdr (last t/last)))))) ;s+1 / n+2 see laplace rule of succession.
+    (insert (car t/last)))))
+(defun t/incr-last ()
         (interactive)
-        (setcar (car t/last)
-        (1+ (car t/last))))
-(defun incr-second ()
+        (setcar (last t/last)
+        (1+ (car (last t/last)))))
+(defun t/decr-last ()
         (interactive)
-        (setcdr (t/last)
-        (1+ (cdr (t/last)))))
+        (setcdr (last t/last)
+        (1+ (cdr (last t/last)))))
 
 
 (setq desktop-globals-to-save
@@ -661,7 +669,7 @@ I copied this macro from [[https://stackoverflow.com/a/22418983/492140][here]] t
 (define-and-bind-quoted-text-object "slash" "/" "/" "/")
 (define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
 (define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
-(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$") ;; You don't have to
+(define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$")
 (define-and-bind-quoted-text-object "code" "ℝ" "\\#\\+BEGIN_SRC" "\\#\\+END_SRC")
 (define-and-bind-quoted-text-object "code2" "Π" "\\#\\+begin_src" "\\#\\+end_src")
 
@@ -863,6 +871,7 @@ Finally getting around to adding some auto-completion. For now just copy pasted 
 #+end_src
 
 #+begin_src emacs-lisp
+
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
 #+end_src
