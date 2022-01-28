@@ -8,6 +8,8 @@
         projectile-project-search-path '("~/repos" "~/Dropbox/")
         zot-bib "~/repos/bibliography/zotLib.bib")
 
+
+
 (setq org-agenda-files
 '("~/org-roam/to-read.org" "/home/tassilo/org-roam/projects.org"
 "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"
@@ -41,8 +43,8 @@
 
 (map! :after anki-editor
       :map org-mode-map
-        "<f12>"  #'anki-editor-cloze-region-auto-incr
-        "<f11>"  #'anki-editor-cloze-region-dont-incr
+        "<f12>"  #'anki-editor-cloze-region-dont-incr
+        "<f11>"  #'anki-editor-cloze-region-auto-incr
         "<f10>"  #'anki-editor-reset-cloze-number
         "<f9>"   #'anki-editor-push-tree)
 
@@ -108,25 +110,26 @@
     (make-variable-buffer-local 'evil-snipe-aliases)
     (push '(?: "def .+:") evil-snipe-aliases)))
 
+(setq org-log-into-drawer t)
+
   (with-no-warnings
     (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
     (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) "")
     (custom-declare-face '+org-todo-onhold  '((t (:inherit (bold warning org-todo)))) "")
     (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) ""))
+  ;look here for how to do this
   (setq org-todo-keywords
         '((sequence   ; Not sure what the sequence is doing here (where it gets evaluated?)
-           "TODO(t)"  ; A task that needs doin            g & is ready to do
+           "TODO(t!)"  ; A task that needs doin            g & is ready to do
            "PROJ(P)"  ; A project, which usually contains other tasks
            "LOOP(r)"  ; A recurring task
-           "STRT(s)"  ; A task that is in progress
-           "WAIT(w)"  ; Something external is holding up this task
+           "STRT(s!)"  ; A task that is in progress
+           "WAIT(w!)"  ; Something external is holding up this task
            "HOLD(h)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
-           "PRO(p)"   ; Pro in pro-con list
-           "CON(c)"   ; Con in pro and con list
            "|"
-           "DONE(d)"  ; Task successfully completed
-           "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
+           "DONE(d!)"  ; Task successfully completed
+           "KILL(k!)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
            "[ ](T)"   ; A task that needs doing
            "[-](S)"   ; Task is in progress
@@ -138,7 +141,11 @@
            "|"
            "OKAY(o)"
            "YES(y)"
-           "NO(n)"))
+           "NO(n)")
+          (sequence
+           "|"
+           "PRO(p)"   ; Pro in pro-con list
+           "CON(c)"))   ; Con in pro and con list
         org-todo-keyword-faces
         '(("[-]"  . +org-todo-active)
           ("STRT" . +org-todo-active)
@@ -541,6 +548,7 @@ With a prefix ARG, remove start location."
 (define-and-bind-quoted-text-object "asterisk" "*" "*" "*")
 (define-and-bind-quoted-text-object "dot" "." "\\." "\\.")
 (define-and-bind-quoted-text-object "dollar" "$" "\\$" "\\$")
+(define-and-bind-quoted-text-object "colon" ":" ":" ":")
 (define-and-bind-quoted-text-object "code" "ℝ" "\\#\\+BEGIN_SRC" "\\#\\+END_SRC")
 (define-and-bind-quoted-text-object "code2" "Π" "\\#\\+begin_src" "\\#\\+end_src")
 
@@ -579,8 +587,7 @@ With a prefix ARG, remove start location."
 (after! evil
   (setq evil-want-fine-undo t)
   (setq-default delete-by-moving-to-trash t)
-  (global-wakatime-mode)
-  (global-activity-watch-mode))
+  (global-wakatime-mode))
 
 (use-package! openwith
   :after-call pre-command-hook
@@ -660,3 +667,5 @@ With a prefix ARG, remove start location."
 
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
+
+(after! core-ui (menu-bar-mode 1))
