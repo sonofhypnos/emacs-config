@@ -120,7 +120,7 @@
            "PROJ(P)"  ; A project, which usually contains other tasks
            "LOOP(r)"  ; A recurring task
            "STRT(s!)"  ; A task that is in progress
-           "WAIT(w!)"  ; Something external is holding up this task
+           "WAIT(W!)"  ; Something external is holding up this task
            "HOLD(h)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
            "|"
@@ -129,7 +129,7 @@
           (sequence
            "[ ](T)"   ; A task that needs doing
            "[-](S)"   ; Task is in progress
-           "[?](W)"   ; Task is being held up or paused
+           "[?](w)"   ; Task is being held up or paused
            "[??](C)"  ; Confusion marker in notes
            "|"
            "[X](D)")  ; Task was completed
