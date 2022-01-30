@@ -64,9 +64,6 @@
 (package! monkeytype)
 (package! lispy)
 (package! nyan-mode)
-(package! evil-motion-trainer
-  :recipe (:host github
-           :repo "/martinbaillie/evil-motion-trainer"))
 (package! i3
   :recipe (:host github
            :repo "vava/i3-emacs"))

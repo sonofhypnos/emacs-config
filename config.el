@@ -89,10 +89,6 @@
   (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "") ;; see dooms org module for more examples of how to do this.
   (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) ""))
 
-  (global-evil-motion-trainer-mode 1)
-  (setq evil-motion-trainer-threshold 6)
-  (emt-add-suggestion 'evil-next-line 'evil-avy-goto-char-timer)
-;; See also: (emt-add-suggestions)
 
 (setq org-tag-persistent-alist '(("@unterwegs") ("anki" . ?a) ("logbook")
 ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
