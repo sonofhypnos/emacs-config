@@ -8,6 +8,12 @@
         projectile-project-search-path '("~/repos" "~/Dropbox/")
         zot-bib "~/repos/bibliography/zotLib.bib")
 
+(use-package langtool
+  :config
+  (setq langtool-language-tool-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool.jar")
+  (setq langtool-language-tool-server-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool-server.jar")
+  (setq langtool-server-user-arguments '("-p" "8081"))
+  )
 
 
 (setq org-agenda-files
