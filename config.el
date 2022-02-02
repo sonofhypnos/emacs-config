@@ -11,15 +11,7 @@
 
 
 (setq org-agenda-files
-'("~/org-roam/to-read.org" "/home/tassilo/org-roam/projects.org"
-"/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"
-"/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org"
-"/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org"
-"~/org-roam/20210606205702-emacs_improvement_list.org"
-"/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org"
-"/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org"
-"/home/tassilo/org-roam/rechnerorganisation.org"
-"/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"))
+'("~/org-roam/.org" "/home/tassilo/org-roam/20210502170155-project_blog_writing.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/20210606205702-emacs_improvement_list.org" "/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/rechnerorganisation.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"))
 
 (after! ispell
   ;; Configure `LANG`, otherwise ispell.el cannot find a 'default
@@ -267,23 +259,6 @@
                         (cons "When is the soonest that you can treat yourself to this perfect day, or to another day that you'll really enjoy and remember?" (cons 1 1))
                         ))
 
-(defun t/random-phrase ()
-    (interactive)
-      (while (progn
-               (setq t/last (seq-random-elt t/phrases))
-               (< (* (car (cdr (calcFunc-random '(float 1 0)))) (expt 10 -12))
-                                (/(car (last t/last))
-                        (float (+ (car (last t/last))
-                                  (cdr (last t/last)))))) ;s+1 / n+2 see laplace rule of succession.
-    (insert (car t/last)))))
-(defun t/incr-last ()
-        (interactive)
-        (setcar (last t/last)
-        (1+ (car (last t/last)))))
-(defun t/decr-last ()
-        (interactive)
-        (setcdr (last t/last)
-        (1+ (cdr (last t/last)))))
 
 
 (setq desktop-globals-to-save
@@ -601,21 +576,6 @@ With a prefix ARG, remove start location."
             (openwith-mode 1))
         ad-do-it)))
 
-(defun toggle-maximize-buffer () "Maximize buffer"
-       (interactive)
-       (if (= 1 (length (window-list)))
-           (jump-to-register '_)
-         (progn
-           (window-configuration-to-register '_)
-           (delete-other-windows))))
-
-(use-package! vterm
-  :after org
-  :commands vterm
-  :config
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")
-  (setq vterm-shell "zsh")
-  (setq vterm-max-scrollback 10000))
 
 (use-package! term
   :after org
@@ -628,6 +588,8 @@ With a prefix ARG, remove start location."
  :leader :desc "projectile find file" :r ":" #'projectile-find-file
  :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
 
+;;TODO add documentation from org file. Figure out how to do regular
+;;documentation in elisp and how to export it to markdown for github
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
  (use-package benchmark-init
    :config
@@ -665,3 +627,31 @@ With a prefix ARG, remove start location."
   :hook (doom-modeline-mode . nyan-mode))
 
 (after! core-ui (menu-bar-mode 1))
+
+;; custom functions
+(defun t/random-phrase ()
+    (interactive)
+      (while (progn
+               (setq t/last (seq-random-elt t/phrases))
+               (< (* (car (cdr (calcFunc-random '(float 1 0)))) (expt 10 -12))
+                                (/(car (last t/last))
+                        (float (+ (car (last t/last))
+                                  (cdr (last t/last)))))) ;s+1 / n+2 see laplace rule of succession.
+    (insert (car t/last)))))
+(defun t/incr-last ()
+        (interactive)
+        (setcar (last t/last)
+        (1+ (car (last t/last)))))
+(defun t/decr-last ()
+        (interactive)
+        (setcdr (last t/last)
+        (1+ (cdr (last t/last)))))
+
+
+(defun toggle-maximize-buffer () "Maximize buffer"
+       (interactive)
+       (if (= 1 (length (window-list)))
+           (jump-to-register '_)
+         (progn
+           (window-configuration-to-register '_)
+           (delete-other-windows))))

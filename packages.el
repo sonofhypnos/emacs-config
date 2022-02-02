@@ -1,68 +1,53 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;tracking
-(package! activity-watch-mode)
-(package! wakatime-mode)
-
+;org
+(package! org-mode :recipe (:repo "https://code.orgmode.org/bzg/org-mode.git")) ;see  hlissner/doom-emacs#4534
+(package! openwith)
+(unpin! org-roam)
+(package! org-download
+  :recipe (:host github
+           :repo "abo-abo/org-download"))
+(package! org-roam
+  :recipe (:host github :repo "org-roam/org-roam"))
+(package! anki-editor)
+(package! real-auto-save
+  :recipe (:host github
+           :repo "ChillarAnand/real-auto-save")) ;; not sure whether this helps with anything?
 ;autocompletion
 (package! company-tabnine
   :recipe (:host github :repo "TommyX12/company-tabnine"))
 
-;org
-(package! org-mode :recipe (:repo "https://code.orgmode.org/bzg/org-mode.git")) ;see https://github.com/hlissner/doom-emacs/issues/4534
+;degugging
+(package! benchmark-init)
+
+;not really used
+(package! zotxt)
 (package! org-ref)
 (package! org-noter)
-(package! org-habit-plus
-  :recipe (:host github
-           :repo "myshevchuk/org-habit-plus"))
-(package! org-mind-map)
-
-(package! elpy)
-(package! real-auto-save
-  :recipe (:host github
-           :repo "ChillarAnand/real-auto-save"))
-(package! emacs-todoist
-  :recipe (:host github
-           :repo "abrochard/emacs-todoist"))
 (package! org-roam-bibtex
   :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (unpin! helm-bibtex)
-(package! spray)
-(package! openwith)
-(package! org-recoll)
-;;(package! helm-swoop)
-(package! benchmark-init)
-(package! format-all)
-(unpin! org-roam)
-(package! websocket)
-(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
-(package! md-roam
-  :recipe (:host github
-           :repo "nobiot/md-roam"))
+(package! org-roam-bibtex
+ :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (package! org-pdftools
   :recipe (:host github
            :repo "fuxialexander/org-pdftools"))
-(package! org-noter-pdftools)
-(package! org-download
+(package! md-roam
   :recipe (:host github
-           :repo "abo-abo/org-download"))
-(package! org-auto-tangle)
-(package! org-roam
-  :recipe (:host github :repo "org-roam/org-roam"))
-(package! org-roam-bibtex
- :recipe (:host github :repo "org-roam/org-roam-bibtex"))
-(package! mathpix.el
-  :recipe (:host github :repo "jethrokuan/mathpix.el"))
-(package! anki-editor)
-
-(package! vimgolf)
+           :repo "nobiot/md-roam"))
+(package! websocket)
+(package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
+(package! format-all)
+        ;tracking
+        (package! wakatime-mode)
 (package! pdf-tools)
-(package! zotxt)
+(package! org-noter-pdftools)
 
 ;testing out
-(package! monkeytype)
-(package! lispy)
+(package! org-auto-tangle)
+(package! mathpix.el
+  :recipe (:host github :repo "jethrokuan/mathpix.el"))
 (package! nyan-mode)
 (package! i3
   :recipe (:host github
@@ -73,19 +58,8 @@
 (package! emr)
 (package! highlight)
 
-;; To install a package with Doom you must declare them here and run 'doom sync'
-;; on the command line, then restart Emacs for the changes to take effect -- or
-;; use 'M-x doom/reload'.
 
-
-;; To install SOME-PACKAGE from MELPA , ELPA or emacsmirror:
-;;(package! some-package)
-
-;; To install a package directly from a remote git repo, you must specify a
-;; `:recipe'. You'll find documentation on what `:recipe' accepts here:
-;; https://github.com/raxod502/straight.el#the-recipe-format
-;;(package! another-package
-;;  :recipe (:host github :repo "username/repo"))
+;;(package! activity-watch-mode) maybe add again when debugged
 
 ;; If the package you are trying to install does not contain a PACKAGENAME.el
 ;; file, or is located in a subdirectory of the repo, you'll need to specify
