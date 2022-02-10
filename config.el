@@ -17,7 +17,17 @@
 
 
 (setq org-agenda-files
-'("~/org-roam/.org" "/home/tassilo/org-roam/20210502170155-project_blog_writing.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/20210606205702-emacs_improvement_list.org" "/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/rechnerorganisation.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"))
+'("~/org-roam/.org"
+"/home/tassilo/org-roam/20210502170155-project_blog_writing.org"
+"/home/tassilo/org-roam/projects.org"
+"/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"
+"/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org"
+"/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org"
+"/home/tassilo/org-roam/20210606205702-emacs_improvement_list.org"
+"/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org"
+"/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org"
+"/home/tassilo/org-roam/rechnerorganisation.org"
+"/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"))
 
 (after! ispell
   ;; Configure `LANG`, otherwise ispell.el cannot find a 'default
@@ -626,8 +636,7 @@ With a prefix ARG, remove start location."
 
 (after! company
   (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
-  (setq company-show-numbers t)
-  (setq company-idle-delay 0))
+  (setq company-idle-delay 0.3)) ;; this value should not be 0!
 
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
