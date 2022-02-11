@@ -13,7 +13,7 @@
  '(jdee-db-spec-breakpoint-face-colors (cons "#073642" "#56697A"))
  '(objed-cursor-color "#dc322f")
  '(org-agenda-files
-   '("~/org-roam/20210502170155-project_blog_writing.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/20210606205702-emacs_improvement_list.org" "/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/rechnerorganisation.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"))
+   '("~/org-roam/betriebssysteme.org" "/home/tassilo/org-roam/20210502170155-project_blog_writing.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/20210606205702-emacs_improvement_list.org" "/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/rechnerorganisation.org" "/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"))
  '(pdf-view-midnight-colors (cons "#839496" "#002b36"))
  '(rustic-ansi-faces
    ["#002b36" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
