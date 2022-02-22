@@ -106,13 +106,6 @@
 
 (setq org-track-ordered-property-with-tag t)
 
-(add-hook 'python-mode-hook
-  (snipe-aliases ()
-    (make-variable-buffer-local 'evil-snipe-aliases)
-    (push '(?: "def .+:") evil-snipe-aliases)))
-        ;; this belongs somewhere else than the org file, but I don't want to
-          ;; deal with that. Might make emacs load slower?
-
 (setq org-log-into-drawer t)
 
   (with-no-warnings
@@ -168,11 +161,60 @@
         :prefix "m"
         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
+
 (after! org
   :config
-  (setq org-export-with-tasks nil)
-  (add-hook 'focus-out-hook
-        (lambda () (org-save-all-org-buffers))))
+
+(setq org-export-with-tasks nil)
+(defun mdlinks-to-orglinks ()
+    (interactive)
+    (evil-ex "%s/\\[\\(.*?\\)\\](\\(.*?\\))/[[\\1][\\2]]/g"))
+
+
+(defun pushblog ()
+  (interactive)
+(start-file-process "tassilos_invocation.sh" "*push-blog*" "~/repos/lazyblorg/tassilos_invocation.sh"))
+
+;; links for Memacs setup
+(setq org-link-abbrev-alist
+        '(("tsfile" .
+        "/home/tassilo/org-roam/photos.org_archive::/\*.*%s/")))
+
+;;taken from lazyblorg
+(defun my-lazyblorg-test()
+"Saves current blog entry to file and invoke lazyblorg process with it"
+(interactive)
+(save-excursion
+  (turn-off-evil-mode)
+        (search-backward ":blog:");; search begin of current (previous) blog entry
+        (beginning-of-line nil)
+        (set-mark-command nil);; set mark
+        (org-cycle nil);; close org-mode heading and sub-headings
+        (org-forward-heading-same-level 1)
+        (forward-line -1)
+        (let ((p (point));; copy region
+        (m (mark)))
+        (if (< p m)
+        (kill-ring-save p m)
+        (kill-ring-save m p)))
+        (find-file "/tmp/lazyblorg-preview.org");; hard coded temporary file (will be overwritten)
+        (erase-buffer);; I told you!
+        (yank);; paste region from above
+        (save-buffer);; save to disk
+        (kill-buffer "lazyblorg-preview.org");; destroy last evidence
+        (forward-line -1);;
+        (org-cycle nil);; close org-mode heading and sub-headings
+        ;; invoke lazyblorg:
+        (start-file-process "preview_blog_entry.sh" "*preview-blog*" "/home/tassilo/repos/lazyblorg/preview_blogentry.sh")
+        (turn-on-evil-mode)
+        )
+)
+
+(defun preview-blogentry-current-file
+    (interactive)
+(start-file-process "preview_blogentry" "*preview_blog_entry*" "~/repos/lazyblorg/preview_blogentry.sh" (buffer-file-name (buffer-base-buffer)))))
+
+
 
 
 (use-package! org-roam
