@@ -680,7 +680,7 @@
 
 (after! company
   (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
-  (setq company-idle-delay 0.3)) ;; this value should not be 0!
+  (setq company-idle-delay 0.2)) ;; this value should not be 0!
 
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
@@ -692,10 +692,11 @@
     (interactive)
       (while (progn
                (setq t/last (seq-random-elt t/phrases))
-               (< (* (car (cdr (calcFunc-random '(float 1 0)))) (expt 10 -12))
-                                (/(car (last t/last))
-                        (float (+ (car (last t/last))
-                                  (cdr (last t/last)))))) ;s+1 / n+2 see laplace rule of succession.
+               ;; calcFunc-random function seems to be gone now!
+               ;; (< (* (car (cdr (calcFunc-random '(float 1 0)))) (expt 10 -12))
+               ;;                  (/(car (last t/last))
+               ;;          (float (+ (car (last t/last))
+               ;;                    (cdr (last t/last)))))) ;s+1 / n+2 see laplace rule of succession.
     (insert (car t/last)))))
 (defun t/incr-last ()
         (interactive)
@@ -706,4 +707,45 @@
         (setcdr (last t/last)
         (1+ (cdr (last t/last)))))
 
+(map! :localleader ;;markdown mappings stolen from here: https://dotdoom.rgoswami.me/config.html
+      :map markdown-mode-map
+      :prefix ("i" . "Insert")
+      :desc "Blockquote"    "q" 'markdown-insert-blockquote
+      :desc "Bold"          "b" 'markdown-insert-bold
+      :desc "Code"          "c" 'markdown-insert-code
+      :desc "Emphasis"      "e" 'markdown-insert-italic
+      :desc "Footnote"      "f" 'markdown-insert-footnote
+      :desc "Code Block"    "s" 'markdown-insert-gfm-code-block
+      :desc "Image"         "i" 'markdown-insert-image
+      :desc "Link"          "l" 'markdown-insert-link
+      :desc "List Item"     "n" 'markdown-insert-list-item
+      :desc "Pre"           "p" 'markdown-insert-pre
+      (:prefix ("h" . "Headings")
+        :desc "One"   "1" 'markdown-insert-atx-1
+        :desc "Two"   "2" 'markdown-insert-atx-2
+        :desc "Three" "3" 'markdown-insert-atx-3
+        :desc "Four"  "4" 'markdown-insert-atx-4
+        :desc "Five"  "5" 'markdown-insert-atx-5
+        :desc "Six"   "6" 'markdown-insert-atx-6))
 
+(after! evil
+  (map! :map evil-colemak-basics-keymap
+      :nv "N" 'evil-scroll-page-down
+      :nv "E" 'evil-scroll-page-up))
+
+(message "hi!")
+
+;;open external terminal
+(defun run-terminal-here ()
+  (interactive "@")
+  (shell-command "kitty > /dev/null 2>&1 & disown" nil nil))
+
+;;might want to defer evaluation of this function.
+(defun execute-c-program ()
+  (interactive)
+  (defvar foo)
+  (setq foo (concat "gcc " (buffer-name) " && ./a.out" ))
+  (shell-command foo))
+
+(map! :after c-or-c++-mode)
+(global-set-key [] 'execute-c-program)
