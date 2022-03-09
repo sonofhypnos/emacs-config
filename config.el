@@ -206,9 +206,7 @@
         (org-cycle nil);; close org-mode heading and sub-headings
         ;; invoke lazyblorg:
         (start-file-process "preview_blog_entry.sh" "*preview-blog*" "/home/tassilo/repos/lazyblorg/preview_blogentry.sh")
-        (turn-on-evil-mode)
-        )
-)
+        (turn-on-evil-mode)))
 
 (defun preview-blogentry-current-file
     (interactive)
@@ -238,7 +236,7 @@
        "\n - [ ] Tasks Reviewed"
        "\n - [ ] Timetracking Reviewed ([[id:4d96fd27-2523-475a-a791-a67f9996e5a4][Enter Deep Work]])"
        "\n - [ ] Answer Journal Questions (Look at prompts on vocab cards)"
-       "\n - [ ] Do active questions"
+       "\n - [ ] Do active questions (t/random-phrase)"
        "\n - [ ] Review Anki"
        "\n - [ ] Brush Teeth"
        "\n - [ ] Prepare Backpack"
@@ -342,6 +340,8 @@
                             "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
          :immediate-finish t
          :unnarrowed t)))
+
+
 
 (setq +org-roam-open-buffer-on-find-file nil)
 (setq org-roam-db-gc-threshold most-positive-fixnum)
@@ -521,38 +521,37 @@
   :hook (org-mode . org-pdftools-setup-link)
   (pdf-tools-install))
 
+(use-package! org-noter-pdftools
+  :after org-noter
+  :config
   ;; Add a function to ensure precise note is inserted
-;; (use-package! org-noter-pdftools
-;;   :after org-noter
-;;   :config
-;;   ;; Add a function to ensure precise note is inserted
-;;   (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-;;     (interactive "P")
-;;     (org-noter--with-valid-session
-;;      (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-;;                                                    (not org-noter-insert-note-no-questions)
-;;                                                  org-noter-insert-note-no-questions))
-;;            (org-pdftools-use-isearch-link t)
-;;            (org-pdftools-use-freestyle-annot t))
-;;        (org-noter-insert-note (org-noter--get-precise-info)))))
-;;   ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
-;;   (defun org-noter-set-start-location (&optional arg)
-;;     "When opening a session with this document, go to the current location.
-;; With a prefix ARG, remove start location."
-;;     (interactive "P")
-;;     (org-noter--with-valid-session
-;;      (let ((inhibit-read-only t)
-;;            (ast (org-noter--parse-root))
-;;            (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-;;        (with-current-buffer (org-noter--session-notes-buffer session)
-;;          (org-with-wide-buffer
-;;           (goto-char (org-element-property :begin ast))
-;;           (if arg
-;;               (org-entry-delete nil org-noter-property-note-location)
-;;             (org-entry-put nil org-noter-property-note-location
-;;                            (org-noter--pretty-print-location location))))))))
-;;   (with-eval-after-load 'pdf-annot
-;;     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+                                                   (not org-noter-insert-note-no-questions)
+                                                 org-noter-insert-note-no-questions))
+           (org-pdftools-use-isearch-link t)
+           (org-pdftools-use-freestyle-annot t))
+       (org-noter-insert-note (org-noter--get-precise-info)))))
+  ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+  (defun org-noter-set-start-location (&optional arg)
+    "When opening a session with this document, go to the current location.
+With a prefix ARG, remove start location."
+    (interactive "P")
+    (org-noter--with-valid-session
+     (let ((inhibit-read-only t)
+           (ast (org-noter--parse-root))
+           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+       (with-current-buffer (org-noter--session-notes-buffer session)
+         (org-with-wide-buffer
+          (goto-char (org-element-property :begin ast))
+          (if arg
+              (org-entry-delete nil org-noter-property-note-location)
+            (org-entry-put nil org-noter-property-note-location
+                           (org-noter--pretty-print-location location))))))))
+  (with-eval-after-load 'pdf-annot
+    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
 (use-package! org-download
   :after org
@@ -584,8 +583,7 @@
 (define-and-bind-quoted-text-object "code2" "Π" "\\#\\+begin_src" "\\#\\+end_src")
 
 (after! pdf-tools
-  (add-hook! 'pdf-tools-enabled-hook
-    (pdf-view-midnight-minor-mode 1)))
+  (add-hook! 'pdf-tools-enabled-hook))
 
 (global-set-key (kbd "C-c g") 'org-recoll-search)
 (global-set-key (kbd "C-c u") 'org-recoll-update-index)
@@ -677,7 +675,6 @@
 ;;  (evil-escape-mode -1)
 ;;  (evil-insert -1))
 ;;(add-hook 'monkeytype-mode-hook #'my/monkeytype-mode-hook)
-
 (after! company
   (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
   (setq company-idle-delay 0.2)) ;; this value should not be 0!

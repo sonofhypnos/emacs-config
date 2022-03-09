@@ -56,7 +56,8 @@
     (cons 320 "#775b67")
     (cons 340 "#405A61")
     (cons 360 "#405A61")))
- '(vc-annotate-very-old-color nil))
+ '(vc-annotate-very-old-color nil)
+ '(warning-suppress-types '(((flycheck syntax-checker))))) ;; not sure this is the right place to set this.
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
