@@ -184,6 +184,69 @@
         "/home/tassilo/org-roam/photos.org_archive::/\*.*%s/")))
 (defun my-handle-tsfile-link (querystring)
   (message (concat "DEBUG1: querystring: " querystring))
+  (message (concat "DEBUG2: "
+                          "grep \""
+                          querystring
+                          "\" "
+                          (concat memacs-root memacs-file-pattern)))
+  ;; get a list of hits
+  (let ((queryresults (split-string
+                       (s-trim
+                        (shell-command-to-string
+                         (concat
+                          "grep \""
+                          querystring
+                          "\" "
+                          (concat memacs-root memacs-file-pattern))))
+                       "\n" t)))
+    (message (concat "DEBUG3: queryresults: " (car queryresults)))
+    ;; check length of list (number of lines)
+    (cond
+     ((= 0 (length queryresults))
+      ;; edge case: empty query result
+      (message "Sorry, no results found for query: %s" querystring))
+     (t
+      (with-temp-buffer
+        (insert (if (= 1 (length queryresults))
+                    (car queryresults)
+                  (completing-read "Choose: " queryresults)))
+        (org-mode)
+        (goto-char (point-min))
+        (org-next-link)
+        (org-open-at-point))))))
+
+(org-link-set-parameters
+ "tsfile"
+ :follow (lambda (path) (my-handle-tsfile-link path))
+ :help-echo "Opens the linked file with your default application"
+ :face '(:foreground "DarkSeaGreen" :underline t)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;;taken from lazyblorg
 (defun my-lazyblorg-test()
