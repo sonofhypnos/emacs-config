@@ -1,0 +1,5 @@
+# key: <j
+# name: journal
+# --
+`(car (seq-random-elt t/phrases))`
+$0

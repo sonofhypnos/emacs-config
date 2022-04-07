@@ -1,0 +1,15 @@
+# key: blogEntry
+# name: blogEntry
+# --
+
+
+* DONE ${1:Title} :blog:
+:PROPERTIES:
+:ID: ${2:this is id}
+:CREATED: [`(format-time-string "%Y-%02m-%02d%3a %02H:%02M")`]
+:END:
+:LOGBOOK:
+- State "DONE"       from "TODO"       [`(format-time-string "%Y-%02m-%02d %3a %02H:%02M")`]
+:END:
+
+$0
