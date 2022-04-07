@@ -165,7 +165,8 @@
 (after! org
   :config
 
-(setq org-export-with-tasks nil)
+(setq org-export-with-tasks nil
+      org-refile-use-cache t) ;;testing for now
 (defun mdlinks-to-orglinks ()
     (interactive)
     (evil-ex "%s/\\[\\(.*?\\)\\](\\(.*?\\))/[[\\1][\\2]]/g"))
@@ -175,10 +176,14 @@
   (interactive)
 (start-file-process "tassilos_invocation.sh" "*push-blog*" "~/repos/lazyblorg/tassilos_invocation.sh"))
 
+(defvar memacs-root org-directory)
+(defvar memacs-file-pattern "photos.org_archive") ;; also possible: "*.org"
 ;; links for Memacs setup
 (setq org-link-abbrev-alist
         '(("tsfile" .
         "/home/tassilo/org-roam/photos.org_archive::/\*.*%s/")))
+(defun my-handle-tsfile-link (querystring)
+  (message (concat "DEBUG1: querystring: " querystring))
 
 ;;taken from lazyblorg
 (defun my-lazyblorg-test()
@@ -208,7 +213,7 @@
         (start-file-process "preview_blog_entry.sh" "*preview-blog*" "/home/tassilo/repos/lazyblorg/preview_blogentry.sh")
         (turn-on-evil-mode)))
 
-(defun preview-blogentry-current-file
+(defun preview-blogentry-current-file ()
     (interactive)
 (start-file-process "preview_blogentry" "*preview_blog_entry*" "~/repos/lazyblorg/preview_blogentry.sh" (buffer-file-name (buffer-base-buffer)))))
 
@@ -260,7 +265,7 @@
                         (cons "What surprised you today?" (cons 1 1))
                         (cons "What did I notice today?" (cons 1 1))
                         (cons "What is the most outrageous thing you did recently?" (cons 1 1))
-                        (cons "Which past experience are you the most thankfull for? Why?" (cons 1 1))
+                        (cons "Which experience are you the most thankfull for? Why?" (cons 1 1))
                         (cons "What’s a brave thing you did last week?" (cons 1 1))
                         (cons "When was I at peace today?" (cons 1 1))
                         (cons "What have been your biggest mistakes recently? What have you learned from them?" (cons 1 1))
