@@ -756,12 +756,11 @@ With a prefix ARG, remove start location."
       :nv "N" 'evil-scroll-page-down
       :nv "E" 'evil-scroll-page-up))
 
-(message "hi!")
 
 ;;open external terminal
 (defun run-terminal-here ()
   (interactive "@")
-  (shell-command "kitty > /dev/null 2>&1 & disown" nil nil))
+  (shell-command "xterm > /dev/null 2>&1 & disown" nil nil))
 
 ;;might want to defer evaluation of this function.
 (defun execute-c-program ()
