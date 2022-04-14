@@ -25,8 +25,6 @@
 (package! zotxt)
 (package! org-ref)
 (package! org-noter)
-(package! org-roam-bibtex
-  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
 (unpin! helm-bibtex)
 (package! org-roam-bibtex
  :recipe (:host github :repo "org-roam/org-roam-bibtex"))

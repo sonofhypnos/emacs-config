@@ -3,17 +3,16 @@
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
+
 (setq   org-directory "~/org-roam/"
         org-roam-directory "~/org-roam/"
-        projectile-project-search-path '("~/repos" "~/Dropbox/")
-        zot-bib "~/repos/bibliography/zotLib.bib")
+        projectile-project-search-path '("~/repos" "~/Dropbox/"))
 
 (use-package langtool
   :config
   (setq langtool-language-tool-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool.jar")
   (setq langtool-language-tool-server-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool-server.jar")
-  (setq langtool-server-user-arguments '("-p" "8081"))
-  )
+  (setq langtool-server-user-arguments '("-p" "8081")))
 
 
 (setq org-agenda-files
@@ -93,20 +92,17 @@
   (anki-editor-reset-cloze-number))
 
 (after! org
-  (with-no-warnings
-  (custom-declare-face '+org-todo-cancel  '((t (:inherit (bold error org-todo)))) "") ;; see dooms org module for more examples of how to do this.
-  (custom-declare-face '+org-todo-project '((t (:inherit (bold font-lock-doc-face org-todo)))) ""))
-
-
 (setq org-tag-persistent-alist '(("@unterwegs") ("anki" . ?a) ("logbook")
 ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
 ("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus")
 ("Brainstorm" . ?b) ("@pc" . ?p) ("uni" . ?u) ("Computergrafik") ("laughing") ("projekt")
 ("@zuhause" . ?z)))
 
-(setq org-track-ordered-property-with-tag t)
-
-(setq org-log-into-drawer t)
+(setq org-track-ordered-property-with-tag t
+      org-log-into-drawer t)
+;;starting to try org-cite (not quite sure how and for what to use it) I mostly
+;;want to use citation stuff with my blog, but also do something similar to
+;;gwern with archiving entries
 
   (with-no-warnings
     (custom-declare-face '+org-todo-active  '((t (:inherit (bold font-lock-constant-face org-todo)))) "")
@@ -532,57 +528,18 @@
 (use-package! org-noter
   :after org
   :config
-  (setq org-noter-notes-search-path '("~/org-roam/")))
+  (setq org-noter-notes-search-path org-directory))
 
-(use-package! bibtex
-  :init
-(setq
-   bibtex-completion-notes-path org-directory
-   bibtex-completion-bibliography zot-bib
-   bibtex-completion-pdf-field "file"
-   bibtex-completion-notes-template-multiple-files
-   (concat
-    "#+TITLE: ${title}\n"
-    "#+ROAM_KEY: cite:${=key=}\n"
-    "* TODO Notes\n"
-    ":PROPERTIES:\n"
-    ":Custom_ID: ${=key=}\n"
-    ":NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n"
-    ":AUTHOR: ${author-abbrev}\n"
-    ":JOURNAL: ${journaltitle}\n"
-    ":DATE: ${date}\n"
-    ":YEAR: ${year}\n"
-    ":DOI: ${doi}\n"
-    ":URL: ${url}\n"
-    ":END:\n\n")))
-
-(use-package! org-ref
-  :after org
-  :config
-  :init
-  (setq org-ref-completion-library 'org-ref-ivy-cite
-        org-ref-get-pdf-filename-function 'org-ref-get-pdf-filename-helm-bibtex)
-  (setq
-   org-ref-default-bibliography (list zot-bib)
-   org-ref-bibliography-notes  (concat org-roam-directory "bibliography.org")
-   org-ref-note-title-format "* TODO %y - %t\n :PROPERTIES:\n  :Custom_ID: %k\n  :NOTER_DOCUMENT: %F\n :ROAM_KEY: cite:%k\n  :AUTHOR: %9a\n  :JOURNAL: %j\n  :YEAR: %y\n  :VOLUME: %v\n  :PAGES: %p\n  :DOI: %D\n  :URL: %U\n :END:\n\n"
-   org-ref-notes-directory (concat org-roam-directory "/lit")
-   org-ref-notes-function 'orb-edit-notes))
-
-(use-package! org-roam-bibtex
-  :after org-roam
-  :hook (org-roam-mode . org-roam-bibtex-mode)
-  :config
-  (setq org-roam-bibtex-preformat-keywords
-        '("=key=" "title" "url" "file" "author-or-editor" "keywords"))
-  (setq orb-templates
-        '(("r" "ref" plain (function org-roam-capture--get-point)
-           ""
-           :file-name "${slug}"
-           :head "#+TITLE: ${=key=}: ${title}\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS:
-- keywords :: ${keywords}
-\n* ${title}\n  :PROPERTIES:\n  :Custom_ID: ${=key=}\n  :URL: ${url}\n  :AUTHOR: ${author-or-editor}\n  :NOTER_DOCUMENT: %(orb-process-file-field \"${=key=}\")\n  :NOTER_PAGE: \n  :END:\n\n"
-           :unnarrowed t))))
+;; see doom readme for biblio for further config info
+(after! oc ;right package?
+  (setq! bibtex-completion-bibliography '("~/repos/bibliography/zotLib.bib"))
+  ;; not sure where my files for zotero are currently stored
+  ;; once I understand that part I might uncomment this:
+  ;; You may also set the respective note and library path variables as well for enhanced functionality:
+ (setq! bibtex-completion-library-path "~/Zotero/storage/"
+        bibtex-completion-notes-path (concat org-directory "lit/"))
+        org-cite-follow-processor 'basic
+ )
 
 (use-package! org-pdftools
   :after org
@@ -689,8 +646,9 @@ With a prefix ARG, remove start location."
 (use-package! openwith
   :after-call pre-command-hook
   :config
- ;; (openwith-mode t) ;keeping openwith-mode disabled until I've found a solution for inline images
-  (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file)))
+;; (openwith-mode t) ;keeping openwith-mode disabled until I've found a solution for inline images
+
+(add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file)))
 
     (defadvice org-display-inline-images
     (around handle-openwith
@@ -698,7 +656,7 @@ With a prefix ARG, remove start location."
     (if openwith-mode
         (progn
             (openwith-mode -1)
-            ad-do-it
+            ad-do-it ;;not sure what this line is for? should this be add-to-list? why is it not throwing errors? does it evaluate to false?
             (openwith-mode 1))
         ad-do-it)))
 
