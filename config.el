@@ -646,7 +646,7 @@ With a prefix ARG, remove start location."
 (use-package! openwith
   :after-call pre-command-hook
   :config
-;; (openwith-mode t) ;keeping openwith-mode disabled until I've found a solution for inline images
+ (openwith-mode t) ;keeping openwith-mode disabled until I've found a solution for inline images
 
 (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file)))
 
