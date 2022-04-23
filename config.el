@@ -762,6 +762,18 @@ With a prefix ARG, remove start location."
   (interactive "@")
   (shell-command "xterm > /dev/null 2>&1 & disown" nil nil))
 
+
+
+(after! ccls
+  (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
+  (set-lsp-priority! 'ccls 2)) ; optional as ccls is the default in Doom
+
+(add-hook! c++-mode-hook
+         (flycheck-checker 'c/c++-gcc)) ;;hope this fixes flycheck with c++
+(map! :after c-or-c++-mode
+
+
+
 ;;might want to defer evaluation of this function.
 (defun execute-c-program ()
   (interactive)
@@ -769,5 +781,28 @@ With a prefix ARG, remove start location."
   (setq foo (concat "gcc " (buffer-name) " && ./a.out" ))
   (shell-command foo))
 
-(map! :after c-or-c++-mode)
+
+
+(defun code-compile ()
+  (interactive)
+  (unless (file-exists-p "Makefile")
+    (set (make-local-variable 'compile-command)
+     (let ((file (file-name-nondirectory buffer-file-name)))
+       (format "%s -o %s %s"
+           (if  (equal (file-name-extension file) "cpp") "g++" "gcc" )
+           (file-name-sans-extension file)
+           file)))
+    (compile compile-command)))
+
 (global-set-key [] 'execute-c-program)
+(global-set-key [f9] 'code-compile))
+
+(after! org
+  (defun tassilo/open-pdf (filepath)
+    ;;TODO figure out how to add zotero stuff from here (maybe call shell)
+
+    (find-file filepath)
+    )
+  )
+
+;; the stuff below should probably be loaded later
