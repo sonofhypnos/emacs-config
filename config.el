@@ -762,16 +762,37 @@ With a prefix ARG, remove start location."
   (interactive "@")
   (shell-command "xterm > /dev/null 2>&1 & disown" nil nil))
 
+;;put following after python config:
+(setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
+(setq +python-jupyter-repl-args '("--simple-prompt"))
 
 
 (after! ccls
   (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
-  (set-lsp-priority! 'ccls 2)) ; optional as ccls is the default in Doom
-
+  (set-lsp-priority! 'ccls 2); optional as ccls is the default in Doom
+  (defun t/compile-c++ ()
+        (setq-local compile-command
+        (concat
+        "g++ -std=gnu++17 -Og -g -Wall -Wextra -Wconversion -fsanitize=address -fsanitize=undefined "
+        (buffer-file-name)
+        "&& cat 1.in | ./a.out | diff 1.out -")))
+(add-hook 'c++-mode-hook #'t/compile-c++)
 (add-hook! c++-mode-hook
-         (flycheck-checker 'c/c++-gcc)) ;;hope this fixes flycheck with c++
+         (flycheck-select-checker 'c/c++-gcc))) ;;hope this fixes flycheck with c++
+
+
+
 (map! :after c-or-c++-mode
 
+
+(after! python
+  (defun t/pyconf ()
+    (interactive)
+        (let ((dir (file-name-directory buffer-file-name)))
+                (setq-local compile-command
+                        (concat "chmod +x " (buffer-file-name) ";cat " dir "1.in | " (buffer-file-name)))))
+
+        (add-hook 'python-mode-hook #'t/pyconf))
 
 
 ;;might want to defer evaluation of this function.
