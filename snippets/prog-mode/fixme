@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: fixme
+# key: fixme
+# --
+`(yas-trimmed-comment-start)` FIXME $0

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: todos-code
+# key: todo
+# --
+
+`(yas-trimmed-comment-start)` TODO $0
