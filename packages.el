@@ -45,6 +45,7 @@
         (package! wakatime-mode)
 (package! pdf-tools)
 (package! org-noter-pdftools)
+(package! ccls)
 
 ;testing out
 (package! org-auto-tangle)

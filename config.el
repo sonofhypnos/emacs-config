@@ -768,6 +768,11 @@ With a prefix ARG, remove start location."
 
 
 (after! ccls
+  ;;function for fixing autocorrect (should be added as a hook at some point (though naively adding to c++-mode would trigger infinite loop))
+        (defun t/c++-mode ()
+        (interactive)
+        (progn (c++-mode)
+        (setq-local flycheck-checker 'g++-gcc)))
   (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
   (set-lsp-priority! 'ccls 2); optional as ccls is the default in Doom
   (defun t/compile-c++ ()
@@ -782,7 +787,6 @@ With a prefix ARG, remove start location."
 
 
 
-(map! :after c-or-c++-mode
 
 
 (after! python
@@ -815,7 +819,8 @@ With a prefix ARG, remove start location."
            file)))
     (compile compile-command)))
 
-(global-set-key [] 'execute-c-program)
+(map! :after c-or-c++-mode
+;(global-set-key [] 'execute-c-program)
 (global-set-key [f9] 'code-compile))
 
 (after! org
@@ -826,4 +831,42 @@ With a prefix ARG, remove start location."
     )
   )
 
+
+(after! dap-mode
+  (setq dap-python-debugger 'debugpy))
 ;; the stuff below should probably be loaded later
+
+;; trying to configure dap mode might already be added in doom module for dap else:
+(map! :map dap-mode-map
+      :leader
+      :prefix ("d" . "dap")
+      ;; basics
+      :desc "dap next"          "n" #'dap-next
+      :desc "dap step in"       "i" #'dap-step-in
+      :desc "dap step out"      "o" #'dap-step-out
+      :desc "dap continue"      "c" #'dap-continue
+      :desc "dap hydra"         "h" #'dap-hydra
+      :desc "dap debug restart" "r" #'dap-debug-restart
+      :desc "dap debug"         "s" #'dap-debug
+
+      ;; debug
+      :prefix ("dd" . "Debug")
+      :desc "dap debug recent"  "r" #'dap-debug-recent
+      :desc "dap debug last"    "l" #'dap-debug-last
+
+      ;; eval
+      :prefix ("de" . "Eval")
+      :desc "eval"                "e" #'dap-eval
+      :desc "eval region"         "r" #'dap-eval-region
+      :desc "eval thing at point" "s" #'dap-eval-thing-at-point
+      :desc "add expression"      "a" #'dap-ui-expressions-add
+      :desc "remove expression"   "d" #'dap-ui-expressions-remove
+
+      :prefix ("db" . "Breakpoint")
+      :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
+      :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
+      :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
+      :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
+
+(after! doom
+  (run-hooks 'after-setting-font-hook))
