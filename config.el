@@ -6,7 +6,8 @@
 
 (setq   org-directory "~/org-roam/"
         org-roam-directory "~/org-roam/"
-        projectile-project-search-path '("~/repos" "~/Dropbox/"))
+        projectile-project-search-path '("~/repos" "~/Dropbox/")
+        org-fc-diretories '(org-directory))
 
 (use-package langtool
   :config
@@ -878,5 +879,22 @@ With a prefix ARG, remove start location."
       :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
       :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
 
-(after! doom
-  (run-hooks 'after-setting-font-hook))
+;; (after! doom
+;;   (run-hooks 'after-setting-font-hook)) ;;try this if .. happens again?
+
+(after! org-fc
+        :config
+        (require 'org-fc-hydra)
+        (evil-define-minor-mode-key '(normal insert emacs) 'org-fc-review-flip-mode
+        (kbd "RET") 'org-fc-review-flip
+        (kbd "n") 'org-fc-review-flip
+        (kbd "s") 'org-fc-review-suspend-card
+        (kbd "q") 'org-fc-review-quit)
+
+        (evil-define-minor-mode-key '(normal insert emacs) 'org-fc-review-rate-mode
+        (kbd "a") 'org-fc-review-rate-again
+        (kbd "h") 'org-fc-review-rate-hard
+        (kbd "g") 'org-fc-review-rate-good
+        (kbd "e") 'org-fc-review-rate-easy
+        (kbd "s") 'org-fc-review-suspend-card
+        (kbd "q") 'org-fc-review-quit))

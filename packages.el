@@ -17,6 +17,7 @@
 ;autocompletion
 (package! company-tabnine
   :recipe (:host github :repo "TommyX12/company-tabnine"))
+(package! nyan-mode)
 
 ;degugging
 (package! benchmark-init)
@@ -45,20 +46,22 @@
         (package! wakatime-mode)
 (package! pdf-tools)
 (package! org-noter-pdftools)
-(package! ccls)
-
-;testing out
-(package! org-auto-tangle)
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
-(package! nyan-mode)
+
+;testing out
+(package! org-fc
+	:recipe (:host github
+		:repo "l3kn/org-fc"
+                :files (:defaults "awk" "*.org"))) ;flashcards for org trying whether this has better
+(package! org-auto-tangle) ; not sure why added?
 (package! i3
   :recipe (:host github
            :repo "vava/i3-emacs"))
 (package! org-remark
   :recipe (:host github
            :repo "nobiot/org-remark"))
-(package! emr)
+(package! emr) ;not working in C where it would be useful
 (package! highlight)
 
 
