@@ -14,6 +14,7 @@
   (setq langtool-language-tool-server-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool-server.jar")
   (setq langtool-server-user-arguments '("-p" "8081")))
 
+;;emacs -e "(seq-random-elt '(\"Luan\" \"David\" \"Tassilo\" \"Simon\")"
 
 (setq org-agenda-files
 '("~/org-roam/.org"
@@ -100,6 +101,15 @@
 
 (setq org-track-ordered-property-with-tag t
       org-log-into-drawer t)
+;;;automatically add id on save (ask )
+;; (defun my-org-add-ids-to-headlines-in-file ()
+;;         "Add ID properties to all headlines in the current file which
+;; do not already have one."
+;;         (interactive)
+;;         (org-map-entries #'org-id-get-create))
+;; (add-hook 'org-mode-hook
+;;         (lambda ()
+;;                 (add-hook 'before-save-hook #'my-org-add-ids-to-headlines-in-file nil 'local)))
 ;;starting to try org-cite (not quite sure how and for what to use it) I mostly
 ;;want to use citation stuff with my blog, but also do something similar to
 ;;gwern with archiving entries
@@ -581,7 +591,7 @@ With a prefix ARG, remove start location."
 (use-package! org-download
   :after org
   :init
-  (map! :leader
+  (map! :leader ;;TODO configure this so it only works in org-mode
         :prefix "d"
         :desc "org-screenshot" "d" #'org-download-screenshot)
 (add-hook 'dired-mode-hook 'org-download-enable)
