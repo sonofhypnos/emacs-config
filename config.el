@@ -323,6 +323,7 @@
   :after org
   :config
 
+  ; TODO maybe load some of the big stuff here later, such that org doesn't take ages to load
 (setq daily-template
       (concat
        "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -490,7 +491,6 @@
        ;This worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
       (progn
         (progn
-    (start-process "i3-msg" "*i3-msg*" "i3-msg" "scratchpad show")
     (org-roam-db-sync)
      (delete-frame))
      nil)))
@@ -498,13 +498,14 @@
 
 (defun i3-hide-emacs ()
   (and  (tassilo/scratch-window-p)
-        (async-shell-command "i3-msg '[title=\"_emacs scratchpad_\"] move scratchpad'")))
+        (async-shell-command "i3-msg [title=\"_emacs scratchpad_\"] move scratchpad'")))
 
 (add-hook 'org-capture-prepare-finalize-hook #'i3-hide-emacs)
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
        (progn
+    (start-process "i3-msg" "*i3-msg*" "i3-msg" "[title=\"_emacs scratchpad_\"] scratchpad show");;not sure why this line is here?
          (delete-other-windows)))) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
 
