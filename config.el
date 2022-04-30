@@ -1,5 +1,4 @@
 ;;; config.el -*- lexical-binding: t; -*-
-
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
@@ -8,6 +7,33 @@
         org-roam-directory "~/org-roam/"
         projectile-project-search-path '("~/repos" "~/Dropbox/")
         org-fc-diretories '(org-directory))
+
+;;add curry
+(defsubst curry (function &rest arguments)
+  (lexical-let ((function function)
+                (arguments arguments))
+    (lambda (&rest more) (apply function (append arguments more)))))
+
+(defsubst rcurry (function &rest arguments)
+  (lexical-let ((function function)
+                (arguments arguments))
+    (lambda (&rest more) (apply function (append more arguments)))))
+
+(defsubst compose (function &rest more-functions)
+  (cl-reduce (lambda (f g)
+               (lexical-let ((f f) (g g))
+                 (lambda (&rest arguments)
+                   (funcall f (apply g arguments)))))
+             more-functions
+             :initial-value function))
+
+;;Checking for stupid config mistakes
+; TODO make sure this is triggered in the correct buffer on emacs startup
+(defun check-init-file ()
+ (while (re-search-forward "\\(use-package\\(.*\n?\\)\\)*)")
+   (if (not (some (rcurry #'string-match-p (match-string 0)) '(":after" ":defer"))))
+   (warn "Do not use use-package without "))) ;; I
+;;want to curry this function and then use map, but not quite sure how to do that in elisp
 
 (use-package langtool
   :config
@@ -643,6 +669,7 @@ With a prefix ARG, remove start location."
 (after! emacs-lisp-mode
   (setq doom-scratch-initial-major-mode emacs-lisp-mode))
 
+; TODO figure out why auto-tangle was configured?
 (use-package! org-auto-tangle
   :defer t
   :hook (org-mode . org-auto-tangle-mode)
@@ -838,9 +865,7 @@ With a prefix ARG, remove start location."
   (defun tassilo/open-pdf (filepath)
     ;;TODO figure out how to add zotero stuff from here (maybe call shell)
 
-    (find-file filepath)
-    )
-  )
+    (find-file filepath)))
 
 
 (after! dap-mode
@@ -881,6 +906,7 @@ With a prefix ARG, remove start location."
 
 ;; (after! doom
 ;;   (run-hooks 'after-setting-font-hook)) ;;try this if .. happens again?
+
 
 (after! org-fc
         :config
