@@ -120,6 +120,9 @@
   (anki-editor-reset-cloze-number))
 
 (after! org
+
+
+
 (setq org-tag-persistent-alist '(("@unterwegs") ("anki" . ?a) ("logbook")
 ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
 ("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus")
@@ -492,6 +495,12 @@
      (delete-frame))
      nil)))
 (add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
+
+(defun i3-hide-emacs ()
+  (and  (tassilo/scratch-window-p)
+        (async-shell-command "i3-msg '[title=\"_emacs scratchpad_\"] move scratchpad'")))
+
+(add-hook 'org-capture-prepare-finalize-hook #'i3-hide-emacs)
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
@@ -924,3 +933,4 @@ With a prefix ARG, remove start location."
         (kbd "e") 'org-fc-review-rate-easy
         (kbd "s") 'org-fc-review-suspend-card
         (kbd "q") 'org-fc-review-quit))
+
