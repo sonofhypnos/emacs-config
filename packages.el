@@ -55,9 +55,11 @@
 		:repo "l3kn/org-fc"
                 :files (:defaults "awk" "*.org"))) ;flashcards for org trying whether this has better
 (package! org-auto-tangle) ; not sure why added?
-(package! i3-integration
+(package! i3-mode
   :recipe (:host github
-           :repo "vava/i3-emacs"))
+           :repo "junyi-hou/i3-mode"
+           :files ("i3-mode.el" "i3-call" "sway-call")))
+
 (package! org-remark
   :recipe (:host github
            :repo "nobiot/org-remark"))

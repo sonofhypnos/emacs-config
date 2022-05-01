@@ -717,8 +717,11 @@ With a prefix ARG, remove start location."
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
 
 (map! (:when (featurep! :tools lookup)
- :leader :desc "projectile find file" :r ":" #'projectile-find-file
- :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command))
+ :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command
+ :leader :desc "window management" :r "C-j" #'+evil/window-move-left
+ :leader :desc "window management" :r "C-ö" #'+evil/window-move-right
+ :leader :desc "window management" :r "C-l" #'+evil/window-move-up
+ :leader :desc "window management" :r "C-k" #'+evil/window-move-down))
 
 ;;TODO add documentation from org file. Figure out how to do regular
 ;;documentation in elisp and how to export it to markdown for github
@@ -935,3 +938,38 @@ With a prefix ARG, remove start location."
         (kbd "s") 'org-fc-review-suspend-card
         (kbd "q") 'org-fc-review-quit))
 
+
+; TODO figure out how to make i3-mode actually work
+(after! i3-mode
+  (setq i3-flavor 'i3
+        i3-config-file "~/.config/regolith/i3/config")
+
+        (setq i3-bindings
+        '((?\C-l . "focus right")
+                (?\C-h . "focus left")
+                (?\C-k . "focus up")
+                (?\C-j . "focus down")))
+        (defun i3--key-binding-config ()
+        "Append STR with the key bindings settings according to `i3-bindings' in i3 configuration format. Return the appended string"
+        (with-temp-buffer
+        (let ((key-binding-string "\n"))
+        (dolist (binding i3-bindings)
+                (let* ((mod (--> (car binding)
+                        (event-modifiers it)
+                        (-map 'symbol-name it)
+                        (-map 's-capitalize it)
+                        (s-join "+" it)))
+                (key (-> (car binding)
+                                event-basic-type vector (key-description nil)))
+                (script (if (eq i3-flavor 'sway) "sway-call" "i3-call"))
+                (cmd (concat script " "
+                                (cdr binding) " "
+                                (-> (car binding) vector key-description))))
+                (setq key-binding-string
+                        (concat key-binding-string
+                                "bindsym " mod "+" key " exec --no-startup-id " cmd "\n"))))
+        (insert key-binding-string))
+        (buffer-string)))
+
+
+        (add-to-list 'i3-extra-config #'i3--key-binding-config))
