@@ -939,16 +939,17 @@ With a prefix ARG, remove start location."
         (kbd "q") 'org-fc-review-quit))
 
 
-; TODO figure out how to make i3-mode actually work
+; TODO figure out how to make i3-mode actually work (keybinds don't seem to be stolen from i3 (though not sure did not really get both to use the same keybinds at the same time))
 (after! i3-mode
   (setq i3-flavor 'i3
         i3-config-file "~/.config/regolith/i3/config")
 
-        (setq i3-bindings
-        '((?\C-l . "focus right")
-                (?\C-h . "focus left")
-                (?\C-k . "focus up")
-                (?\C-j . "focus down")))
+  ;below disabled (because distracting)
+        ;; (setq i3-bindings
+        ;; '((?\C-l . "focus right")
+        ;;         (?\C-h . "focus left")
+        ;;         (?\C-k . "focus up")
+        ;;         (?\C-j . "focus down")))
         (defun i3--key-binding-config ()
         "Append STR with the key bindings settings according to `i3-bindings' in i3 configuration format. Return the appended string"
         (with-temp-buffer
@@ -972,4 +973,5 @@ With a prefix ARG, remove start location."
         (buffer-string)))
 
 
-        (add-to-list 'i3-extra-config #'i3--key-binding-config))
+        ;; (add-to-list 'i3-extra-config #'i3--key-binding-config)
+        )
