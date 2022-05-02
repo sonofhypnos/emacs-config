@@ -551,16 +551,6 @@
                             "#+title: ${title}\n#+author:\n")
          :unnarrowed t))))
 
-(defun make-capture-frame ()
-    "Create a new frame and run org-capture."
-    (interactive)
-    (make-frame '((name . "capture")))
-    (require 'noflet)
-    (select-frame-by-name "capture")
-    (delete-other-windows)
-    (noflet ((switch-to-buffer-other-window (buf) (switch-to-buffer buf)))
-    (org-capture)))
-
 (use-package! websocket
     :after org-roam)
 
