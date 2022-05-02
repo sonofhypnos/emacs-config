@@ -47,6 +47,7 @@
 ;;want to curry this function and then use map, but not quite sure how to do that in elisp
 
 (use-package langtool
+  :defer-incrementally t
   :config
   (setq langtool-language-tool-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool.jar")
   (setq langtool-language-tool-server-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool-server.jar")
@@ -98,6 +99,7 @@
 
 (use-package! anki-editor
   :after org-roam
+  :defer-incrementally t
 
   :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
@@ -311,7 +313,7 @@
 (start-file-process "preview_blogentry" "*preview_blog_entry*" "~/repos/lazyblorg/preview_blogentry.sh" (buffer-file-name (buffer-base-buffer)))))
 
 (use-package! org-roam
-  :after org
+  :defer-incrementally t
   :config
 
   ; TODO maybe load some of the big stuff here later (loading things like the defvar below took essentially 0 time)
