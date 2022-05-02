@@ -939,27 +939,29 @@ With a prefix ARG, remove start location."
         ;;         (?\C-h . "focus left")
         ;;         (?\C-k . "focus up")
         ;;         (?\C-j . "focus down")))
-        (defun i3--key-binding-config ()
-        "Append STR with the key bindings settings according to `i3-bindings' in i3 configuration format. Return the appended string"
-        (with-temp-buffer
-        (let ((key-binding-string "\n"))
-        (dolist (binding i3-bindings)
-                (let* ((mod (--> (car binding)
-                        (event-modifiers it)
-                        (-map 'symbol-name it)
-                        (-map 's-capitalize it)
-                        (s-join "+" it)))
-                (key (-> (car binding)
-                                event-basic-type vector (key-description nil)))
-                (script (if (eq i3-flavor 'sway) "sway-call" "i3-call"))
-                (cmd (concat script " "
-                                (cdr binding) " "
-                                (-> (car binding) vector key-description))))
-                (setq key-binding-string
-                        (concat key-binding-string
-                                "bindsym " mod "+" key " exec --no-startup-id " cmd "\n"))))
-        (insert key-binding-string))
-        (buffer-string)))
+        ;; (defun i3--key-binding-config ()
+        ;; "Append STR with the key bindings settings according to `i3-bindings' in i3 configuration format. Return the appended string"
+        ; FIXME disabled the thing that changes keybinds
+
+        ;; (with-temp-buffer
+        ;; (let ((key-binding-string "\n"))
+        ;; (dolist (binding i3-bindings)
+        ;;         (let* ((mod (--> (car binding)
+        ;;                 (event-modifiers it)
+        ;;                 (-map 'symbol-name it)
+        ;;                 (-map 's-capitalize it)
+        ;;                 (s-join "+" it)))
+        ;;         (key (-> (car binding)
+        ;;                         event-basic-type vector (key-description nil)))
+        ;;         (script (if (eq i3-flavor 'sway) "sway-call" "i3-call"))
+        ;;         (cmd (concat script " "
+        ;;                         (cdr binding) " "
+        ;;                         (-> (car binding) vector key-description))))
+        ;;         (setq key-binding-string
+        ;;                 (concat key-binding-string
+        ;;                         "bindsym " mod "+" key " exec --no-startup-id " cmd "\n"))))
+        ;; (insert key-binding-string))
+        ;; (buffer-string)))
 
 
         ;; (add-to-list 'i3-extra-config #'i3--key-binding-config)
