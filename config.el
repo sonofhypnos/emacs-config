@@ -1,14 +1,23 @@
 ;;; config.el -*- lexical-binding: t; -*-
+;;;
+; TODO Sprincle in documentation from the org-file
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
+; TODO maybe use something like defer-incrementally or is this done by doom?
+;; :defer-incrementally SYMBOL|LIST|t
+;;   Takes a symbol or list of symbols representing packages that will be loaded
+;;   incrementally at startup before this one. This is helpful for large packages
+;;   like magit or org, which load a lot of dependencies on first load. This lets
+;;   you load them piece-meal during idle periods, so that when you finally do need
+;;   the package, it'll load quicker.
 
 (setq   org-directory "~/org-roam/"
         org-roam-directory "~/org-roam/"
         projectile-project-search-path '("~/repos" "~/Dropbox/")
         org-fc-diretories '(org-directory))
 
-;;add curry
+;;add curry for functions further down
 (defsubst curry (function &rest arguments)
   (lexical-let ((function function)
                 (arguments arguments))
@@ -29,6 +38,8 @@
 
 ;;Checking for stupid config mistakes
 ; TODO make sure this is triggered in the correct buffer on emacs startup
+; FIXME check-init-file does not work at the moment check if langtool is detected if necessary
+
 (defun check-init-file ()
  (while (re-search-forward "\\(use-package\\(.*\n?\\)\\)*)")
    (if (not (some (rcurry #'string-match-p (match-string 0)) '(":after" ":defer"))))
@@ -42,6 +53,8 @@
   (setq langtool-server-user-arguments '("-p" "8081")))
 
 ;;emacs -e "(seq-random-elt '(\"Luan\" \"David\" \"Tassilo\" \"Simon\")"
+
+; FIXME org-agenda-files should probably be loaded after org (might be overwritten)
 
 (setq org-agenda-files
 '("~/org-roam/.org"
@@ -131,7 +144,8 @@
 
 (setq org-track-ordered-property-with-tag t
       org-log-into-drawer t)
-;;;automatically add id on save (ask )
+
+;;; ; TODO automatically add id on save (ask Hauke if sensible)
 ;; (defun my-org-add-ids-to-headlines-in-file ()
 ;;         "Add ID properties to all headlines in the current file which
 ;; do not already have one."
@@ -199,26 +213,30 @@
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
 
 (after! org
-  :config
 
 (setq org-export-with-tasks nil
       org-refile-use-cache t) ;;testing for now
+
 (defun mdlinks-to-orglinks ()
     (interactive)
     (evil-ex "%s/\\[\\(.*?\\)\\](\\(.*?\\))/[[\\1][\\2]]/g"))
 
 
 (defun pushblog ()
+  "Parse blog entries to blog directory and push to github"
   (interactive)
 (start-file-process "tassilos_invocation.sh" "*push-blog*" "~/repos/lazyblorg/tassilos_invocation.sh"))
 
 (defvar memacs-root org-directory)
 (defvar memacs-file-pattern "photos.org_archive") ;; also possible: "*.org"
-;; links for Memacs setup
-(setq org-link-abbrev-alist
+
+
+(setq org-link-abbrev-alist ; FIXME Memacs links don't work at the moment
         '(("tsfile" .
         "/home/tassilo/org-roam/photos.org_archive::/\*.*%s/")))
+
 (defun my-handle-tsfile-link (querystring)
+  "query stuff that is supposed to make memacs links work"
   (message (concat "DEBUG1: querystring: " querystring))
   (message (concat "DEBUG2: "
                           "grep \""
@@ -259,31 +277,6 @@
 )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ;;taken from lazyblorg
 (defun my-lazyblorg-test()
 "Saves current blog entry to file and invoke lazyblorg process with it"
@@ -313,17 +306,15 @@
         (turn-on-evil-mode)))
 
 (defun preview-blogentry-current-file ()
+  "preview current blogentry in the browser"
     (interactive)
 (start-file-process "preview_blogentry" "*preview_blog_entry*" "~/repos/lazyblorg/preview_blogentry.sh" (buffer-file-name (buffer-base-buffer)))))
-
-
-
 
 (use-package! org-roam
   :after org
   :config
 
-  ; TODO maybe load some of the big stuff here later, such that org doesn't take ages to load
+  ; TODO maybe load some of the big stuff here later (loading things like the defvar below took essentially 0 time)
 (setq daily-template
       (concat
        "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
@@ -449,8 +440,7 @@
 
 
 (setq +org-roam-open-buffer-on-find-file nil)
-(setq org-roam-db-gc-threshold most-positive-fixnum)
-;; Mentioned performance optimization in the manual. I have enough memory anyways
+(setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned performance optimization in the manual. I have enough memory anyways
 
 (defun org-hide-properties ()
   "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
@@ -479,10 +469,12 @@
 (add-hook 'org-roam-mode-hook #'org-hide-properties)
 
 (defun completion-ignore-case-enable ()
+  "enable completion in org-mode"
     (setq completion-ignore-case t))
 (add-hook 'org-mode-hook #'completion-ignore-case-enable)
 
 (defun tassilo/scratch-window-p ()
+  "Current fram is a scratchpad window"
   (string= (substring-no-properties (cdr (assoc 'name (frame-parameters))))
                                     "_emacs scratchpad_"))
 (defun tassilo/org-capture-cleanup ()
@@ -497,8 +489,14 @@
 (add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
 
 (defun i3-hide-emacs ()
+  ; FIXME Seems like this function is triggered when capturing not when ending capture for some reason?
+
+  "Hide emacs scratchpad"
   (and  (tassilo/scratch-window-p)
         (async-shell-command "i3-msg [title=\"_emacs scratchpad_\"] move scratchpad'")))
+
+;;FIXME perhaps advice for shorter time to hide window
+; FIXME capture seems to have stopped working
 
 (add-hook 'org-capture-prepare-finalize-hook #'i3-hide-emacs)
 
@@ -509,7 +507,7 @@
          (delete-other-windows)))) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
 
-(require 'org-roam-protocol)
+(require 'org-roam-protocol) ; FIXME this should probably get it's own use-package or something?
 
 (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
 
@@ -713,8 +711,7 @@ With a prefix ARG, remove start location."
  :leader :desc "window management" :r "C-l" #'+evil/window-move-up
  :leader :desc "window management" :r "C-k" #'+evil/window-move-down))
 
-;;TODO add documentation from org file. Figure out how to do regular
-;;documentation in elisp and how to export it to markdown for github
+;;this is required for benchmark-init to stop complaining
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
  (use-package benchmark-init
    :config
