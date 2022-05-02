@@ -444,6 +444,7 @@
 (setq +org-roam-open-buffer-on-find-file nil)
 (setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned performance optimization in the manual. I have enough memory anyways
 
+
 (defun org-hide-properties ()
   "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
   (interactive)
@@ -475,6 +476,7 @@
     (setq completion-ignore-case t))
 (add-hook 'org-mode-hook #'completion-ignore-case-enable)
 
+;; setup org-capture hook stuff
 (defun tassilo/scratch-window-p ()
   "Current fram is a scratchpad window"
   (string= (substring-no-properties (cdr (assoc 'name (frame-parameters))))
@@ -488,26 +490,30 @@
     (org-roam-db-sync)
      (delete-frame))
      nil)))
-(add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
+
+(defun finalize-capture ()
+  "finalize-capture"
+  (interactive)
+  (i3-hide-emacs)
+  (org-capture-finalize))
+
+; FIXME figure out why map! is not working here:
+(map! :map org-capture-mode-map
+      "C-c C-c" #'finalize-capture)
+
 
 (defun i3-hide-emacs ()
-  ; FIXME Seems like this function is triggered when capturing not when ending capture for some reason?
-
   "Hide emacs scratchpad"
   (and  (tassilo/scratch-window-p)
-        (async-shell-command "i3-msg [title=\"_emacs scratchpad_\"] move scratchpad'")))
-
-;;FIXME perhaps advice for shorter time to hide window
-; FIXME capture seems to have stopped working
-
-(add-hook 'org-capture-prepare-finalize-hook #'i3-hide-emacs)
+        (async-shell-command "i3-msg '[title=\"_emacs scratchpad_\"] move scratchpad'"))) ;;
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
-       (progn
-    (start-process "i3-msg" "*i3-msg*" "i3-msg" "[title=\"_emacs scratchpad_\"] scratchpad show");;not sure why this line is here?
-         (delete-other-windows)))) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
+        (doom/window-maximize-buffer)
+       )) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
+
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
+(add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
 
 (require 'org-roam-protocol) ; FIXME this should probably get it's own use-package or something?
 
