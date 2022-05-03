@@ -14,10 +14,15 @@
 (package! real-auto-save
   :recipe (:host github
            :repo "ChillarAnand/real-auto-save")) ;; not sure whether this helps with anything?
+
+(package! org-wild-notifier)
 ;autocompletion
 (package! company-tabnine
   :recipe (:host github :repo "TommyX12/company-tabnine"))
+
+;lols
 (package! nyan-mode)
+
 
 ;degugging
 (package! benchmark-init)
