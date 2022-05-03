@@ -972,3 +972,9 @@ With a prefix ARG, remove start location."
 
         ;; (add-to-list 'i3-extra-config #'i3--key-binding-config)
         )
+
+;;trying out to disable garbage-collection
+(setq gc-cons-threshold 8000000000)
+(defun garbage-collect (&rest args)
+(message "trying to garbage collect. probably you want to quit emacs."))
+(setq garbage-collection-messages t)
