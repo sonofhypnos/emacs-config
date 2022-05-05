@@ -68,6 +68,9 @@
            :repo "nobiot/org-remark"))
 (package! emr) ;not working in C where it would be useful
 (package! highlight)
+(package! org-nag-clock-mode
+  :recipe (:host github
+           :repo "a-schaefers/org-nag-clock-mode"))
 
 
 ;;(package! activity-watch-mode) maybe add again when debugged
