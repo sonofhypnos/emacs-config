@@ -1,6 +1,6 @@
 ;;; config.el -*- lexical-binding: t; -*-
 ;;;
-; TODO Sprincle in documentation from the org-file
+; TODO Sprinkle in documentation from the org-file
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
@@ -11,6 +11,8 @@
 ;;   like magit or org, which load a lot of dependencies on first load. This lets
 ;;   you load them piece-meal during idle periods, so that when you finally do need
 ;;   the package, it'll load quicker.
+
+
 
 (setq   org-directory "~/org-roam/"
         org-roam-directory "~/org-roam/"
@@ -213,8 +215,6 @@
         :prefix "m"
         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
-
-(after! org
 
 (setq org-export-with-tasks nil
       org-refile-use-cache t) ;;testing for now
@@ -501,11 +501,24 @@
 (map! :map org-capture-mode-map
       "C-c C-c" #'finalize-capture)
 
+;; macro stolen from here: https://github.com/SqrtMinusOne/dotfiles/blob/master/Emacs.org
+(defmacro i3-msg (&rest args)
+  `(start-process "emacs-i3-windmove" "i3-msg" "i3-msg" ,@args))
+(defmacro press-key (&rest args)
+  "HACK: Simulates keypress. This is useful for some functionality that I can't get to work otherwise (i3-scratchpad)"
+        ;;sleep is in the command so the keypress to trigger this does not conflict with the keypress to trigger
+        ;;; FIXME I copied adapted this from the i3-msg macro, but I am not entirely sure if I should just make this a function
+  `(shell-command ,(concat "sleep 0.1; xdotool" ,@args))) ;;; FIXME not sure if @ is doing here. Also not sure if the second comma is needed
 
 (defun i3-hide-emacs ()
   "Hide emacs scratchpad"
+  (interactive)
   (and  (tassilo/scratch-window-p)
-        (async-shell-command "i3-msg '[title=\"_emacs scratchpad_\"] move scratchpad'"))) ;;
+        (press-key "super+e"))) ;;
+;;[title=\"_emacs scratchpad_\"]
+
+
+;;(shell-command "sleep 0.1; xdotool key super+e")
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
@@ -868,12 +881,6 @@ With a prefix ARG, remove start location."
 (map! :after c-or-c++-mode
 ;(global-set-key [] 'execute-c-program)
 (global-set-key [f9] 'code-compile))
-
-(after! org
-  (defun tassilo/open-pdf (filepath)
-    ;;TODO figure out how to add zotero stuff from here (maybe call shell)
-
-    (find-file filepath)))
 
 
 (after! dap-mode
