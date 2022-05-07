@@ -207,7 +207,23 @@
           ("CON" . +org-todo-cancel)
           ("PROJ" . +org-todo-project)
           ("NO"   . +org-todo-cancel)
-          ("KILL" . +org-todo-cancel))))
+          ("KILL" . +org-todo-cancel)))
+
+
+  ;; org-agenda filters:
+  (setq org-stuck-projects
+        '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODE")))
+
+  (setq org-agenda-custom-commands
+'(("n" "Agenda and all TODOs")
+  ("z" "Zuordnen"
+   ((agenda "")
+    (tags-todo ""))
+
+   )
+
+  ))
+
 
 (map! (:after org-roam
         :map org-mode-map
