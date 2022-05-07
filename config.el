@@ -743,6 +743,9 @@ With a prefix ARG, remove start location."
 
 (map! (:when (featurep! :tools lookup)
  :leader :desc "execute emacs command" :r "SPC" #'execute-extended-command
+ :leader :desc "execute emacs command" :r ":" #'execute-extended-command
+ :leader :desc "list buffers" :r "b l"
+
  :leader :desc "window management" :r "C-j" #'+evil/window-move-left
  :leader :desc "window management" :r "C-ö" #'+evil/window-move-right
  :leader :desc "window management" :r "C-l" #'+evil/window-move-up
