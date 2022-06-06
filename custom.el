@@ -42,8 +42,7 @@
     (cons 320 "#775b67")
     (cons 340 "#405A61")
     (cons 360 "#405A61")))
- '(vc-annotate-very-old-color nil)
- '(warning-suppress-types '((python-mode-hook) ((flycheck syntax-checker)))))
+ '(vc-annotate-very-old-color nil))
  ;; not sure this is the right place to set this.
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

@@ -12,7 +12,12 @@
 ;;   you load them piece-meal during idle periods, so that when you finally do need
 ;;   the package, it'll load quicker.
 
+;; (after! c++-mode
+;;   (map! :map c++-mode-map
+;;   "SPC c k" (lambda () (interactive) (manual-entry (current-word)))
+;;         )
 
+;;   )
 
 (setq   org-directory "~/org-roam/"
         org-roam-directory "~/org-roam/"
@@ -48,12 +53,12 @@
    (warn "Do not use use-package without "))) ;; I
 ;;want to curry this function and then use map, but not quite sure how to do that in elisp
 
-(use-package langtool
-  :defer-incrementally t
-  :config
-  (setq langtool-language-tool-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool.jar")
-  (setq langtool-language-tool-server-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool-server.jar")
-  (setq langtool-server-user-arguments '("-p" "8081")))
+;; (use-package langtool
+;;   :defer-incrementally t
+;;   :config
+;;   (setq langtool-language-tool-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool.jar")
+;;   (setq langtool-language-tool-server-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool-server.jar")
+;;   (setq langtool-server-user-arguments '("-p" "8081")))
 
 ;;emacs -e "(seq-random-elt '(\"Luan\" \"David\" \"Tassilo\" \"Simon\")"
 
@@ -92,54 +97,55 @@
 ;; The personal dictionary file has to exist, otherwise hunspell will
 ;; silently not use it.
 
-(map! :after anki-editor
-      :map org-mode-map
-        "<f12>"  #'anki-editor-cloze-region-dont-incr
-        "<f11>"  #'anki-editor-cloze-region-auto-incr
-        "<f10>"  #'anki-editor-reset-cloze-number
-        "<f9>"   #'anki-editor-push-tree)
+;; (map! :after anki-editor
+;;       :map org-mode-map
+;;         "<f12>"  #'anki-editor-cloze-region-dont-incr
+;;         "<f11>"  #'anki-editor-cloze-region-auto-incr
+;;         "<f10>"  #'anki-editor-reset-cloze-number
+;;         "<f9>"   #'anki-editor-push-tree)
 
-(use-package! anki-editor
-  :after org-roam
-  :defer-incrementally t
+;; (use-package! anki-editor
+;;   :after org-roam
+;;   :defer-incrementally t
 
-  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+;;   :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
-  :config
-  (setq-default anki-editor-use-math-jax t)
-  (setq anki-editor-org-tags-as-anki-tags t)
+;;   :config
+;;   (setq-default anki-editor-use-math-jax t)
+;;   (setq anki-editor-org-tags-as-anki-tags t)
 
-  (defun anki-editor-cloze-region-auto-incr (&optional arg)
-    "Cloze region without hint and increase card number."
-    (interactive)
-    (anki-editor-cloze-region my-anki-editor-cloze-number "")
-    (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-    (forward-sexp))
-  (defun anki-editor-cloze-region-dont-incr (&optional arg)
-    "Cloze region without hint using the previous card number."
-    (interactive)
-    (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
-                                     (progn
-                                       (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
-                                       1))
-                                    (t (1- my-anki-editor-cloze-number))) "")
-    (forward-sexp))
-  (defun anki-editor-reset-cloze-number (&optional arg)
-    "Reset cloze number to ARG or 1"
-    (interactive)
-    (setq my-anki-editor-cloze-number (or arg 1)))
-  (defun anki-editor-push-tree ()
-    "Push all notes under a tree."
-    (interactive)
-    (anki-editor-push-notes '(4))
-    (anki-editor-reset-cloze-number))
-  ;; Initialize
-  (anki-editor-reset-cloze-number))
+;;   (defun anki-editor-cloze-region-auto-incr (&optional arg)
+;;     "Cloze region without hint and increase card number."
+;;     (interactive)
+;;     (anki-editor-cloze-region my-anki-editor-cloze-number "")
+;;     (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+;;     (forward-sexp))
+;;   (defun anki-editor-cloze-region-dont-incr (&optional arg)
+;;     "Cloze region without hint using the previous card number."
+;;     (interactive)
+;;     (anki-editor-cloze-region (cond ((eq my-anki-editor-cloze-number 1)
+;;                                      (progn
+;;                                        (setq my-anki-editor-cloze-number (1+ my-anki-editor-cloze-number))
+;;                                        1))
+;;                                     (t (1- my-anki-editor-cloze-number))) "")
+;;     (forward-sexp))
+;;   (defun anki-editor-reset-cloze-number (&optional arg)
+;;     "Reset cloze number to ARG or 1"
+;;     (interactive)
+;;     (setq my-anki-editor-cloze-number (or arg 1)))
+;;   (defun anki-editor-push-tree ()
+;;     "Push all notes under a tree."
+;;     (interactive)
+;;     (anki-editor-push-notes '(4))
+;;     (anki-editor-reset-cloze-number))
+;;   ;; Initialize
+;;   (anki-editor-reset-cloze-number))
 
 (after! org
+  ;; enable sound:
+  (setq org-clock-play-sound t)
 
-
-
+  ;;
 (setq org-tag-persistent-alist '(("@unterwegs") ("anki" . ?a) ("logbook")
 ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
 ("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus")
@@ -193,9 +199,9 @@
            "YES(y)"
            "NO(n)")
           (sequence
-           "|"
            "PRO(p)"   ; Pro in pro-con list
-           "CON(c)"))   ; Con in pro and con list
+           "CON(c)"
+           "|"))   ; Con in pro and con list
         org-todo-keyword-faces
         '(("[-]"  . +org-todo-active)
           ("STRT" . +org-todo-active)
@@ -211,33 +217,23 @@
 
 
   ;; org-agenda filters:
-  (setq org-stuck-projects
-        '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODE")))
+  ;; (setq org-stuck-projects
+  ;;       '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODE")))
 
   (setq org-agenda-custom-commands
 '(("n" "Agenda and all TODOs")
   ("z" "Zuordnen"
    ((agenda "")
-    (tags-todo ""))
-
-   )
-
-  ))
+    (tags-todo "")))))
 
 
-(map! (:after org-roam
-        :map org-mode-map
-        :localleader
-        :prefix "m"
-        :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
-        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
 
-(setq org-export-with-tasks nil
-      org-refile-use-cache t) ;;testing for now
+(setq org-export-with-tasks nil) ;;what is this?
+;      org-refile-use-cache t) ;;testing for now (this might have caused major org trouble)
 
-(defun mdlinks-to-orglinks ()
-    (interactive)
-    (evil-ex "%s/\\[\\(.*?\\)\\](\\(.*?\\))/[[\\1][\\2]]/g"))
+;; (defun mdlinks-to-orglinks ()
+;;     (interactive)
+;;     (evil-ex "%s/\\[\\(.*?\\)\\](\\(.*?\\))/[[\\1][\\2]]/g"))
 
 
 (defun pushblog ()
@@ -329,8 +325,14 @@
 (start-file-process "preview_blogentry" "*preview_blog_entry*" "~/repos/lazyblorg/preview_blogentry.sh" (buffer-file-name (buffer-base-buffer)))))
 
 (use-package! org-roam
-  :defer-incrementally t
+  :defer-incrementally t ;did the after org thing trigger something
   :config
+(map! (
+        :map org-roam-mode-map
+        :localleader
+        :prefix "m"
+        :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
+        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
 
   ; TODO maybe load some of the big stuff here later (loading things like the defvar below took essentially 0 time)
 (setq daily-template
@@ -507,15 +509,15 @@
      (delete-frame))
      nil)))
 
-(defun finalize-capture ()
-  "finalize-capture"
-  (interactive)
-  (i3-hide-emacs)
-  (org-capture-finalize))
+;; (defun finalize-capture ()
+;;   "finalize-capture"
+;;   (interactive)
+;;   (i3-hide-emacs)
+;;   (org-capture-finalize))
 
-; FIXME figure out why map! is not working here:
-(map! :map org-capture-mode-map
-      "C-c C-c" #'finalize-capture)
+;; ; FIXME figure out why map! is not working here:
+;; (map! :map org-capture-mode-map
+;;       "C-c C-c" #'finalize-capture)
 
 ;; macro stolen from here: https://github.com/SqrtMinusOne/dotfiles/blob/master/Emacs.org
 (defmacro i3-msg (&rest args)
@@ -527,13 +529,12 @@
   `(shell-command ,(concat "sleep 0.1; xdotool" ,@args))) ;;; FIXME not sure if @ is doing here. Also not sure if the second comma is needed
 
 (defun i3-hide-emacs ()
-  "Hide emacs scratchpad"
+  "Hide emacs scratchpad by simulating key command (HACK!)"
   (interactive)
   (and  (tassilo/scratch-window-p)
         (press-key "super+e"))) ;;
+;;things tried:
 ;;[title=\"_emacs scratchpad_\"]
-
-
 ;;(shell-command "sleep 0.1; xdotool key super+e")
 
 (defun tassilo/org-capture-setup ()
@@ -544,7 +545,8 @@
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
 (add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
 
-(require 'org-roam-protocol) ; FIXME this should probably get it's own use-package or something?
+;; (require 'org-roam-protocol) ;FIXME might still be needed? (could be huge error?)
+                                        ; FIXME this should probably get it's own use-package or something?
 
 (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
 
@@ -597,58 +599,58 @@
           org-roam-ui-update-on-save t
           org-roam-ui-open-on-start t))
 
-(use-package! org-noter
-  :after org
-  :config
-  (setq org-noter-notes-search-path org-directory))
+;; (use-package! org-noter
+;;   :after org
+;;   :config
+;;   (setq org-noter-notes-search-path org-directory))
 
 ;; see doom readme for biblio for further config info
-(after! oc ;right package?
-  (setq! bibtex-completion-bibliography '("~/repos/bibliography/zotLib.bib"))
-  ;; not sure where my files for zotero are currently stored
-  ;; once I understand that part I might uncomment this:
-  ;; You may also set the respective note and library path variables as well for enhanced functionality:
- (setq! bibtex-completion-library-path "~/Zotero/storage/"
-        bibtex-completion-notes-path (concat org-directory "lit/"))
-        org-cite-follow-processor 'basic
- )
+;; (after! oc ;right package?
+;;   (setq! bibtex-completion-bibliography '("~/repos/bibliography/zotLib.bib"))
+;;   ;; not sure where my files for zotero are currently stored
+;;   ;; once I understand that part I might uncomment this:
+;;   ;; You may also set the respective note and library path variables as well for enhanced functionality:
+;;  (setq! bibtex-completion-library-path "~/Zotero/storage/"
+;;         bibtex-completion-notes-path (concat org-directory "lit/"))
+;;         org-cite-follow-processor 'basic
+;;  )
 
-(use-package! org-pdftools
-  :after org
-  :hook (org-mode . org-pdftools-setup-link)
-  (pdf-tools-install))
+;; (use-package! org-pdftools
+;;   :after org
+;;   :hook (org-mode . org-pdftools-setup-link)
+;;   (pdf-tools-install))
 
-(use-package! org-noter-pdftools
-  :after org-noter
-  :config
-  ;; Add a function to ensure precise note is inserted
-  (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
-    (interactive "P")
-    (org-noter--with-valid-session
-     (let ((org-noter-insert-note-no-questions (if toggle-no-questions
-                                                   (not org-noter-insert-note-no-questions)
-                                                 org-noter-insert-note-no-questions))
-           (org-pdftools-use-isearch-link t)
-           (org-pdftools-use-freestyle-annot t))
-       (org-noter-insert-note (org-noter--get-precise-info)))))
-  ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
-  (defun org-noter-set-start-location (&optional arg)
-    "When opening a session with this document, go to the current location.
-With a prefix ARG, remove start location."
-    (interactive "P")
-    (org-noter--with-valid-session
-     (let ((inhibit-read-only t)
-           (ast (org-noter--parse-root))
-           (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
-       (with-current-buffer (org-noter--session-notes-buffer session)
-         (org-with-wide-buffer
-          (goto-char (org-element-property :begin ast))
-          (if arg
-              (org-entry-delete nil org-noter-property-note-location)
-            (org-entry-put nil org-noter-property-note-location
-                           (org-noter--pretty-print-location location))))))))
-  (with-eval-after-load 'pdf-annot
-    (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
+;; (use-package! org-noter-pdftools
+;;   :after org-noter
+;;   :config
+;;   ;; Add a function to ensure precise note is inserted
+;;   (defun org-noter-pdftools-insert-precise-note (&optional toggle-no-questions)
+;;     (interactive "P")
+;;     (org-noter--with-valid-session
+;;      (let ((org-noter-insert-note-no-questions (if toggle-no-questions
+;;                                                    (not org-noter-insert-note-no-questions)
+;;                                                  org-noter-insert-note-no-questions))
+;;            (org-pdftools-use-isearch-link t)
+;;            (org-pdftools-use-freestyle-annot t))
+;;        (org-noter-insert-note (org-noter--get-precise-info)))))
+;;   ;; fix https://github.com/weirdNox/org-noter/pull/93/commits/f8349ae7575e599f375de1be6be2d0d5de4e6cbf
+;;   (defun org-noter-set-start-location (&optional arg)
+;;     "When opening a session with this document, go to the current location.
+;; With a prefix ARG, remove start location."
+;;     (interactive "P")
+;;     (org-noter--with-valid-session
+;;      (let ((inhibit-read-only t)
+;;            (ast (org-noter--parse-root))
+;;            (location (org-noter--doc-approx-location (when (called-interactively-p 'any) 'interactive))))
+;;        (with-current-buffer (org-noter--session-notes-buffer session)
+;;          (org-with-wide-buffer
+;;           (goto-char (org-element-property :begin ast))
+;;           (if arg
+;;               (org-entry-delete nil org-noter-property-note-location)
+;;             (org-entry-put nil org-noter-property-note-location
+;;                            (org-noter--pretty-print-location location))))))))
+;;   (with-eval-after-load 'pdf-annot
+;;     (add-hook 'pdf-annot-activate-handler-functions #'org-noter-pdftools-jump-to-note)))
 
 (use-package! org-download
   :after org
@@ -734,7 +736,7 @@ With a prefix ARG, remove start location."
         ad-do-it)))
 
 
-(use-package! term
+(use-package! term ;;was something up with term?
   :after org
   :config
   (setq explicit-shell-file-name "zsh")
@@ -753,7 +755,7 @@ With a prefix ARG, remove start location."
 
 ;;this is required for benchmark-init to stop complaining
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
- (use-package benchmark-init
+ (use-package benchmark-init ;is this overdue?
    :config
    (require 'benchmark-init-modes) ; explicitly required
    (add-hook 'after-init-hook #'benchmark-init/deactivate)))
@@ -764,14 +766,21 @@ With a prefix ARG, remove start location."
                                        ("#+begin_src" . "<<")
                                        ("#+end_src" . ">>")))
 (setq prettify-symbols-unprettyfy-at-point 'rigth-edge)
-(add-hook 'org-mode-hook 'prettify-symbols-mode)
+(add-hook 'org-mode-hook 'prettify-symbols-mode) ;;is this causing problems?
 
-(after! emr (define-key prog-mode-map (kbd "M-RET") 'em2r-show-refactor-menu))
+;; (after! emr (define-key prog-mode-map (kbd "M-RET") 'em2r-show-refactor-menu))
 
-(after! lsp-rust
-  (setq lsp-rust-server 'rust-analyzer))
+;; (after! lsp-rust
+;;   (setq lsp-rust-server 'rust-analyzer))
 
-(remove-hook 'text-mode-hook #'spell-fu-mode)
+;; (after! lsp-mode
+;;   ;; (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\.my-folder\\'")
+;;   ;; ;; or
+;;   ;; (add-to-list 'lsp-file-watch-ignored-files "[/\\\\]\\.my-files\\'"))
+;;   (add-to-list 'lsp-file-watch-ignored-directories "[/\\\\]\\emacs\\'")
+;;   )
+
+;; (remove-hook 'text-mode-hook #'spell-fu-mode) (not sure this was ever needed?)
 
 ;;(defun my/monkeytype-mode-hook ()
 ;;  "Hooks for monkeytype-mode."
@@ -780,13 +789,14 @@ With a prefix ARG, remove start location."
 ;;  (evil-insert -1))
 ;;(add-hook 'monkeytype-mode-hook #'my/monkeytype-mode-hook)
 (after! company
-  (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
-  (setq company-idle-delay 0.2)) ;; this value should not be 0!
+  ;; (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
+  (setq company-idle-delay 0.2)
+  ) ;; this value should not be 0!
 
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
 
-(after! core-ui (menu-bar-mode 1))
+;; (after! core-ui (menu-bar-mode 1)) ;;is this causing problems?
 
 ;; custom functions
 (defun t/random-phrase ()
@@ -840,9 +850,6 @@ With a prefix ARG, remove start location."
   (interactive "@")
   (shell-command "xterm > /dev/null 2>&1 & disown" nil nil))
 
-;;put following after python config:
-(setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
-(setq +python-jupyter-repl-args '("--simple-prompt"))
 
 
 (after! ccls
@@ -868,16 +875,26 @@ With a prefix ARG, remove start location."
 
 
 (after! python
+;;put following after python config:
+(setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
+(setq +python-jupyter-repl-args '("--simple-prompt"))
   (defun t/pyconf ()
     (interactive)
         (let ((dir (file-name-directory buffer-file-name)))
                 (setq-local compile-command
                         (concat "chmod +x " (buffer-file-name) ";cat " dir "1.in | " (buffer-file-name)))))
 
-        (add-hook 'python-mode-hook #'t/pyconf))
+        (add-hook 'python-mode-hook #'t/pyconf)
 
 
-;;might want to defer evaluation of this function.
+        )
+
+
+
+(map! :after c-or-c++-mode
+;(global-set-key [] 'execute-c-program)
+;; (global-set-key [f9] 'code-compile)
+;;
 (defun execute-c-program ()
   (interactive)
   (defvar foo)
@@ -896,17 +913,11 @@ With a prefix ARG, remove start location."
            (file-name-sans-extension file)
            file)))
     (compile compile-command)))
-
-(map! :after c-or-c++-mode
-;(global-set-key [] 'execute-c-program)
-(global-set-key [f9] 'code-compile))
+)
 
 
 (after! dap-mode
-  (setq dap-python-debugger 'debugpy))
-;; the stuff below should probably be loaded later
-
-;; trying to configure dap mode might already be added in doom module for dap else:
+  (setq dap-python-debugger 'debugpy)
 (map! :map dap-mode-map
       :leader
       :prefix ("d" . "dap")
@@ -938,26 +949,33 @@ With a prefix ARG, remove start location."
       :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
       :desc "dap breakpoint log message" "l" #'dap-breakpoint-log-message)
 
+  )
+;; the stuff below should probably be loaded later
+
+;; trying to configure dap mode might already be added in doom module for dap else:
+
+
 ;; (after! doom
 ;;   (run-hooks 'after-setting-font-hook)) ;;try this if .. happens again?
 
 
-(after! org-fc
-        :config
-        (require 'org-fc-hydra)
-        (evil-define-minor-mode-key '(normal insert emacs) 'org-fc-review-flip-mode
-        (kbd "RET") 'org-fc-review-flip
-        (kbd "n") 'org-fc-review-flip
-        (kbd "s") 'org-fc-review-suspend-card
-        (kbd "q") 'org-fc-review-quit)
+;; stuff fror flashcards
+;; (after! org-fc ;;(remove require)
+;;         :config
+;;         (require 'org-fc-hydra)
+;;         (evil-define-minor-mode-key '(normal insert emacs) 'org-fc-review-flip-mode
+;;         (kbd "RET") 'org-fc-review-flip
+;;         (kbd "n") 'org-fc-review-flip
+;;         (kbd "s") 'org-fc-review-suspend-card
+;;         (kbd "q") 'org-fc-review-quit)
 
-        (evil-define-minor-mode-key '(normal insert emacs) 'org-fc-review-rate-mode
-        (kbd "a") 'org-fc-review-rate-again
-        (kbd "h") 'org-fc-review-rate-hard
-        (kbd "g") 'org-fc-review-rate-good
-        (kbd "e") 'org-fc-review-rate-easy
-        (kbd "s") 'org-fc-review-suspend-card
-        (kbd "q") 'org-fc-review-quit))
+;;         (evil-define-minor-mode-key '(normal insert emacs) 'org-fc-review-rate-mode
+;;         (kbd "a") 'org-fc-review-rate-again
+;;         (kbd "h") 'org-fc-review-rate-hard
+;;         (kbd "g") 'org-fc-review-rate-good
+;;         (kbd "e") 'org-fc-review-rate-easy
+;;         (kbd "s") 'org-fc-review-suspend-card
+;;         (kbd "q") 'org-fc-review-quit))
 
 
 ; TODO figure out how to make i3-mode actually work (keybinds don't seem to be stolen from i3 (though not sure did not really get both to use the same keybinds at the same time))
