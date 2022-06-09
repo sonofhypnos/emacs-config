@@ -146,7 +146,7 @@
   (setq org-clock-play-sound t)
 
   ;;
-(setq org-tag-persistent-alist '(("@unterwegs") ("anki" . ?a) ("logbook")
+(setq org-tag-persistent-alist '(("continue?") ("@unterwegs") ("anki" . ?a) ("logbook")
 ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
 ("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus")
 ("Brainstorm" . ?b) ("@pc" . ?p) ("uni" . ?u) ("Computergrafik") ("laughing") ("projekt")
