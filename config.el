@@ -499,15 +499,6 @@
   "Current fram is a scratchpad window"
   (string= (substring-no-properties (cdr (assoc 'name (frame-parameters))))
                                     "_emacs scratchpad_"))
-(defun tassilo/org-capture-cleanup ()
-  "Delete capture windows if it is a scratch window"
-  (and (tassilo/scratch-window-p)
-       ;This worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
-      (progn
-        (progn
-    (org-roam-db-sync)
-     (delete-frame))
-     nil)))
 
 ;; (defun finalize-capture ()
 ;;   "finalize-capture"
@@ -522,31 +513,41 @@
 ;; macro stolen from here: https://github.com/SqrtMinusOne/dotfiles/blob/master/Emacs.org
 (defmacro i3-msg (&rest args)
   `(start-process "emacs-i3-windmove" "i3-msg" "i3-msg" ,@args))
-(defmacro press-key (&rest args)
-  "HACK: Simulates keypress. This is useful for some functionality that I can't get to work otherwise (i3-scratchpad)"
-        ;;sleep is in the command so the keypress to trigger this does not conflict with the keypress to trigger
-        ;;; FIXME I copied adapted this from the i3-msg macro, but I am not entirely sure if I should just make this a function
-  `(shell-command ,(concat "sleep 0.1; xdotool" ,@args))) ;;; FIXME not sure if @ is doing here. Also not sure if the second comma is needed
+;; (defmacro press-key (&rest args)
+;;   "HACK: Simulates keypress. This is useful for some functionality that I can't get to work otherwise (i3-scratchpad)"
+;;         ;;sleep is in the command so the keypress to trigger this does not conflict with the keypress to trigger
+;;         ;;; FIXME macro does not work
+;;   `(shell-command ,(concat "sleep 0.1; xdotool key " ,@args))) ;;; FIXME not sure if @ is doing here. Also not sure if the second comma is needed
+(defun press-key (bind)
+  (shell-command (concat "sleep 0.1; xdotool key " bind)))
 
-(defun i3-hide-emacs ()
+(defun i3-hide-scratch ()
   "Hide emacs scratchpad by simulating key command (HACK!)"
-  (interactive)
   (and  (tassilo/scratch-window-p)
         (press-key "super+e"))) ;;
 ;;things tried:
 ;;[title=\"_emacs scratchpad_\"]
 ;;(shell-command "sleep 0.1; xdotool key super+e")
+;;
+
+(defun tassilo/org-capture-cleanup ()
+  "Delete capture windows if it is a scratch window"
+  (and (tassilo/scratch-window-p)
+       ;This worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
+      (progn
+        (progn
+        (i3-hide-scratch)
+        (org-roam-db-sync)
+        (delete-frame))
+        nil)))
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
-        (doom/window-maximize-buffer)
+        (doom/window-maximize-buffer) ;this does seem to work!
        )) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
 
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
 (add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
-
-;; (require 'org-roam-protocol) ;FIXME might still be needed? (could be huge error?)
-                                        ; FIXME this should probably get it's own use-package or something?
 
 (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
 
