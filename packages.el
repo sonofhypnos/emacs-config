@@ -25,6 +25,7 @@
 
 
 ;degugging
+(package! lxd-tramp)
 (package! benchmark-init)
 
 ;not really used
