@@ -23,14 +23,14 @@
        ;;(helm + fuzzy)      ; the *other* search engine for love and life
        ;ido               ; the other *other* search engine...
        ;ivy               ; a search engine for love and life
-       (vertico)
+       vertico
 
        :ui
-       deft              ; notational velocity for Emacs
+       ;; deft              ; notational velocity for Emacs
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
        doom-quit         ; DOOM quit-message prompts when you quit Emacs
-       (emoji)  ;
+       emoji  ;
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
@@ -77,12 +77,12 @@
 
        :checkers
        syntax              ; tasing you for every semicolon you forget
-       (spell) ; tasing you for misspelling mispelling
+       spell ; tasing you for misspelling mispelling
        grammar           ; tasing grammar mistake every you make
 
        :tools
        ;;ansible
-       (debugger +lsp)          ; FIXME stepping through code, to help you add bugs
+       debugger         ; FIXME stepping through code, to help you add bugs
        ;;direnv
        ;;docker
        ;;editorconfig      ; let someone else argue about tabs vs spaces
@@ -109,8 +109,8 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       (cc +lsp)                ; C/C++/Obj-C madness
-       (clojure +lsp)           ; java with a lisp
+       cc                ; C/C++/Obj-C madness
+       ;; (clojure +lsp)           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
        ;;crystal           ; ruby at the speed of c
@@ -119,7 +119,7 @@
        ;;(dart +flutter)   ; paint ui and not much else
        ;;elixir            ; erlang done right
        ;;elm               ; care for a cup of TEA?
-       (emacs-lisp +lsp)        ; drown in parentheses
+       (emacs-lisp +lsp)     ; drown in parentheses
        ;;erlang            ; an elegant language for a more civilized age
        ;;ess               ; emacs speaks statistics
        ;;faust             ; dsp, but you get to keep your soul
@@ -156,13 +156,13 @@
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
-       (python +lsp)            ; beautiful is better than ugly
-       ;;qt                ; the 'cutest' gui framework ever
+       python            ; beautiful is better than ugly
+       ;;qt               ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
        ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
-       ;;(ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       ;; (ruby +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        rust              ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
        ;;scheme            ; a fully conniving family of lisps
