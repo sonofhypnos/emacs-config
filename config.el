@@ -708,11 +708,11 @@
   (setq doom-scratch-initial-major-mode emacs-lisp-mode))
 
 ; TODO figure out why auto-tangle was configured?
-(use-package! org-auto-tangle
-  :defer t
-  :hook (org-mode . org-auto-tangle-mode)
-  :config
-  (setq org-auto-tangle-default t))
+;; (use-package! org-auto-tangle
+;;   :defer t
+;;   :hook (org-mode . org-auto-tangle-mode)
+;;   :config
+;;   (setq org-auto-tangle-default t))
 
 (after! evil
   (setq evil-want-fine-undo t)

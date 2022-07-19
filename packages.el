@@ -53,12 +53,11 @@
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 
-;testing out
+;;testing out
 (package! org-fc
 	:recipe (:host github
 		:repo "l3kn/org-fc"
-                :files (:defaults "awk" "*.org"))) ;flashcards for org trying whether this has better
-(package! org-auto-tangle) ; not sure why added?
+               :files (:defaults "awk" "*.org"))) ;flashcards for org trying whether this has better
 (package! i3-mode
   :recipe (:host github
            :repo "junyi-hou/i3-mode"
