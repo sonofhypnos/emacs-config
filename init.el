@@ -145,18 +145,15 @@
        ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
        (org
-        +deft
-        +noter
         +latex-mode-hook
         +roam2
         +jupyter
-        +pomodoro
-        +pdf-tools)               ; organize your plain life in plain text
+        +pomodoro)               ; organize your plain life in plain text
 
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
-       python            ; beautiful is better than ugly
+       (python +conda)           ; beautiful is better than ugly
        ;;qt               ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
