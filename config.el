@@ -717,7 +717,8 @@
 (after! evil
   (setq evil-want-fine-undo t)
   (setq-default delete-by-moving-to-trash t)
-  (global-wakatime-mode))
+  ;; (global-wakatime-mode)
+  )
 
 (use-package! openwith
   :after-call pre-command-hook

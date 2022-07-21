@@ -45,9 +45,9 @@
 (package! org-ql)
 (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 (package! htmlize) ;not sure why this was added?
-(package! format-all)
-        ;tracking
-        (package! wakatime-mode)
+;; (package! format-all)
+;;         ;tracking
+;;         (package! wakatime-mode)
 (package! pdf-tools)
 (package! org-noter-pdftools)
 (package! mathpix.el
