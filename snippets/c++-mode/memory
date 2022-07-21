@@ -1,0 +1,4 @@
+# key: <mem
+# name: memory
+# --
+armarx::armem::MemoryId
