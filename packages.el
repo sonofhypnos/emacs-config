@@ -23,6 +23,9 @@
 ;lols
 (package! nyan-mode)
 
+;gitlab and github
+(package! forge)
+
 
 ;degugging
 (package! lxd-tramp)
