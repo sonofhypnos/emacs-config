@@ -24,7 +24,6 @@
 (package! nyan-mode)
 
 ;gitlab and github
-(package! forge)
 
 
 ;degugging

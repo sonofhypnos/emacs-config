@@ -28,6 +28,12 @@
 ;;default in doom is to low. Not sure where all the memory is going
 (setq gcmh-high-cons-threshold (*  1000 1024 1024)) ;;give leeway: 1000 mb
 
+(after! forge
+  (require 'forge)
+(transient-append-suffix 'forge-dispatch '(0)
+ ["Edit"
+  ("e a" "assignees" forge-edit-topic-assignees)
+  ("e r" "review requests" forge-edit-topic-review-requests)]))
 
 ;;add curry for functions further down
 (defsubst curry (function &rest arguments)
