@@ -1032,3 +1032,14 @@
         ;; (add-to-list 'i3-extra-config #'i3--key-binding-config)
         )
 
+
+;;supposedly helpful for not saving secret stuff on disk
+(setq dabbrev-ignored-buffer-regexps '(".*\.gpg$" "^ [*].*"))
+
+(defun my-company-dabbrev-ignore (buffer)
+  (let (res)
+    ;; don't search in encrypted files, or hidden buffers
+    (dolist (re '("\.gpg$" "^ [*]") res)
+      (if (string-match-p re (buffer-name buffer))
+          (setq res t)))))
+(setq company-dabbrev-ignore-buffers 'my-company-dabbrev-ignore)
