@@ -69,6 +69,11 @@
   :recipe (:host github
            :repo "nobiot/org-remark"))
 (package! ssh)
+(package! emacs-matrix
+  :recipe (:host github
+           :repo "alphapapa/matrix-client.el"
+           :files (:defaults "logo.png" "matrix-client-standalone.el.sh")))
+
 (package! emr) ;not working in C where it would be useful
 (package! highlight)
 (package! org-nag-clock-mode
