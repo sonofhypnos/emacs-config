@@ -813,7 +813,7 @@
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
 
-;; (after! core-ui (menu-bar-mode 1)) ;;is this causing problems?
+(after! core-ui (menu-bar-mode 1)) ;;is this causing problems?
 
 ;; custom functions
 (defun t/random-phrase ()
