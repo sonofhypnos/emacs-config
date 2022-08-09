@@ -460,13 +460,14 @@
          :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))
        ))
 
-(setq org-roam-capture-templates
-      '(("d" "default" plain
-         "%?"
-         :if-new (file+head "${slug}.org"
-                            "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
-         :immediate-finish t
-         :unnarrowed t)))
+;; Might wanna just want to go with default template here.
+;; (setq org-roam-capture-templates
+;;       '(("d" "default" plain
+;;          "%?"
+;;          :if-new (file+head "${slug}.org"
+;;                             "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
+;;          :immediate-finish t
+;;          :unnarrowed t)))
 
 
 
@@ -593,12 +594,14 @@
                :prepend t
                :kill-buffer t))
 
-(setq org-roam-capture-ref-templates
-      '(("r" "ref" plain
-         "%u %?\n\n* \" %c\"  "
-         :if-new (file+head "${slug}.org"
-                            "#+title: ${title}\n#+author:\n")
-         :unnarrowed t))))
+;; might be unnecessary, because there is a good default one now.
+;; (setq org-roam-capture-ref-templates
+;;       '(("r" "ref" plain
+;;          "%u %?\n\n* \" %c\"  "
+;;          :if-new (file+head "${slug}.org"
+;;                             "#+title: ${title}\n#+author:\n")
+;;          :unnarrowed t)))
+)
 
 (use-package! websocket
     :after org-roam)
