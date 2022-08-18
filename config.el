@@ -935,17 +935,18 @@
   (shell-command foo))
 
 
-(defun code-compile ()
+(defun t/cconf ()
+  "configure compile command for c-code"
   (interactive)
   (unless (file-exists-p "Makefile")
-    (set (make-local-variable 'compile-command)
      (let ((file (file-name-nondirectory buffer-file-name)))
-       (format "%s -o %s %s"
+       (setq-local compile-command
+        (format "%s -o %s %s"
            (if  (equal (file-name-extension file) "cpp") "g++" "gcc" )
            (file-name-sans-extension file)
-           file)))
-    (compile compile-command)))
-)
+           file))))
+  ;not sure this is the right hook to call for c and c++
+    (add-hook 'c-mode-hook #'t/cconf)))
 
 
 (after! dap-mode
@@ -1063,10 +1064,7 @@
           (setq res t)))))
 (setq company-dabbrev-ignore-buffers 'my-company-dabbrev-ignore)
 
-;;; TODO Disabeling the crypto-hook, because it seems ate all the memory on my system: [[file:~/org-roam/22-8-15 profiler-report][profile]]   (not sure why)?
-
-
-
+;;; TODO Disabeling the crypto-hook from doom config, because it seems ate all the memory on my system: [[file:~/org-roam/22-8-15 profiler-report][profile]]   (not sure why)?
 
 ;;setup company modes:
 
