@@ -1,5 +1,4 @@
-# -*- mode: snippet -*-
+# key: <time
 # name: time
-# key: :time:
 # --
 `(format-time-string "%Y-%m-%d %H:%M")`$0

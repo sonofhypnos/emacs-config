@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: date
-# key: :jdate
+# key: <date
 # --
 `(format-time-string "%Y-%m-%d")`$0
