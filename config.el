@@ -24,9 +24,20 @@
         projectile-project-search-path '("~/repos" "~/Dropbox/")
         org-fc-diretories '(org-directory)
         org-archive-location (concat org-directory ".archive/%s::")
+        t/org-inbox-file (concat org-directory "notes.org")
+        t/org-project-file (concat org-directory "projects.org")
+        t/org-someday-maybe-file (concat org-directory "someday_maybe.org")
+        t/org-archive-file (concat org-directory "archive.org")
+        t/journal-file (concat org-directory "journal.org")
 ; FIXME org-agenda-files should perhaps be loaded after org (does it get overwritten?)
-        org-agenda-files org-directory
         )
+
+;;go where refile takes you
+(defun +org-search ()
+  (interactive)
+  (org-refile '(4)))
+;; (custom-set-variables '(org-agenda-files (list org-directory))
+;;                       '(org-refile-targets ((t/org-inbox-file t/org-project-file t/org-someday-maybe-file t/org-archive-file t/journal-file) :maxlevel . 3))) ;not sure about benefits of custom-set-variables
 
 
 ;;default in doom is to low. Not sure where all the memory is going
@@ -96,9 +107,7 @@
   (let ((ispell-local "~/.hunspell_personal"))
         (setq ispell-personal-dictionary "~/.hunspell_personal")
         (unless (file-exists-p ispell-local)
-                (with-temp-buffer (write-file ispell-local))
-        ))
-  )
+                (with-temp-buffer (write-file ispell-local)))))
 ;; The personal dictionary file has to exist, otherwise hunspell will
 ;; silently not use it.
 
@@ -147,6 +156,52 @@
 ;;   (anki-editor-reset-cloze-number))
 
 (after! org
+        (setq org-refile-targets
+                '((nil :maxlevel . 3)
+                (t/org-inbox-file :maxlevel . 3)
+                (t/org-project-file :maxlevel . 3)
+                (t/org-someday-maybe-file :maxlevel . 3)
+                (t/org-archive-file :maxlevel . 3)
+                (t/journal-file :maxlevel . 1)))
+
+  (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
+      org-capture-templates `(
+        ("l" "Link" entry (file+headline +org-capture-notes-file "Links")
+               "* [[%:link][%:description]]\n %?\n \n %i\n%T"
+               :immediate-finish t)
+        ("a" "Anki basic"
+                        entry
+                        (file+headline org-my-anki-file "Dispatch Shelf")
+                        "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n")
+
+        ("A" "Anki cloze"
+                        entry
+                        (file+headline org-my-anki-file "Dispatch Shelf")
+                        "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x")
+        ("T" "Anki type"
+        entry
+        (file+headline org-my-anki-file "Dispatch Shelf")
+        "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x")
+
+        ("L" "Protocol Link" entry
+        (file+headline +org-capture-notes-file "Inbox")
+        "* [[%:link][%:description]] \n \n \n%i \n %T"
+        :prepend t)
+        ("S" "Todo Protocoll" entry
+        (file+headline +org-capture-notes-file "Inbox")
+        "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
+        :prepend t
+        :kill-buffer t)
+        ("t" "Personal todo" entry
+                (file+headline +org-capture-notes-file "Todos")
+                "* [ ] %?\n%i\n%a" :prepend t)
+        ("n" "Personal notes" entry
+                (file+headline +org-capture-notes-file "Inbox")
+                "* %u %?\n%i\n%a" :prepend t)
+        ("j" "Journal" entry
+                (file+olp+datetree +org-capture-journal-file)
+                "* %U %?\n%i\n%a" :prepend t)))
+
   ;; enable sound:
   (setq org-clock-play-sound t)
 
@@ -555,46 +610,6 @@
 (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
 (add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
 
-(setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
-
-(add-to-list 'org-capture-templates
-             `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
-               "* [[%:link][%:description]]\n %?\n \n %i\n%T"
-               :immediate-finish t))
-(add-to-list 'org-capture-templates
-            '("a" "Anki basic"
-                entry
-                (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
-(add-to-list 'org-capture-templates
-            '("A" "Anki cloze"
-                entry
-                (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
-(add-to-list 'org-capture-templates
-            '("T" "Anki type"
-                entry
-                (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
-(add-to-list 'org-capture-templates
-             '("L" "Protocol Link" entry
-               (file+headline +org-capture-notes-file "Inbox")
-               "* [[%:link][%:description]] \n \n \n%i \n %T"
-               :prepend t))
-(add-to-list 'org-capture-templates
-             '("S" "Todo Protocoll" entry
-               (file+headline +org-capture-notes-file "Inbox")
-               "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
-               :prepend t
-               :kill-buffer t))
-
-;; might be unnecessary, because there is a good default one now.
-;; (setq org-roam-capture-ref-templates
-;;       '(("r" "ref" plain
-;;          "%u %?\n\n* \" %c\"  "
-;;          :if-new (file+head "${slug}.org"
-;;                             "#+title: ${title}\n#+author:\n")
-;;          :unnarrowed t)))
 )
 
 (use-package! websocket
@@ -1041,6 +1056,10 @@
       (if (string-match-p re (buffer-name buffer))
           (setq res t)))))
 (setq company-dabbrev-ignore-buffers 'my-company-dabbrev-ignore)
+
+;;Disabeling the crypto-hook, because it seems ate all the memory on my system: [[file:~/org-roam/22-8-15 profiler-report][profile]]   (not sure why)?
+
+
 
 ;;setup company modes:
 
