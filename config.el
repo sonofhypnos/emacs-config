@@ -93,9 +93,12 @@
   (ispell-hunspell-add-multi-dic "de_DE,en_GB,en_US")
   ;; For saving words to the personal dictionary, don't infer it from
   ;; the locale, otherwise it would save to ~/.hunspell_de_DE.
-  (setq ispell-personal-dictionary "~/.hunspell_personal")
-  (unless (file-exists-p ispell-personal-dictionary)
-  (write-region "" nil ispell-personal-dictionary nil 0)))
+  (let ((ispell-local "~/.hunspell_personal"))
+        (setq ispell-personal-dictionary "~/.hunspell_personal")
+        (unless (file-exists-p ispell-local)
+                (with-temp-buffer (write-file ispell-local))
+        ))
+  )
 ;; The personal dictionary file has to exist, otherwise hunspell will
 ;; silently not use it.
 
@@ -541,8 +544,8 @@
         (progn
         (i3-hide-scratch)
         (org-roam-db-sync)
-        (delete-frame))
-        nil)))
+        (delete-frame)) ;;delete frame after having synced
+        nil))) ;;not sure why nil here
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
@@ -798,7 +801,8 @@
 ;;(add-hook 'monkeytype-mode-hook #'my/monkeytype-mode-hook)
 (after! company
   ;; (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
-  (setq company-idle-delay 0.2)
+  (setq company-idle-delay 0.3)
+  (setq company-minimum-prefix-lenght 2)
   ) ;; this value should not be 0!
 
 (use-package! nyan-mode
