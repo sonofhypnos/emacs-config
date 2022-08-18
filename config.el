@@ -31,7 +31,6 @@
         t/journal-file (concat org-directory "journal.org")
 ; FIXME org-agenda-files should perhaps be loaded after org (does it get overwritten?)
         )
-
 ;;go where refile takes you
 (defun +org-search ()
   (interactive)
@@ -107,7 +106,9 @@
   (let ((ispell-local "~/.hunspell_personal"))
         (setq ispell-personal-dictionary "~/.hunspell_personal")
         (unless (file-exists-p ispell-local)
-                (with-temp-buffer (write-file ispell-local)))))
+                (with-temp-buffer (write-file ispell-local))
+        ))
+  )
 ;; The personal dictionary file has to exist, otherwise hunspell will
 ;; silently not use it.
 
@@ -190,8 +191,7 @@
         ("S" "Todo Protocoll" entry
         (file+headline +org-capture-notes-file "Inbox")
         "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
-        :prepend t
-        :kill-buffer t)
+        :prepend t)
         ("t" "Personal todo" entry
                 (file+headline +org-capture-notes-file "Todos")
                 "* [ ] %?\n%i\n%a" :prepend t)
@@ -519,6 +519,14 @@
 ;;          :unnarrowed t)))
 
 
+(setq org-roam-capture-ref-templates
+        '(
+          ("r" "ref" plain "%?" :target
+        (file+head "${slug}.org" "#+title: ${title}")
+        :unnarrowed t
+        :jump-to-captured t))
+
+      )
 
 (setq +org-roam-open-buffer-on-find-file nil)
 (setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned performance optimization in the manual. I have enough memory anyways
@@ -583,34 +591,32 @@
   (shell-command (concat "sleep 0.1; xdotool key " bind)))
 
 (defun i3-hide-scratch ()
-  "HACK: Hide emacs scratchpad by simulating key command!"
+  "HACK: Hide emacs scratchpad by simulating key command!
+        ;;other things tried:
+        ;;[title=\\\"_emacs scratchpad_\\\"]
+        ;;(shell-command \\\"sleep 0.1; xdotool key super+e\\\")"
   (and  (tassilo/scratch-window-p)
         (press-key "super+e"))) ;;
-;;things tried:
-;;[title=\"_emacs scratchpad_\"]
-;;(shell-command "sleep 0.1; xdotool key super+e")
-;;
 
 (defun tassilo/org-capture-cleanup ()
   "Delete capture windows if it is a scratch window"
   (and (tassilo/scratch-window-p)
-       ;This worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
+       ;HACK: Using progn twice worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
       (progn
-        (progn
+        (and
         (i3-hide-scratch)
         (org-roam-db-sync)
+        (not (org-roam-capture-p))
         (delete-frame)) ;;delete frame after having synced
         nil))) ;;not sure why nil here
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
         (doom/window-maximize-buffer) ;this does seem to work!
-       )) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
+        )) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
 
-(add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
-(add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
-
-)
+;; (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup) ;;TODO check in a while whether this just workes by adding :unnarrow t to templates
+(add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup))
 
 (use-package! websocket
     :after org-roam)
@@ -1050,14 +1056,15 @@
 (setq dabbrev-ignored-buffer-regexps '(".*\.gpg$" "^ [*].*"))
 
 (defun my-company-dabbrev-ignore (buffer)
+  "configure emacs to not search in encrypted files, or hidden buffers"
   (let (res)
-    ;; don't search in encrypted files, or hidden buffers
     (dolist (re '("\.gpg$" "^ [*]") res)
       (if (string-match-p re (buffer-name buffer))
           (setq res t)))))
 (setq company-dabbrev-ignore-buffers 'my-company-dabbrev-ignore)
 
-;;Disabeling the crypto-hook, because it seems ate all the memory on my system: [[file:~/org-roam/22-8-15 profiler-report][profile]]   (not sure why)?
+;;; TODO Disabeling the crypto-hook, because it seems ate all the memory on my system: [[file:~/org-roam/22-8-15 profiler-report][profile]]   (not sure why)?
+
 
 
 
