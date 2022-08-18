@@ -12,15 +12,14 @@
  '(jdee-db-requested-breakpoint-face-colors (cons "#073642" "#859900"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#073642" "#56697A"))
  '(objed-cursor-color "#dc322f")
- '(org-agenda-files
-   '(  "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org" "/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org" "/home/tassilo/org-roam/20210606205702-emacs_improvement_list.org" ))
+ '(org-agenda-inhibit-startup nil)
  '(pdf-view-midnight-colors (cons "#839496" "#002b36"))
  '(rustic-ansi-faces
    ["#002b36" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
  '(safe-local-variable-values
    '((DISABLEDeval ispell-change-dictionary "en_US")
      (DISABLEDmode . flyspell)
-     (eval ispell-change-dictionary "en_US")))
+     (eval ispell-change-dictionary "en_US"))) ;;not sure what this is supposed to do?
  '(vc-annotate-background "#002b36")
  '(vc-annotate-color-map
    (list
