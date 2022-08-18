@@ -1037,3 +1037,14 @@
       (if (string-match-p re (buffer-name buffer))
           (setq res t)))))
 (setq company-dabbrev-ignore-buffers 'my-company-dabbrev-ignore)
+
+;;setup company modes:
+
+;;example
+;; (after! js2-mode
+;;   (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
+;;
+;;
+;;trying things to improve latency issues:
+(setq lsp-print-performance t)
+;;enabling garbage collection
