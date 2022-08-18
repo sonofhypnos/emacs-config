@@ -30,7 +30,7 @@
 
 
 ;;default in doom is to low. Not sure where all the memory is going
-(setq gcmh-high-cons-threshold (*  1000 1024 1024)) ;;give leeway: 1000 mb
+(setq gcmh-high-cons-threshold (*  100 1024 1024)) ;;give leeway: 1000 mb
 
 (after! forge
   (require 'forge)
@@ -525,7 +525,7 @@
   (shell-command (concat "sleep 0.1; xdotool key " bind)))
 
 (defun i3-hide-scratch ()
-  "Hide emacs scratchpad by simulating key command (HACK!)"
+  "HACK: Hide emacs scratchpad by simulating key command!"
   (and  (tassilo/scratch-window-p)
         (press-key "super+e"))) ;;
 ;;things tried:
