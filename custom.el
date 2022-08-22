@@ -19,7 +19,7 @@
  '(safe-local-variable-values
    '((DISABLEDeval ispell-change-dictionary "en_US")
      (DISABLEDmode . flyspell)
-     (eval ispell-change-dictionary "en_US"))) ;;not sure what this is supposed to do?
+     (eval ispell-change-dictionary "en_US")))
  '(vc-annotate-background "#002b36")
  '(vc-annotate-color-map
    (list
@@ -41,7 +41,8 @@
     (cons 320 "#775b67")
     (cons 340 "#405A61")
     (cons 360 "#405A61")))
- '(vc-annotate-very-old-color nil))
+ '(vc-annotate-very-old-color nil)
+ '(warning-suppress-types '(((yasnippet zombie)) ((yasnippet zombie)) (defvaralias))))
  ;; not sure this is the right place to set this.
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

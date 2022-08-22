@@ -29,9 +29,9 @@
         t/org-someday-maybe-file (concat org-directory "someday_maybe.org")
         t/org-archive-file (concat org-directory "archive.org")
         t/journal-file (concat org-directory "journal.org")
-; FIXME org-agenda-files should perhaps be loaded after org (does it get overwritten?)
         )
-;;go where refile takes you
+
+;;go where refile takes you:
 (defun +org-search ()
   (interactive)
   (org-refile '(4)))
@@ -160,8 +160,8 @@
         (setq org-refile-targets
                 '((nil :maxlevel . 3)
                 (t/org-inbox-file :maxlevel . 3)
-                (t/org-project-file :maxlevel . 3)
-                (t/org-someday-maybe-file :maxlevel . 3)
+                (t/org-project-file :maxlevel . 5)
+                (t/org-someday-maybe-file :maxlevel . 5)
                 (t/org-archive-file :maxlevel . 3)
                 (t/journal-file :maxlevel . 1)))
 
@@ -280,7 +280,7 @@
   ;; (setq org-stuck-projects
   ;;       '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODE")))
 
-  (setq org-agenda-custom-commands
+(setq org-agenda-custom-commands
 '(("n" "Agenda and all TODOs")
   ("z" "Zuordnen"
    ((agenda "")
@@ -347,8 +347,7 @@
  "tsfile"
  :follow (lambda (path) (my-handle-tsfile-link path))
  :help-echo "Opens the linked file with your default application"
- :face '(:foreground "DarkSeaGreen" :underline t)
-)
+ :face '(:foreground "DarkSeaGreen" :underline t))
 
 
 ;;taken from lazyblorg
@@ -392,7 +391,7 @@
         :localleader
         :prefix "m"
         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
-        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
+        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree)) ;FIXME: these shortcuts do not seem to be evaluated at the right time!
 
   ; TODO maybe load some of the big stuff here later (loading things like the defvar below took essentially 0 time)
 (setq daily-template
@@ -588,7 +587,11 @@
 ;;         ;;; FIXME macro does not work
 ;;   `(shell-command ,(concat "sleep 0.1; xdotool key " ,@args))) ;;; FIXME not sure if @ is doing here. Also not sure if the second comma is needed
 (defun press-key (bind)
-  (shell-command (concat "sleep 0.1; xdotool key " bind)))
+  ;; (start-process "press-key" "*press-key*" "xdotool" bind)
+  ;;       (start-process-shell-command "press-key" "*press-key*" "xdotool" "key" "super+e")
+  ;; )
+  (shell-command (concat "xdotool key " bind))
+  )
 
 (defun i3-hide-scratch ()
   "HACK: Hide emacs scratchpad by simulating key command!
@@ -596,7 +599,19 @@
         ;;[title=\\\"_emacs scratchpad_\\\"]
         ;;(shell-command \\\"sleep 0.1; xdotool key super+e\\\")"
   (and  (tassilo/scratch-window-p)
-        (press-key "super+e"))) ;;
+        ;;No real reason for doing this more then once. This is mostly for checking whether the lags are just inherent in the command (seems to not be the case.)
+        (dotimes (i 1)
+        (press-key "super+e")))) ;;
+
+
+;;FIXME: I still do not get why this is slower when not directly evaluated, but instead triggered by org-capture? I tried to evaluate it before anything else.
+;; I think one explanation could be that it is something about native compilation?
+(defun tassilo/org-capture-prepare-cleanup (&optional args) ;;optional arguments, so advice work
+       ;HACK: Using progn twice worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
+        (and
+        (not (org-roam-capture-p))
+        (i3-hide-scratch))  ;;delete frame after having synced
+        ) ;;not sure why nil here
 
 (defun tassilo/org-capture-cleanup ()
   "Delete capture windows if it is a scratch window"
@@ -604,8 +619,6 @@
        ;HACK: Using progn twice worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
       (progn
         (and
-        (i3-hide-scratch)
-        (org-roam-db-sync)
         (not (org-roam-capture-p))
         (delete-frame)) ;;delete frame after having synced
         nil))) ;;not sure why nil here
@@ -616,6 +629,8 @@
         )) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
 
 ;; (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup) ;;TODO check in a while whether this just workes by adding :unnarrow t to templates
+(advice-add 'org-capture-finalize :before #'tassilo/org-capture-prepare-cleanup)
+;; (remove-hook 'org-capture-prepare-finalize-hook #'tassilo/org-capture-prepare-cleanup)
 (add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup))
 
 (use-package! websocket
