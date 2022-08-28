@@ -29,7 +29,8 @@
         t/org-someday-maybe-file (concat org-directory "someday_maybe.org")
         t/org-archive-file (concat org-directory "archive.org")
         t/journal-file (concat org-directory "journal.org")
-        )
+        t/writing-ideas (concat org-directory "20210508185546-things_to_write_about.org")
+        t/fzi (concat org-directory "fzi_assistant_job.org"))
 
 ;;go where refile takes you:
 (defun +org-search ()
@@ -163,7 +164,11 @@
                 (t/org-project-file :maxlevel . 5)
                 (t/org-someday-maybe-file :maxlevel . 5)
                 (t/org-archive-file :maxlevel . 3)
-                (t/journal-file :maxlevel . 1)))
+                (t/journal-file :maxlevel . 1)
+                (t/writing-ideas :maxlevel . 1)
+                (t/fzi :maxlevel . 1)
+
+                ))
 
   (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
       org-capture-templates `(
@@ -424,6 +429,7 @@
        "\n** What else is on your mind?"))
 
 (defvar t/phrases (list
+                        (cons "What subtle things did you notice today?" (cons 1 1))
                         (cons "What meaningfull or important thing should you tell a particular person that you havent't said to them yet?" (cons 1 1))
                         (cons "Think about things you like about other people" (cons 1 1))
                         (cons "If you could go back in time and change one thing about your past, what would it be?" (cons 1 1))
