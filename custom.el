@@ -17,7 +17,12 @@
  '(rustic-ansi-faces
    ["#002b36" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
  '(safe-local-variable-values
-   '((DISABLEDeval ispell-change-dictionary "en_US")
+   '((org-refile-targets)
+     (org-download-delete-image-after-download)
+     (org-download-method . directory)
+     (org-download-heading-lvl . 0)
+     (org-download-image-dir . "~/Dropbox/journals/images/anki/")
+     (DISABLEDeval ispell-change-dictionary "en_US")
      (DISABLEDmode . flyspell)
      (eval ispell-change-dictionary "en_US")))
  '(vc-annotate-background "#002b36")
