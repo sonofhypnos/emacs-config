@@ -158,6 +158,8 @@
 ;;   (anki-editor-reset-cloze-number))
 
 (after! org
+  ;;trying to speed up org by disabeling this:
+  (setq org-agenda-ignore-properties '(effort appt category))
         (setq org-refile-targets
                 '((nil :maxlevel . 3)
                 (t/org-inbox-file :maxlevel . 3)
@@ -167,7 +169,6 @@
                 (t/journal-file :maxlevel . 1)
                 (t/writing-ideas :maxlevel . 1)
                 (t/fzi :maxlevel . 1)
-
                 ))
 
   (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
