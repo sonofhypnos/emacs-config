@@ -36,8 +36,8 @@
 (defun +org-search ()
   (interactive)
   (org-refile '(4)))
-;; (custom-set-variables '(org-agenda-files (list org-directory))
-;;                       '(org-refile-targets ((t/org-inbox-file t/org-project-file t/org-someday-maybe-file t/org-archive-file t/journal-file) :maxlevel . 3))) ;not sure about benefits of custom-set-variables
+(custom-set-variables '(org-agenda-files '("~/org-roam/projects.org" "~/org-roam/notes.org"))
+                      '(org-refile-targets ((t/org-inbox-file t/org-project-file t/org-someday-maybe-file t/org-archive-file t/journal-file) :maxlevel . 3))) ;not sure about benefits of custom-set-variables
 
 
 ;;default in doom is to low. Not sure where all the memory is going
