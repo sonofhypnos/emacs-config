@@ -22,11 +22,26 @@
 (setq   org-directory "~/org-roam/"
         org-roam-directory "~/org-roam/"
         projectile-project-search-path '("~/repos" "~/Dropbox/")
-        org-fc-diretories '(org-directory))
+        org-fc-diretories '(org-directory)
+        org-archive-location (concat org-directory ".archive/%s::")
+        t/org-inbox-file (concat org-directory "notes.org")
+        t/org-project-file (concat org-directory "projects.org")
+        t/org-someday-maybe-file (concat org-directory "someday_maybe.org")
+        t/org-archive-file (concat org-directory "archive.org")
+        t/journal-file (concat org-directory "journal.org")
+        t/writing-ideas (concat org-directory "20210508185546-things_to_write_about.org")
+        t/fzi (concat org-directory "fzi_assistant_job.org"))
+
+;;go where refile takes you:
+(defun +org-search ()
+  (interactive)
+  (org-refile '(4)))
+(custom-set-variables '(org-agenda-files '("~/org-roam/projects.org" "~/org-roam/notes.org"))
+                      '(org-refile-targets ((t/org-inbox-file t/org-project-file t/org-someday-maybe-file t/org-archive-file t/journal-file) :maxlevel . 3))) ;not sure about benefits of custom-set-variables
 
 
 ;;default in doom is to low. Not sure where all the memory is going
-(setq gcmh-high-cons-threshold (*  1000 1024 1024)) ;;give leeway: 1000 mb
+(setq gcmh-high-cons-threshold (*  100 1024 1024)) ;;give leeway: 1000 mb
 
 (after! forge
   (require 'forge)
@@ -73,20 +88,7 @@
 
 ;;emacs -e "(seq-random-elt '(\"Luan\" \"David\" \"Tassilo\" \"Simon\")"
 
-; FIXME org-agenda-files should probably be loaded after org (might be overwritten)
 
-(setq org-agenda-files
-'("~/org-roam/.org"
-"/home/tassilo/org-roam/20210502170155-project_blog_writing.org"
-"/home/tassilo/org-roam/projects.org"
-"/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"
-"/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/notes.org"
-"/home/tassilo/org-roam/someday_maybe.org" "/home/tassilo/org-roam/todos.org"
-"/home/tassilo/org-roam/20210606205702-emacs_improvement_list.org"
-"/home/tassilo/org-roam/the_pragmatist_s_guide_to_live.org"
-"/home/tassilo/org-roam/journal.org" "/home/tassilo/org-roam/todos.org"
-"/home/tassilo/org-roam/rechnerorganisation.org"
-"/home/tassilo/org-roam/20210528214526-journaling_tabelle_05_28_2021.org"))
 
 (after! ispell
   ;; Configure `LANG`, otherwise ispell.el cannot find a 'default
@@ -102,9 +104,12 @@
   (ispell-hunspell-add-multi-dic "de_DE,en_GB,en_US")
   ;; For saving words to the personal dictionary, don't infer it from
   ;; the locale, otherwise it would save to ~/.hunspell_de_DE.
-  (setq ispell-personal-dictionary "~/.hunspell_personal")
-  (unless (file-exists-p ispell-personal-dictionary)
-  (write-region "" nil ispell-personal-dictionary nil 0)))
+  (let ((ispell-local "~/.hunspell_personal"))
+        (setq ispell-personal-dictionary "~/.hunspell_personal")
+        (unless (file-exists-p ispell-local)
+                (with-temp-buffer (write-file ispell-local))
+        ))
+  )
 ;; The personal dictionary file has to exist, otherwise hunspell will
 ;; silently not use it.
 
@@ -153,6 +158,56 @@
 ;;   (anki-editor-reset-cloze-number))
 
 (after! org
+  ;;trying to speed up org by disabeling this:
+  (setq org-agenda-ignore-properties '(effort appt category))
+        (setq org-refile-targets
+                '((nil :maxlevel . 3)
+                (t/org-inbox-file :maxlevel . 3)
+                (t/org-project-file :maxlevel . 5)
+                (t/org-someday-maybe-file :maxlevel . 5)
+                (t/org-archive-file :maxlevel . 3)
+                (t/journal-file :maxlevel . 1)
+                (t/writing-ideas :maxlevel . 1)
+                (t/fzi :maxlevel . 1)
+                ))
+
+  (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
+      org-capture-templates `(
+        ("l" "Link" entry (file+headline +org-capture-notes-file "Links")
+               "* [[%:link][%:description]]\n %?\n \n %i\n%T"
+               :immediate-finish t)
+        ("a" "Anki basic"
+                        entry
+                        (file+headline org-my-anki-file "Dispatch Shelf")
+                        "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n")
+
+        ("A" "Anki cloze"
+                        entry
+                        (file+headline org-my-anki-file "Dispatch Shelf")
+                        "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x")
+        ("T" "Anki type"
+        entry
+        (file+headline org-my-anki-file "Dispatch Shelf")
+        "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x")
+
+        ("L" "Protocol Link" entry
+        (file+headline +org-capture-notes-file "Inbox")
+        "* [[%:link][%:description]] \n \n \n%i \n %T"
+        :prepend t)
+        ("S" "Todo Protocoll" entry
+        (file+headline +org-capture-notes-file "Inbox")
+        "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
+        :prepend t)
+        ("t" "Personal todo" entry
+                (file+headline +org-capture-notes-file "Todos")
+                "* [ ] %?\n%i\n%a" :prepend t)
+        ("n" "Personal notes" entry
+                (file+headline +org-capture-notes-file "Inbox")
+                "* %u %?\n%i\n%a" :prepend t)
+        ("j" "Journal" entry
+                (file+olp+datetree +org-capture-journal-file)
+                "* %U %?\n%i\n%a" :prepend t)))
+
   ;; enable sound:
   (setq org-clock-play-sound t)
 
@@ -231,7 +286,7 @@
   ;; (setq org-stuck-projects
   ;;       '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODE")))
 
-  (setq org-agenda-custom-commands
+(setq org-agenda-custom-commands
 '(("n" "Agenda and all TODOs")
   ("z" "Zuordnen"
    ((agenda "")
@@ -298,8 +353,7 @@
  "tsfile"
  :follow (lambda (path) (my-handle-tsfile-link path))
  :help-echo "Opens the linked file with your default application"
- :face '(:foreground "DarkSeaGreen" :underline t)
-)
+ :face '(:foreground "DarkSeaGreen" :underline t))
 
 
 ;;taken from lazyblorg
@@ -343,7 +397,7 @@
         :localleader
         :prefix "m"
         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
-        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree))
+        :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree)) ;FIXME: these shortcuts do not seem to be evaluated at the right time!
 
   ; TODO maybe load some of the big stuff here later (loading things like the defvar below took essentially 0 time)
 (setq daily-template
@@ -376,6 +430,7 @@
        "\n** What else is on your mind?"))
 
 (defvar t/phrases (list
+                        (cons "What subtle things did you notice today?" (cons 1 1))
                         (cons "What meaningfull or important thing should you tell a particular person that you havent't said to them yet?" (cons 1 1))
                         (cons "Think about things you like about other people" (cons 1 1))
                         (cons "If you could go back in time and change one thing about your past, what would it be?" (cons 1 1))
@@ -460,15 +515,24 @@
          :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))
        ))
 
-(setq org-roam-capture-templates
-      '(("d" "default" plain
-         "%?"
-         :if-new (file+head "${slug}.org"
-                            "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
-         :immediate-finish t
-         :unnarrowed t)))
+;; Might wanna just want to go with default template here.
+;; (setq org-roam-capture-templates
+;;       '(("d" "default" plain
+;;          "%?"
+;;          :if-new (file+head "${slug}.org"
+;;                             "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
+;;          :immediate-finish t
+;;          :unnarrowed t)))
 
 
+(setq org-roam-capture-ref-templates
+        '(
+          ("r" "ref" plain "%?" :target
+        (file+head "${slug}.org" "#+title: ${title}")
+        :unnarrowed t
+        :jump-to-captured t))
+
+      )
 
 (setq +org-roam-open-buffer-on-find-file nil)
 (setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned performance optimization in the manual. I have enough memory anyways
@@ -530,75 +594,51 @@
 ;;         ;;; FIXME macro does not work
 ;;   `(shell-command ,(concat "sleep 0.1; xdotool key " ,@args))) ;;; FIXME not sure if @ is doing here. Also not sure if the second comma is needed
 (defun press-key (bind)
-  (shell-command (concat "sleep 0.1; xdotool key " bind)))
+  ;; (start-process "press-key" "*press-key*" "xdotool" bind)
+  ;;       (start-process-shell-command "press-key" "*press-key*" "xdotool" "key" "super+e")
+  ;; )
+  (shell-command (concat "xdotool key " bind))
+  )
 
 (defun i3-hide-scratch ()
-  "Hide emacs scratchpad by simulating key command (HACK!)"
+  "HACK: Hide emacs scratchpad by simulating key command!
+        ;;other things tried:
+        ;;[title=\\\"_emacs scratchpad_\\\"]
+        ;;(shell-command \\\"sleep 0.1; xdotool key super+e\\\")"
   (and  (tassilo/scratch-window-p)
-        (press-key "super+e"))) ;;
-;;things tried:
-;;[title=\"_emacs scratchpad_\"]
-;;(shell-command "sleep 0.1; xdotool key super+e")
-;;
+        ;;No real reason for doing this more then once. This is mostly for checking whether the lags are just inherent in the command (seems to not be the case.)
+        (dotimes (i 1)
+        (press-key "super+e")))) ;;
+
+
+;;FIXME: I still do not get why this is slower when not directly evaluated, but instead triggered by org-capture? I tried to evaluate it before anything else.
+;; I think one explanation could be that it is something about native compilation?
+(defun tassilo/org-capture-prepare-cleanup (&optional args) ;;optional arguments, so advice work
+       ;HACK: Using progn twice worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
+        (and
+        (not (org-roam-capture-p))
+        (i3-hide-scratch))  ;;delete frame after having synced
+        ) ;;not sure why nil here
 
 (defun tassilo/org-capture-cleanup ()
   "Delete capture windows if it is a scratch window"
   (and (tassilo/scratch-window-p)
-       ;This worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
+       ;HACK: Using progn twice worked for me opposed to just using just (delete-frame), so as long as it works I won't touch it (Similar use of progn below)
       (progn
-        (progn
-        (i3-hide-scratch)
-        (org-roam-db-sync)
-        (delete-frame))
-        nil)))
+        (and
+        (not (org-roam-capture-p))
+        (delete-frame)) ;;delete frame after having synced
+        nil))) ;;not sure why nil here
 
 (defun tassilo/org-capture-setup ()
   (and (tassilo/scratch-window-p)
         (doom/window-maximize-buffer) ;this does seem to work!
-       )) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
+        )) ;For some reason "progn" fixes both of my functions. I might want to find out why in the future, but for now I am happy it works at all.
 
-(add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup)
-(add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup)
-
-(setq org-my-anki-file (concat org-roam-directory "anki-stuff.org"))
-
-(add-to-list 'org-capture-templates
-             `("l" "Link" entry (file+headline ,(concat org-roam-directory "/20210510194711-read_and_take_notes.org") "Links")
-               "* [[%:link][%:description]]\n %?\n \n %i\n%T"
-               :immediate-finish t))
-(add-to-list 'org-capture-templates
-            '("a" "Anki basic"
-                entry
-                (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n"))
-(add-to-list 'org-capture-templates
-            '("A" "Anki cloze"
-                entry
-                (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"))
-(add-to-list 'org-capture-templates
-            '("T" "Anki type"
-                entry
-                (file+headline org-my-anki-file "Dispatch Shelf")
-                "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"))
-(add-to-list 'org-capture-templates
-             '("L" "Protocol Link" entry
-               (file+headline +org-capture-notes-file "Inbox")
-               "* [[%:link][%:description]] \n \n \n%i \n %T"
-               :prepend t))
-(add-to-list 'org-capture-templates
-             '("S" "Todo Protocoll" entry
-               (file+headline +org-capture-notes-file "Inbox")
-               "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
-               :prepend t
-               :kill-buffer t))
-
-(setq org-roam-capture-ref-templates
-      '(("r" "ref" plain
-         "%u %?\n\n* \" %c\"  "
-         :if-new (file+head "${slug}.org"
-                            "#+title: ${title}\n#+author:\n")
-         :unnarrowed t))))
+;; (add-hook 'org-capture-mode-hook #'tassilo/org-capture-setup) ;;TODO check in a while whether this just workes by adding :unnarrow t to templates
+(advice-add 'org-capture-finalize :before #'tassilo/org-capture-prepare-cleanup)
+;; (remove-hook 'org-capture-prepare-finalize-hook #'tassilo/org-capture-prepare-cleanup)
+(add-hook 'org-capture-after-finalize-hook #'tassilo/org-capture-cleanup))
 
 (use-package! websocket
     :after org-roam)
@@ -804,13 +844,14 @@
 ;;(add-hook 'monkeytype-mode-hook #'my/monkeytype-mode-hook)
 (after! company
   ;; (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
-  (setq company-idle-delay 0.2)
+  (setq company-idle-delay 0.3)
+  (setq company-minimum-prefix-lenght 2)
   ) ;; this value should not be 0!
 
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
 
-;; (after! core-ui (menu-bar-mode 1)) ;;is this causing problems?
+(after! core-ui (menu-bar-mode 1)) ;;is this causing problems?
 
 ;; custom functions
 (defun t/random-phrase ()
@@ -916,17 +957,18 @@
   (shell-command foo))
 
 
-(defun code-compile ()
+(defun t/cconf ()
+  "configure compile command for c-code"
   (interactive)
   (unless (file-exists-p "Makefile")
-    (set (make-local-variable 'compile-command)
      (let ((file (file-name-nondirectory buffer-file-name)))
-       (format "%s -o %s %s"
+       (setq-local compile-command
+        (format "%s -o %s %s"
            (if  (equal (file-name-extension file) "cpp") "g++" "gcc" )
            (file-name-sans-extension file)
-           file)))
-    (compile compile-command)))
-)
+           file))))
+  ;not sure this is the right hook to call for c and c++
+    (add-hook 'c-mode-hook #'t/cconf)))
 
 
 (after! dap-mode
@@ -1037,9 +1079,22 @@
 (setq dabbrev-ignored-buffer-regexps '(".*\.gpg$" "^ [*].*"))
 
 (defun my-company-dabbrev-ignore (buffer)
+  "configure emacs to not search in encrypted files, or hidden buffers"
   (let (res)
-    ;; don't search in encrypted files, or hidden buffers
     (dolist (re '("\.gpg$" "^ [*]") res)
       (if (string-match-p re (buffer-name buffer))
           (setq res t)))))
 (setq company-dabbrev-ignore-buffers 'my-company-dabbrev-ignore)
+
+;;; TODO Disabeling the crypto-hook from doom config, because it seems ate all the memory on my system: [[file:~/org-roam/22-8-15 profiler-report][profile]]   (not sure why)?
+
+;;setup company modes:
+
+;;example
+;; (after! js2-mode
+;;   (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
+;;
+;;
+;;trying things to improve latency issues:
+(setq lsp-print-performance t)
+;;enabling garbage collection

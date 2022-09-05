@@ -69,6 +69,10 @@
   :recipe (:host github
            :repo "nobiot/org-remark"))
 (package! ssh)
+(package! ement
+  :recipe (:host github
+           :repo "alphapapa/ement.el"))
+
 (package! emr) ;not working in C where it would be useful
 (package! highlight)
 (package! org-nag-clock-mode
