@@ -18,6 +18,7 @@
 ;;         )
 
 ;;   )
+;;   TODO I just learned that function definitions do not get byte-compiled if put into an after! block (probably any use-package block?). Fix this in my code!
 
 (setq   org-directory "~/org-roam/"
         org-roam-directory "~/org-roam/"
@@ -255,8 +256,6 @@
           (sequence
            "[ ](T)"   ; A task that needs doing
            "[-](S)"   ; Task is in progress
-           "[?](w)"   ; Task is being held up or paused
-           "[??](C)"  ; Confusion marker in notes
            "|"
            "[X](D)")  ; Task was completed
           (sequence
@@ -264,6 +263,11 @@
            "OKAY(o)"
            "YES(y)"
            "NO(n)")
+          (sequence
+           "[??](C)"  ; Confusion marker in notes
+           "|"
+           "[?](w)"   ; Task is being held up or paused
+           )
           (sequence
            "PRO(p)"   ; Pro in pro-con list
            "CON(c)"
