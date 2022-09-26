@@ -1080,6 +1080,12 @@
         )
 
 
+;; (after! tramp
+;; ;fixing hangs because tramp does not understand the shell prompt:
+;;         (setenv "SHELL" "/bin/sh")
+;;         (setq tramp-shell-prompt-pattern "\\(?:^\\|\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[[:digit:];]*[[:alpha:]] *\\)*")
+;;   )
+
 ;;supposedly helpful for not saving secret stuff on disk
 (setq dabbrev-ignored-buffer-regexps '(".*\.gpg$" "^ [*].*"))
 
