@@ -219,8 +219,9 @@
 ("Brainstorm" . ?b) ("@pc" . ?p) ("uni" . ?u) ("Computergrafik") ("laughing") ("projekt")
 ("@zuhause" . ?z)))
 
-(setq org-track-ordered-property-with-tag t
-      org-log-into-drawer t)
+(setq org-track-ordered-property-with-tag nil
+      org-log-into-drawer nil
+      )
 
 ;;; ; TODO automatically add id on save (ask Hauke if sensible)
 ;; (defun my-org-add-ids-to-headlines-in-file ()
@@ -243,16 +244,16 @@
   ;look here for how to do this
   (setq org-todo-keywords
         '((sequence   ; Not sure what the sequence is doing here (where it gets evaluated?)
-           "TODO(t!)"  ; A task that needs doin            g & is ready to do
+           "TODO(t)"  ; A task that needs doin            g & is ready to do
            "PROJ(P)"  ; A project, which usually contains other tasks
            "LOOP(r)"  ; A recurring task
-           "STRT(s!)"  ; A task that is in progress
-           "WAIT(W!)"  ; Something external is holding up this task
+           "STRT(s)"  ; A task that is in progress
+           "WAIT(W)"  ; Something external is holding up this task
            "HOLD(h)"  ; This task is paused/on hold because of me
            "IDEA(i)"  ; An unconfirmed and unapproved task or notion
            "|"
-           "DONE(d!)"  ; Task successfully completed
-           "KILL(k!)") ; Task was cancelled, aborted or is no longer applicable
+           "DONE(d)"  ; Task successfully completed
+           "KILL(k)") ; Task was cancelled, aborted or is no longer applicable
           (sequence
            "[ ](T)"   ; A task that needs doing
            "[-](S)"   ; Task is in progress
