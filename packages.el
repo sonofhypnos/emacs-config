@@ -19,6 +19,10 @@
 ;autocompletion
 (package! company-tabnine
   :recipe (:host github :repo "TommyX12/company-tabnine"))
+;;find virtualenvs in the project root
+(package! auto-virtualenv)
+(package! hydra)
+
 
 ;lols
 (package! nyan-mode)

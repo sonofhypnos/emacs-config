@@ -407,7 +407,7 @@
   ; TODO maybe load some of the big stuff here later (loading things like the defvar below took essentially 0 time)
 (setq daily-template
       (concat
-       "#+title: %<%Y-%m-%d>\n* [/] Do Today\n* [/] Maybe Do Today"
+       "#+title: %<%Y-%m-%d>\n* [/] Do Today (FDT)\n* [/] Maybe Do Today"
        "\n* Morgenroutine"
        "\n - [ ] Lüften!"
        "\n - [ ] Kalender angesehen"
