@@ -33,6 +33,7 @@
         t/writing-ideas (concat org-directory "20210508185546-things_to_write_about.org")
         t/fzi (concat org-directory "fzi_assistant_job.org"))
 
+
 ;;go where refile takes you:
 (defun +org-search ()
   (interactive)
@@ -201,13 +202,13 @@
         :prepend t)
         ("t" "Personal todo" entry
                 (file+headline +org-capture-notes-file "Todos")
-                "* [ ] %?\n%i\n%a" :prepend t)
+                "* [ ] %?\n%i\n" :prepend t)
         ("n" "Personal notes" entry
                 (file+headline +org-capture-notes-file "Inbox")
-                "* %u %?\n%i\n%a" :prepend t)
+                "* %u %?\n%i\n" :prepend t)
         ("j" "Journal" entry
                 (file+olp+datetree +org-capture-journal-file)
-                "* %U %?\n%i\n%a" :prepend t)))
+                "* %U %?\n%i\n" :prepend t)))
 
   ;; enable sound:
   (setq org-clock-play-sound t)
