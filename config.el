@@ -935,20 +935,21 @@
 
 
 
-(after! python
-;;put following after python config:
-(setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
-(setq +python-jupyter-repl-args '("--simple-prompt"))
-  (defun t/pyconf ()
-    (interactive)
-        (let ((dir (file-name-directory buffer-file-name)))
-                (setq-local compile-command
-                        (concat "chmod +x " (buffer-file-name) ";cat " dir "1.in | " (buffer-file-name)))))
+;; (after! python
+;; ;;put following after python config:
+;; ;;FIXME: python config makes babel no work
+;; (setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
+;; (setq +python-jupyter-repl-args '("--simple-prompt"))
+;;   (defun t/pyconf ()
+;;     (interactive)
+;;         (let ((dir (file-name-directory buffer-file-name)))
+;;                 (setq-local compile-command
+;;                         (concat "chmod +x " (buffer-file-name) ";cat " dir "1.in | " (buffer-file-name)))))
 
-        (add-hook 'python-mode-hook #'t/pyconf)
+;;         (add-hook 'python-mode-hook #'t/pyconf)
 
 
-        )
+;;         )
 
 
 
@@ -1110,3 +1111,13 @@
 ;;trying things to improve latency issues:
 (setq lsp-print-performance t)
 ;;enabling garbage collection
+
+;trying to use nix installed python server (seems to have worked?)
+(use-package lsp-python-ms
+  :ensure t
+  :hook (python-mode . (lambda ()
+                         (require 'lsp-python-ms)
+                         (lsp)))
+  :init
+  (setq lsp-python-ms-executable (executable-find "python-language-server")))
+
