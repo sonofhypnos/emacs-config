@@ -210,6 +210,169 @@
                 (file+olp+datetree +org-capture-journal-file)
                 "* %U %?\n%i\n" :prepend t)))
 
+;; org refile hydras
+(defun my/refile (file headline &optional arg)
+  "Refile to a specific location.
+With a 'C-u' ARG argument, we jump to that location (see
+`org-refile').
+Use `org-agenda-refile' in `org-agenda' mode."
+  (let* ((pos (with-current-buffer (or (get-buffer file)	;Is the file open in a buffer already?
+				       (find-file-noselect file)) ;Otherwise, try to find the file by name (Note, default-directory matters here if it isn't absolute)
+		(or (org-find-exact-headline-in-buffer headline)
+		    (error "Can't find headline `%s'" headline))))
+	 (filepath (buffer-file-name (marker-buffer pos)));If we're given a relative name, find absolute path
+	 (rfloc (list headline filepath nil pos)))
+    (if (and (eq major-mode 'org-agenda-mode) (not (and arg (listp arg)))) ;Don't use org-agenda-refile if we're just jumping
+	(org-agenda-refile nil rfloc)
+      (org-refile arg nil rfloc))))
+
+(defun t/refile (file headline &optional arg)
+  "Refile to HEADLINE in FILE. Clean up org-capture if it's activated.
+With a `C-u` ARG, just jump to the headline."
+  (interactive "P")
+  (let ((is-capturing (and (boundp 'org-capture-mode) org-capture-mode)))
+    (cond
+     ((and arg (listp arg))	    ;Are we jumping?
+      (my/refile file headline arg))
+     ;; Are we in org-capture-mode?
+     (is-capturing      	;Minor mode variable that's defined when capturing
+      (t/org-capture-refile-but-with-args file headline arg))
+     (t
+      (my/refile file headline arg)))
+    (when (or arg is-capturing)
+      (setq hydra-deactivate t))))
+
+(defun t/org-capture-refile-but-with-args (file headline &optional arg)
+  "Copied from `org-capture-refile' since it doesn't allow passing arguments. This does."
+  (unless (eq (org-capture-get :type 'local) 'entry)
+    (error
+     "Refiling from a capture buffer makes only sense for `entry'-type templates"))
+  (let ((pos (point))
+	(base (buffer-base-buffer (current-buffer)))
+	(org-capture-is-refiling t)
+	(kill-buffer (org-capture-get :kill-buffer 'local)))
+    (org-capture-put :kill-buffer nil)
+    (org-capture-finalize)
+    (save-window-excursion
+      (with-current-buffer (or base (current-buffer))
+	(org-with-wide-buffer
+	 (goto-char pos)
+	 (my/refile file headline arg))))
+    (when kill-buffer (kill-buffer base))))
+
+(defmacro t/make-org-refile-hydra (hydraname file keyandheadline)
+  "Make a hydra named HYDRANAME with refile targets to FILE.
+KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\")"
+  `(defhydra ,hydraname (:color blue :after-exit (unless (or hydra-deactivate
+	     current-prefix-arg) ;If we're just jumping to a location, quit the hydra
+	     (t/org-refile-hydra/body)))
+     ,file
+     ,@(cl-loop for kv in keyandheadline
+		collect (list (car kv) (list 't/refile file (cdr kv) 'current-prefix-arg) (cdr kv)))
+     ("q" nil "cancel")))
+
+;;;;;;;;;;
+;; Here we'll define our refile headlines
+;;;;;;;;;;
+;; (setq   org-directory "~/org-roam/"
+;;         org-roam-directory "~/org-roam/"
+;;         org-fc-diretories '(org-directory)
+;;         org-archive-location (concat org-directory ".archive/%s::")
+;;         t/org-inbox-file (concat org-directory "notes.org")
+;;         t/org-project-file (concat org-directory "projects.org")
+;;         t/org-someday-maybe-file (concat org-directory "someday_maybe.org")
+;;         t/org-archive-file (concat org-directory "archive.org")
+;;         t/journal-file (concat org-directory "journal.org")
+;;         t/writing-ideas (concat org-directory "20210508185546-things_to_write_about.org")
+;;         t/fzi (concat org-directory "fzi_assistant_job.org"))
+
+
+;; ;;go where refile takes you:
+;; (defun +org-search ()
+;;   (interactive)
+;;   (org-refile '(4)))
+;; (custom-set-variables '(org-agenda-files '("~/org-roam/projects.org" "~/org-roam/notes.org"))
+;;                       '(org-refile-targets ((t/org-inbox-file t/org-project-file t/org-someday-maybe-file t/org-archive-file t/journal-file) :maxlevel . 3))) ;not sure about benefits of custom-set-variables
+
+;;not sure if I don't add a headline what will happen.
+;; (t/make-org-refile-hydra t/org-refile-hydra-file-archive t/org-archive-file
+;;                                 (("q" . "Archive")))
+;; (t/make-org-refile-hydra t/org-refile-hydra-file-someday-maybe t/org-someday-maybe-file
+;;                                 (("r" . "Reading List") ;;TODO figure out how to do deal with nested headline
+;;                                  ("n" . "New")))
+;; (t/make-org-refile-hydra t/org-refile-hydra-file-writing-ideas t/writing-ideas
+;;                                 (("n" . "New")))
+;; (t/make-org-refile-hydra t/org-refile-hydra-file-quick t/org-project-file
+;; 			    (("q" . "Quick box")
+;;                              ("e" . "Emacs Improvements (this is temporary for better inbox management)")))
+;; (t/make-org-refile-hydra t/org-refile-hydra-file-inbox t/org-inbox-file)
+;TODO: add emacs
+;
+
+(defhydra t/inbox-hydra (:foreign-keys run)
+  "Refile"
+  ("A" (my/refile t/org-archive-file "Archive" ) "Archive")
+  ("a" (org-archive-subtree) "really archive")
+  ("w" (my/refile t/writing-ideas "New" ) "Writing ideas")
+  ("b" (my/refile t/org-project-file "Quick Box") "Quick Box")
+  ("e" (my/refile t/org-project-file "Emacs Improvements (this is temporary for better inbox management)") "emacs improvements")
+  ("r" (my/refile t/org-someday-maybe-file "Reading List") "Reading List")
+  ("s" (my/refile t/org-someday-maybe-file "New") "someday maybe")
+  ("n" (my/refile t/org-inbox-file "Inbox") "move back")
+  ("l" (org-roam-refile) "org-roam-refile")
+  ("f" (org-refile) "refile")
+  ;; ("a" t/org-refile-hydra-file-archive "archive" :exit t)
+  ;; ("s" t/org-refile-hydra-file-someday-maybe "someday maybe" :exit t)
+  ;; ("w" t/org-refile-hydra-file-writing-ideas "writing ideas" :exit t)
+  ("p" org-refile-goto-last-stored "Jump to last refile" :exit t)
+  ;;TODO: add "move to last refile location"
+  ;;TODO: add something to add org-roam links to headings
+  ("i" (org-roam-node-insert) "org-roam-node-insert")
+  ("q" nil "cancel")
+  )
+
+(defhydra t/define-projects-hydra (:foreign-keys run)
+  "Refile"
+  ("A" (my/refile t/org-archive-file "Archive" ) "Archive")
+  ("a" (org-archive-subtree) "really archive")
+  ("w" (my/refile t/writing-ideas "New" ) "Writing ideas")
+  ("b" (my/refile t/org-project-file "Quick Box") "Quick Box")
+  ("e" (my/refile t/org-project-file "Emacs Improvements (this is temporary for better inbox management)") "emacs improvements")
+  ("r" (my/refile t/org-someday-maybe-file "Reading List") "Reading List")
+  ("s" (my/refile t/org-someday-maybe-file "New") "someday maybe")
+  ("n" (my/refile t/org-inbox-file "Inbox") "move back")
+  ("l" (org-roam-refile) "org-roam-refile")
+  ("f" (org-refile) "refile")
+  ;; ("a" t/org-refile-hydra-file-archive "archive" :exit t)
+  ;; ("s" t/org-refile-hydra-file-someday-maybe "someday maybe" :exit t)
+  ;; ("w" t/org-refile-hydra-file-writing-ideas "writing ideas" :exit t)
+  ("p" org-refile-goto-last-stored "Jump to last refile" :exit t)
+  ;;TODO: add "move to last refile location"
+  ;;TODO: add something to add org-roam links to headings
+  ("i" (org-roam-node-insert) "org-roam-node-insert")
+  ("q" nil "cancel")
+  )
+;; (global-set-key (kbd "<SPC> m s r") 't/org-refile-hydra/body)
+
+(defun t/org-refile (&optional args)
+  (interactive)
+  (cond ((file-equal-p buffer-file-name t/org-inbox-file)
+         (t/inbox-hydra/body))
+        ((file-equal-p buffer-file-name t/org-project-file)
+         (t/define-projects-hydra/body))
+        ((org-refile))))
+
+(map! :after org-roam
+      :map org-mode-map
+        "<f12>"  #'anki-editor-cloze-region-dont-incr
+        "<f11>"  #'anki-editor-cloze-region-auto-incr
+        "<f10>"  #'anki-editor-reset-cloze-number
+        "<f9>"   #'anki-editor-push-tree
+        :localleader
+        :prefix "m"
+        :prefix "s"
+; TODO figure out how to define keybinds based on file?
+        :desc "tassilo's refile" "r" #'t/org-refile)
   ;; enable sound:
   (setq org-clock-play-sound t)
 
