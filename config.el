@@ -1100,7 +1100,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 ;; (after! python
 ;; ;;put following after python config:
-;; ;;FIXME: python config makes babel no work
+;; ;;FIXME: python config makes babel no work (check if in babel mode first?)
 ;; (setq +python-ipython-repl-args '("-i" "--simple-prompt" "--no-color-info"))
 ;; (setq +python-jupyter-repl-args '("--simple-prompt"))
 ;;   (defun t/pyconf ()
@@ -1141,9 +1141,9 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
     (add-hook 'c-mode-hook #'t/cconf)))
 
 
-(after! dap-mode
+(after! dap-mode  ;; according to doom config, the line below is everything I need. Not sure if keybinds already added
   (setq dap-python-debugger 'debugpy)
-  ;; ; FIXME disabled because of bug with mode-map
+  ;; ; FIXME disabled because of bug with mode-map (not sure this is needed (does doom add dap keybinds?))
 
 ;; (map! :map dap-mode-map
 ;;       :leader
