@@ -582,13 +582,14 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
        "\n - [ ] Review Anki"
        "\n - [ ] Brush Teeth"
        "\n* Evening Routine"
+       "\n - [ ] genug gegessen? "
+       "\n - [ ] Review Anki" ;;put anki first so you can check it positive in habits
+       "\n - [ ] Brush Teeth" ;;put before checking habits
+       "\n - [ ] Timetracking Reviewed"
+       "\n - [ ] Do active questions (in paper)"
        "\n - [ ] Check Habits/Beeminder"
        "\n - [ ] Tasks Reviewed"
-       "\n - [ ] Timetracking Reviewed"
        "\n - [ ] Answer Journal Questions (Look at prompts on vocab cards)"
-       "\n - [ ] Do active questions (in paper)"
-       "\n - [ ] Review Anki"
-       "\n - [ ] Brush Teeth"
        "\n - [ ] Prepare Backpack"
        "\n* Inbox"
        "\n* Journal"
