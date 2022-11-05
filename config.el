@@ -77,7 +77,7 @@
 
 (defun check-init-file ()
  (while (re-search-forward "\\(use-package\\(.*\n?\\)\\)*)")
-   (if (not (some (rcurry #'string-match-p (match-string 0)) '(":after" ":defer"))))
+   (if (not (cl-some (rcurry #'string-match-p (match-string 0)) '(":after" ":defer"))))
    (warn "Do not use use-package without "))) ;; I
 ;;want to curry this function and then use map, but not quite sure how to do that in elisp
 
@@ -1015,8 +1015,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (after! company
   ;; (setq +lsp-company-backends '(company-tabnine :separate company-capf company-yasnippet))
   (setq company-idle-delay 0.3)
-  (setq company-minimum-prefix-lenght 2)
-  ) ;; this value should not be 0!
+  (setq company-minimum-prefix-lenght 2)) ;; this value should not be 0!
 
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
@@ -1266,6 +1265,11 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;; TODO Disabeling the crypto-hook from doom config, because it seems ate all the memory on my system: [[file:~/org-roam/22-8-15 profiler-report][profile]]   (not sure why)?
 
 ;;setup company modes:
+(after! org
+  (defun tassilo/open-pdf (filepath)
+;; FIXME: opening pdfs does not work
+
+    (find-file filepath)))
 
 ;;example
 ;; (after! js2-mode
