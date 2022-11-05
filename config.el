@@ -1265,12 +1265,8 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;; TODO Disabeling the crypto-hook from doom config, because it seems ate all the memory on my system: [[file:~/org-roam/22-8-15 profiler-report][profile]]   (not sure why)?
 
 ;;setup company modes:
-(after! org
-  (defun tassilo/open-pdf (filepath)
-;; FIXME: opening pdfs does not work
-
-    (find-file filepath)))
-
+(defun tassilo/open-pdf (filepath)
+    (find-file filepath))
 ;;example
 ;; (after! js2-mode
 ;;   (set-company-backend! 'js2-mode 'company-tide 'company-yasnippet))
