@@ -1072,7 +1072,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;open external terminal
 (defun run-terminal-here ()
   (interactive "@")
-  (shell-command "xterm > /dev/null 2>&1 & disown" nil nil))
+  (shell-command "konsole > /dev/null 2>&1 & disown" nil nil))
 
 
 
