@@ -185,5 +185,7 @@
 
        :config
        (default +bindings +smartparens)
-       prompts
+       ;; prompts (FIXME this is were I tried to to make my own package work.
+       ;; Not sure what kind of messes this caused, but at least doctor was
+       ;; annoyed so I uncommented this line again)
 )
