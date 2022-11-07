@@ -877,7 +877,8 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (use-package! org-download
   :after org
   :init
-  (map! :leader ;;TODO configure this so it only works in org-mode
+  (map! :leader
+        :map org-mode-map
         :prefix "d"
         :desc "org-screenshot" "d" #'org-download-screenshot)
 (add-hook 'dired-mode-hook 'org-download-enable)
@@ -1077,22 +1078,27 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 
 (after! ccls
+
   ;;function for fixing autocorrect (should be added as a hook at some point (though naively adding to c++-mode would trigger infinite loop))
-        (defun t/c++-mode ()
+(defun t/c++-mode ()
+  "FIXME: not actually sure what I used this for?"
         (interactive)
         (progn (c++-mode)
         (setq-local flycheck-checker 'g++-gcc)))
+
   (setq ccls-initialization-options '(:index (:comments 2) :completion (:detailedLabel t)))
   (set-lsp-priority! 'ccls 2); optional as ccls is the default in Doom
   (defun t/compile-c++ ()
+    "Function for compiling icpc exercises"
         (setq-local compile-command
         (concat
         "g++ -std=gnu++17 -Og -g -Wall -Wextra -Wconversion -fsanitize=address -fsanitize=undefined "
         (buffer-file-name)
         "&& cat 1.in | ./a.out | diff 1.out -")))
-(add-hook 'c++-mode-hook #'t/compile-c++)
-(add-hook! c++-mode-hook
-         (flycheck-select-checker 'c/c++-gcc))) ;;hope this fixes flycheck with c++
+;; (add-hook 'c++-mode-hook #'t/compile-c++)
+;; (add-hook! c++-mode-hook
+;;          (flycheck-select-checker 'c/c++-gcc))
+) ;;FIXME: hope this fixes flycheck with c++ (actually this is terrible if I am not actually using this checker! (like with computergraphics!))
 
 
 
