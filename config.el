@@ -34,6 +34,13 @@
         t/fzi (concat org-directory "fzi_assistant_job.org"))
 
 
+;;configure haskell to support renaming stuff
+(after! lsp-haskell
+(add-hook 'lsp-after-initialize-hook
+                #'(lambda ()
+                (lsp--set-configuration
+                '(:haskell (:plugin (:rename (:config (:crossModule t)))))
+                ))))
 ;;go where refile takes you:
 (defun +org-search ()
   (interactive)
