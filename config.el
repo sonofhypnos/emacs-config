@@ -1171,19 +1171,19 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;       :desc "dap debug"         "s" #'dap-debug
 
 ;;       ;; debug
-;;       :prefix ("dd" . "Debug")
+;;       :prefix ("d" . "Debug")
 ;;       :desc "dap debug recent"  "r" #'dap-debug-recent
 ;;       :desc "dap debug last"    "l" #'dap-debug-last
 
 ;;       ;; eval
-;;       :prefix ("de" . "Eval")
+;;       :prefix ("e" . "Eval")
 ;;       :desc "eval"                "e" #'dap-eval
 ;;       :desc "eval region"         "r" #'dap-eval-region
 ;;       :desc "eval thing at point" "s" #'dap-eval-thing-at-point
 ;;       :desc "add expression"      "a" #'dap-ui-expressions-add
 ;;       :desc "remove expression"   "d" #'dap-ui-expressions-remove
 
-;;       :prefix ("db" . "Breakpoint")
+;;       :prefix ("b" . "Breakpoint")
 ;;       :desc "dap breakpoint toggle"      "b" #'dap-breakpoint-toggle
 ;;       :desc "dap breakpoint condition"   "c" #'dap-breakpoint-condition
 ;;       :desc "dap breakpoint hit count"   "h" #'dap-breakpoint-hit-condition
