@@ -1306,14 +1306,24 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;
 ;[] ?
 
+
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
-  :bind (
-         ;; ("C-<tab>" . 'copilot-accept-completion-by-word)
-         :map copilot-completion-map
-         ("C-TAB" . #'copilot-accept-completion-by-word)
-         ;; ("<tab>" . 'copilot-accept-completion)
-         ("TAB" . #'copilot-accept-completion)))
+  :hook (org-mode . copilot-mode)
+  :config
+        ; The tab keybinds are used twice because there is apparently a subtle difference
+        ; see: https://discourse.doomemacs.org/t/how-to-re-bind-keys/56 for more info
+        ; FIXME there needs to be a way to set the below keybinds for insert mode specifically
+        (evil-define-key* 'insert copilot-mode-map
+                (kbd "C-TAB") #'copilot-accept-completion-by-word)
+        (evil-define-key* 'insert copilot-mode-map
+                (kbd "C-<tab>") #'copilot-accept-completion-by-word)
+        (evil-define-key* 'insert copilot-mode-map
+                (kbd "<tab>") #'copilot-accept-completion)
+        (evil-define-key* 'insert copilot-mode-map
+                (kbd "TAB") #'copilot-accept-completion)
+         )
+
 (remove-hook 'doom-first-buffer-hook #'smartparens-global-mode
 ; disables smartparens mode.
 ; FIXME temporary snippet, usefullness need to be reevaluated
