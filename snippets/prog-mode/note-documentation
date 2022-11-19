@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: note-documentation
+# key: note
+# --
+`(yas-trimmed-comment-start)` NOTE $0
