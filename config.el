@@ -1309,11 +1309,12 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 (use-package! copilot
   :hook (prog-mode . copilot-mode)
-  :hook (org-mode . copilot-mode)
   :config
         ; The tab keybinds are used twice because there is apparently a subtle difference
         ; see: https://discourse.doomemacs.org/t/how-to-re-bind-keys/56 for more info
-        ; FIXME there needs to be a way to set the below keybinds for insert mode specifically
+        ; FIXME I might want a seperate kebind for copilot instead of plain tab
+        ; that does not conflict with orgmode stuff.
+
         (evil-define-key* 'insert copilot-mode-map
                 (kbd "C-TAB") #'copilot-accept-completion-by-word)
         (evil-define-key* 'insert copilot-mode-map
