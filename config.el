@@ -1297,6 +1297,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
                          (lsp)))
   :init
   (setq lsp-python-ms-executable (executable-find "python-language-server")))
+(setq lsp-python-ms-auto-install-server t) ; FIXME not sure whether this should be inside some use-package expression
 
 
 
