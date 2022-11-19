@@ -2,6 +2,8 @@
 ;;; $DOOMDIR/packages.el
 
 ;org
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 (package! org-mode :recipe (:repo "https://code.orgmode.org/bzg/org-mode.git")) ;see  hlissner/doom-emacs#4534
 (package! openwith)
 (unpin! org-roam)

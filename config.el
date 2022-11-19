@@ -1298,3 +1298,17 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   :init
   (setq lsp-python-ms-executable (executable-find "python-language-server")))
 
+
+
+; TODO remap every keybind that uses öäü?
+;
+;[] ?
+
+(use-package! copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (
+         ;; ("C-<tab>" . 'copilot-accept-completion-by-word)
+         :map copilot-completion-map
+         ("C-TAB" . #'copilot-accept-completion-by-word)
+         ;; ("<tab>" . 'copilot-accept-completion)
+         ("TAB" . #'copilot-accept-completion)))
