@@ -1289,6 +1289,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (setq lsp-print-performance t)
 ;;enabling garbage collection
 
+(setq garbage-collection-messages t)
 ;trying to use nix installed python server (seems to have worked?)
 (use-package lsp-python-ms
   :ensure t
