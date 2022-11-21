@@ -1308,7 +1308,8 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 
 (use-package! copilot
-  :hook (prog-mode . copilot-mode)
+  ;; :hook (prog-mode . copilot-mode) ;disabled because sometimes copilot is just annoying/leading me to do stupid things:
+  ;; use some more inconvenient keybind for copilot
   :config
         ; The tab keybinds are used twice because there is apparently a subtle difference
         ; see: https://discourse.doomemacs.org/t/how-to-re-bind-keys/56 for more info
@@ -1316,12 +1317,8 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
         ; that does not conflict with orgmode stuff.
 
         (evil-define-key* 'insert copilot-mode-map
-                (kbd "C-TAB") #'copilot-accept-completion-by-word)
+                (kbd "C-c SPC") #'copilot-accept-completion-by-word)
         (evil-define-key* 'insert copilot-mode-map
-                (kbd "C-<tab>") #'copilot-accept-completion-by-word)
-        (evil-define-key* 'insert copilot-mode-map
-                (kbd "<tab>") #'copilot-accept-completion)
-        (evil-define-key* 'insert copilot-mode-map
-                (kbd "TAB") #'copilot-accept-completion)
+                (kbd "C-C RET") #'copilot-accept-completion)
          )
 
