@@ -1325,7 +1325,3 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
                 (kbd "TAB") #'copilot-accept-completion)
          )
 
-(remove-hook 'doom-first-buffer-hook #'smartparens-global-mode
-; disables smartparens mode.
-; FIXME temporary snippet, usefullness need to be reevaluated
-             )
