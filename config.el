@@ -319,6 +319,9 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (defhydra t/inbox-hydra (:foreign-keys run)
   "Refile"
   ("A" (my/refile t/org-archive-file "Archive" ) "Archive")
+  ;;NOTE: consider not switching archive and real archive again! (the real
+  ;;archive should be the default. If you really need to find something, you
+  ;;will use project search anyways.)
   ("a" (org-archive-subtree) "really archive")
   ("w" (my/refile t/writing-ideas "New" ) "Writing ideas")
   ("b" (my/refile t/org-project-file "Quick Box") "Quick Box")
@@ -1320,6 +1323,16 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
         (evil-define-key* 'insert copilot-mode-map
                 (kbd "C-c SPC") #'copilot-accept-completion-by-word)
         (evil-define-key* 'insert copilot-mode-map
-                (kbd "C-C RET") #'copilot-accept-completion)
-         )
+                (kbd "C-C RET") #'copilot-accept-completion))
 
+
+(defun ediff-copy-both-to-C ()
+  "Ediff function to combine A and B region. For some reason this does not exist by default."
+        (interactive)
+        (ediff-copy-diff ediff-current-difference nil 'C nil
+                        (concat
+                        (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
+                        (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+(defun add-d-to-ediff-mode-map ()
+        (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
+(add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
