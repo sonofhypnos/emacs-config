@@ -953,22 +953,26 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   ;; (global-wakatime-mode)
   )
 
-(use-package! openwith
-  :after-call pre-command-hook
-  :config
- (openwith-mode t) ;keeping openwith-mode disabled until I've found a solution for inline images
 
-(add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file)))
+; FIXME opening pdfs in emacs not as great as I thought as I sometimes actually want to print things etc.
 
-    (defadvice org-display-inline-images
-    (around handle-openwith
-            (&optional include-linked refresh beg end) activate compile)
-    (if openwith-mode
-        (progn
-            (openwith-mode -1)
-            ad-do-it ;;not sure what this line is for? should this be add-to-list? why is it not throwing errors? does it evaluate to false?
-            (openwith-mode 1))
-        ad-do-it)))
+;; (use-package! openwith
+;;
+;;   :after-call pre-command-hook
+;;   :config
+;;  (openwith-mode nil) ;keeping openwith-mode disabled until I've found a solution for inline images
+
+;; (add-to-list 'openwith-associations '("\\.pdf\\'" "zathura" (file)))
+
+;;     (defadvice org-display-inline-images
+;;     (around handle-openwith
+;;             (&optional include-linked refresh beg end) activate compile)
+;;     (if openwith-mode
+;;         (progn
+;;             (openwith-mode -1)
+;;             ad-do-it ;;not sure what this line is for? should this be add-to-list? why is it not throwing errors? does it evaluate to false?
+;;             (openwith-mode 1))
+;;         ad-do-it)))
 
 
 (use-package! term ;;was something up with term?
