@@ -593,9 +593,10 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
        "\n - [ ] Brush Teeth"
        "\n* Evening Routine"
        "\n - [ ] Lüften!"
-       "\n - [ ] Look at project list for 10 minutes"
-       "\n - [ ] genug gegessen? "
+       "\n - [ ] Look at project list for 5 minutes"
+       "\n - [ ] genug gegessen?"
        "\n - [ ] Review Anki" ;;put anki first so you can check it positive in habits
+       "\n - [ ] Create 5 Anki cards from your backlog (see todos)"
        "\n - [ ] Timetracking Reviewed"
        "\n - [ ] Do active questions (in paper)"
        "\n - [ ] Brush Teeth" ;;put before checking habits
