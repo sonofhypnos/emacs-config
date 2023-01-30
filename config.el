@@ -467,9 +467,15 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 (setq org-agenda-custom-commands
 '(("n" "Agenda and all TODOs")
-  ("z" "Zuordnen"
+  ("z" "Zuordnen" ;; Zuordnen is for selecting tags
    ((agenda "")
-    (tags-todo "")))))
+    (tags-todo "")))
+  ; TODO Add dates view
+  ("d" "Date view") ;selects dates
+  ; ; TODO Add priority view
+  ; TODO customize stuck projects
+  ))
+
 
 
 (setq org-export-with-tasks nil

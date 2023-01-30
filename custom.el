@@ -47,9 +47,7 @@
     (cons 340 "#405A61")
     (cons 360 "#405A61")))
  '(vc-annotate-very-old-color nil)
- '(warning-suppress-types
-   '(
-     (defvaralias))))
+ '(warning-suppress-types '((defvaralias))))
  ;; not sure this is the right place to set this.
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
