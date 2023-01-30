@@ -472,9 +472,11 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
     (tags-todo "")))))
 
 
+(setq org-export-with-tasks nil
+      org-refile-use-cache t ;; ; ; FIXME: this line might cause trouble, but testing it, because refile was unbearably slow
 
-(setq org-export-with-tasks nil) ;;what is this?
-;      org-refile-use-cache t) ;;testing for now (this might have caused major org trouble)
+      )
+
 
 ;; (defun mdlinks-to-orglinks ()
 ;;     (interactive)
