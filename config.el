@@ -602,6 +602,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
        "\n - [ ] Brush Teeth"
        "\n* Evening Routine"
        "\n - [ ] Review daily list"
+       "\n - [ ] review timetracking"
        "\n - [ ] Brush Teeth" ;;put before checking habits
        "\n - [ ] Schedule the day for tomorrow (paper)"
        "\n - [ ] Do active questions"
