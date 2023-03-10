@@ -56,7 +56,7 @@
 ;; (package! format-all)
 ;;         ;tracking
 ;;         (package! wakatime-mode)
-(package! pdf-tools)
+;;(package! pdf-tools)
 (package! org-noter-pdftools)
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
