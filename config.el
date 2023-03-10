@@ -1041,8 +1041,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
 
-(after! core-ui (menu-bar-mode 1)) ;;is this causing problems?
-
+(menu-bar-mode 1) ;;after! is not needed because core-ui is not loaded lazily
 ;; custom functions
 (defun t/random-phrase ()
     (interactive)
