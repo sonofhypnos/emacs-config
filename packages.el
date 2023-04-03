@@ -86,6 +86,7 @@
            :repo "a-schaefers/org-nag-clock-mode"))
 
 
+(package! ob-prolog)
 ;;(package! activity-watch-mode) maybe add again when debugged
 
 ;; If the package you are trying to install does not contain a PACKAGENAME.el
