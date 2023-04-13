@@ -389,7 +389,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   ;;
 (setq org-tag-persistent-alist '(("continue?") ("@unterwegs") ("anki" . ?a) ("logbook")
 ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
-("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus")
+("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus") ("leo")
 ("Brainstorm" . ?b) ("@pc" . ?p) ("uni" . ?u) ("Computergrafik") ("laughing") ("projekt")
 ("@zuhause" . ?z)))
 
@@ -474,7 +474,36 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   ("d" "Date view") ;selects dates
   ; ; TODO Add priority view
   ; TODO customize stuck projects
-  ))
+
+  ("l" "Show Leo's TODOs that are currently due."
+   ((tags-todo "+leo")
+;; (org-agenda-overriding-header "Leo's TODOs that are currently due")
+;; (org-agenda-time-grid nil)
+;; (org-deadline-warning-days 0)
+    )
+   )
+
+
+  ; TODO add filter for only todos that are due and that are for leo
+  )
+      ;; NOTE example custom commands:
+
+     ;; (setq org-agenda-custom-commands
+     ;;       '(("x" agenda)
+     ;;
+     ;;         ("y" agenda*)
+     ;;         ("w" todo "WAITING")
+     ;;         ("W" todo-tree "WAITING")
+     ;;         ("u" tags "+boss-urgent")
+     ;;         ("v" tags-todo "+boss-urgent")
+     ;;         ("U" tags-tree "+boss-urgent")
+     ;;         ("f" occur-tree "\\<FIXME\\>")
+     ;;         ("h" . "HOME+Name tags searches") ;description for "h" prefix
+     ;;         ("hl" tags "+home+Lisa")
+     ;;         ("hp" tags "+home+Peter")
+     ;;         ("hk" tags "+home+Kim")))
+
+)
 
 
 
