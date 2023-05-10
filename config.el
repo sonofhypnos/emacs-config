@@ -620,12 +620,9 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
       (concat
        "#+title: %<%Y-%m-%d>\n* [/] Do Today (FDT)\n* [/] Maybe Do Today"
        "\n* Morgenroutine"
-       "\n - [ ] Lüften!"
        "\n - [ ] Kalender angesehen"
        "\n - [ ] Start tracking"
        "\n - [ ] Medis genommen"
-       "\n - [ ] kk"
-       "\n - [ ] Uhr angezogen"
        "\n - [ ] Ziele gesetzt"
        "\n - [ ] Review Anki"
        "\n - [ ] Brush Teeth"
