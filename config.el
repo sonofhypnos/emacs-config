@@ -78,6 +78,7 @@
              more-functions
              :initial-value function))
 
+
 ;;Checking for stupid config mistakes
 ; TODO make sure this is triggered in the correct buffer on emacs startup
 ; FIXME check-init-file does not work at the moment check if langtool is detected if necessary
@@ -869,15 +870,21 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;   (setq org-noter-notes-search-path org-directory))
 
 ;; see doom readme for biblio for further config info
-;; (after! oc ;right package?
-;;   (setq! bibtex-completion-bibliography '("~/repos/bibliography/zotLib.bib"))
-;;   ;; not sure where my files for zotero are currently stored
-;;   ;; once I understand that part I might uncomment this:
-;;   ;; You may also set the respective note and library path variables as well for enhanced functionality:
-;;  (setq! bibtex-completion-library-path "~/Zotero/storage/"
-;;         bibtex-completion-notes-path (concat org-directory "lit/"))
-;;         org-cite-follow-processor 'basic
-;;  )
+(use-package! citar  ;right package?
+  :after org
+  :config
+  (setq! bibtex-dialect 'biblatex) ;; NOTE this is how I formated the thing under bibliography!
+  ; NOTE below stuff needs to be set to bibtex-completion-bibliography instead
+  ; of citar-bibliography if working with different completion engine than
+  ; vertico. See https://github.com/doomemacs/doomemacs/tree/master/modules/tools/biblio
+  ;; not sure where my files for zotero are currently stored
+  ;; once I understand that part I might uncomment this:
+  ;; You may also set the respective note and library path variables as well for enhanced functionality:
+ (setq!
+        citar-bibliography '("~/repos/bibliography/zotLib.bib")
+        citar-library-paths '("~/Zotero/storage/") ; TODO I should probably set this to an exported thing
+        citar-notes-path `(,(concat org-directory "lit/"))) ; TODO figure out how to fix this?
+ )
 
 ;; (use-package! org-pdftools
 ;;   :after org
@@ -1361,7 +1368,8 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 
 (defun ediff-copy-both-to-C ()
-  "Ediff function to combine A and B region. For some reason this does not exist by default."
+  "Ediff function to combine A and B region. For some reason this does not exist
+by default."
         (interactive)
         (ediff-copy-diff ediff-current-difference nil 'C nil
                         (concat
