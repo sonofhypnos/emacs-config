@@ -1378,3 +1378,65 @@ by default."
 (defun add-d-to-ediff-mode-map ()
         (define-key ediff-mode-map "d" 'ediff-copy-both-to-C))
 (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
+
+
+; TODO create keybinds for ein mode
+; NOTE example:
+;; (after! ein-notebook
+;;   (set-popup-rule! "^\\*ein:" :ignore t)
+
+;;   (defun +ein-buffer-p (buf)
+;;     (or (memq buf (ein:notebook-opened-buffers))
+;;         (memq buf (mapcar #'ein:notebooklist-get-buffer (ein:notebooklist-keys)))))
+;;   (add-to-list 'doom-real-buffer-functions #'+ein-buffer-p nil #'eq)
+;;   (map! :map ein:notebook-mode-map
+;;         "M-s" #'ein:notebook-save-notebook-command-km
+;;         :map ein:notebooklist-mode-map
+;;         "o" #'ein:notebook-open-km))
+
+
+;; (after! ein-notebook
+;; (map! :map ein:notebook-mode-map
+;;       ; ; FIXME figure out how to have this binding only for this mode!
+
+;;       :leader
+;;       :prefix "f"
+;;       :desc "save-notebook" "s" #'ein:notebook-save-notebook-command
+;;         )
+;; )
+;;
+;; (after! ein
+;;   (evil-define-key* 'normal ein:ipdb-mode-map
+;;     (kbd "C SPC") #'ein:worksheet-execute-cell-and-goto-next)
+;;   )
+
+;; ;; AUCTeX settings
+;; (after! tex
+;;   (setq TeX-auto-save t)
+;;   (setq TeX-parse-self t)
+;;   (setq-default TeX-master nil)
+;;   (setq TeX-command-extra-options "-shell-escape")
+;;   (add-hook! 'TeX-mode-hook (setq-local fill-column 120)))
+
+;; RefTeX settings
+(after! reftex
+  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+  (setq reftex-plug-into-AUCTeX t))
+
+;; ;; setup for preview
+;; (after! preview
+;;   (setq LaTeX-command "latex -synctex=1 -shell-escape")
+;;   (setq-default TeX-PDF-mode t))
+
+(after! tex
+  (setq +latex-viewers '(zathura))
+;; (setq reftex-default-bibliography "/your/bib/file.bib")
+  (add-hook! 'TeX-mode-hook
+        (setq TeX-save-query nil
+                TeX-show-compilation nil
+                bibtex-files '("/home/tassilo/repos/bachelorthesis-workspace-tassilo/thesis/BachelorArbeit.bib"))
+    ;; (let ((makefile-path (concat default-directory "Makefile")))
+    ;;   (when (file-exists-p makefile-path)
+    ;;     (set (make-local-variable 'TeX-command) "make")
+    ;;     (add-to-list 'TeX-command-list '("make" makefile-path :default))))
+    ))
