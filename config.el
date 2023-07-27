@@ -741,7 +741,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (setq org-roam-capture-ref-templates
         '(
           ("r" "ref" plain "%?" :target
-        (file+head "${slug}.org" "#+title: ${title}")
+        (file+head "${slug}.org" "${title}")
         :unnarrowed t
         :jump-to-captured t))
 
