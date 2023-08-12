@@ -2,5 +2,4 @@
 # name: todo-latex
 # key: todo
 # --
-
-\todo[inline]{${1:}}
+% TODO: $0
