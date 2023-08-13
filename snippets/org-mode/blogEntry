@@ -9,7 +9,7 @@
 :CREATED: [`(format-time-string "%Y-%02m-%02d%3a %02H:%02M")`]
 :END:
 :LOGBOOK:
-- State "DONE"       from "TODO"       [`(format-time-string "%Y-%02m-%02d %3a %02H:%02M")`]
+- State "DONE"       from "TODO"       [`(let ((current-locale current-language-environment)) (set-locale-environment "English")(let ((time (format-time-string "%Y-%02m-%02d %3a %02H:%02M")))(set-locale-environment current-locale)time))`]
 :END:
 
 $0
