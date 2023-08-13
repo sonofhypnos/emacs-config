@@ -522,7 +522,9 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (defun pushblog ()
   "Parse blog entries to blog directory and push to github"
   (interactive)
-(start-file-process "tassilos_invocation.sh" "*push-blog*" "~/repos/lazyblorg/tassilos_invocation.sh"))
+  (let ((process-buffer-name  "*push-blog*"))
+  (start-file-process "tassilos_invocation.sh" process-buffer-name "~/repos/lazyblorg/tassilos_invocation.sh")
+  (pop-to-buffer process-buffer-name)))
 
 (defvar memacs-root org-directory)
 (defvar memacs-file-pattern "photos.org_archive") ;; also possible: "*.org"
