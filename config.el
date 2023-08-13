@@ -1116,10 +1116,13 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
         :desc "Five"  "5" 'markdown-insert-atx-5
         :desc "Six"   "6" 'markdown-insert-atx-6))
 
+
 (after! evil
   (map! :map evil-colemak-basics-keymap
       :nv "N" 'evil-scroll-page-down
-      :nv "E" 'evil-scroll-page-up))
+      :nv "E" 'evil-scroll-page-up)
+  (global-hl-todo-mode) ;NOTE: this might be the most terrible place to activate this. I don't know a better one though.
+  )
 
 
 ;;open external terminal
