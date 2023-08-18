@@ -1314,11 +1314,10 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
         )
 
 
-;; (after! tramp
-;; ;fixing hangs because tramp does not understand the shell prompt:
-;;         (setenv "SHELL" "/bin/sh")
-;;         (setq tramp-shell-prompt-pattern "\\(?:^\\|\\)[^]#$%>\n]*#?[]#$%>] *\\(\\[[[:digit:];]*[[:alpha:]] *\\)*")
-;;   )
+(after! tramp
+;fixing hangs because tramp does not understand the shell prompt:
+        (setq tramp-terminal-type "tramp")
+  )
 
 ;;supposedly helpful for not saving secret stuff on disk
 (setq dabbrev-ignored-buffer-regexps '(".*\.gpg$" "^ [*].*"))
