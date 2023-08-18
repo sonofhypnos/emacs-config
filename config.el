@@ -518,6 +518,12 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;     (interactive)
 ;;     (evil-ex "%s/\\[\\(.*?\\)\\](\\(.*?\\))/[[\\1][\\2]]/g"))
 
+(defun english-format-time-string (time-string)
+(let ((current-locale current-language-environment))
+  (set-locale-environment "English")
+  (let ((time (format-time-string time-string)))
+    (set-locale-environment current-locale)time)))
+;; "%Y-%02m-%02d %3a %02H:%02M"
 
 (defun pushblog ()
   "Parse blog entries to blog directory and push to github"
