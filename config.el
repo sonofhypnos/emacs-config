@@ -1021,6 +1021,9 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;         ad-do-it)))
 
 
+(after! lsp
+  (setq lsp-warn-no-matched-clients nil))
+
 (use-package! term ;;was something up with term?
   :after org
   :config
