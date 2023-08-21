@@ -1454,6 +1454,6 @@ by default."
     ;;     (add-to-list 'TeX-command-list '("make" makefile-path :default))))
     ))
 (after! format
-(add-to-list '+format-on-save-enabled-modes 'python-mode))
+(add-to-list '+format-on-save-enabled-modes 'python-mode 'append))
 
 ; TODO setup keybind to cycle through search history with the arrow keys.
