@@ -1348,15 +1348,15 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;enabling garbage collection
 
 (setq garbage-collection-messages t)
-;trying to use nix installed python server (seems to have worked?)
-(use-package lsp-python-ms
-  :ensure t
-  :hook (python-mode . (lambda ()
-                         (require 'lsp-python-ms)
-                         (lsp)))
-  :init
-  (setq lsp-python-ms-executable (executable-find "python-language-server")))
-(setq lsp-python-ms-auto-install-server t) ; FIXME not sure whether this should be inside some use-package expression
+;; ;trying to use nix installed python server (seems to have worked?)
+;; (use-package lsp-python-ms
+;;   :ensure t
+;;   :hook (python-mode . (lambda ()
+;;                          (require 'lsp-python-ms)
+;;                          (lsp)))
+;;   :init
+;;   (setq lsp-python-ms-executable (executable-find "python-language-server")))
+;; (setq lsp-python-ms-auto-install-server t) ; FIXME not sure whether this should be inside some use-package expression
 
 
 
