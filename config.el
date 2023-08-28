@@ -1169,6 +1169,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ) ;;FIXME: hope this fixes flycheck with c++ (actually this is terrible if I am not actually using this checker! (like with computergraphics!))
 
 
+;;; FIXME figure out how to make the python-mypy thing work. Just installing mypy didn't work, but might have been impatient.
 (after! flycheck
   (setq flycheck-checkers (delq 'python-mypy flycheck-checkers)))
 
@@ -1459,7 +1460,10 @@ by default."
     ;;     (set (make-local-variable 'TeX-command) "make")
     ;;     (add-to-list 'TeX-command-list '("make" makefile-path :default))))
     ))
-(after! format
-(add-to-list '+format-on-save-enabled-modes 'python-mode 'append))
 
-; TODO setup keybind to cycle through search history with the arrow keys.
+(after! lsp-mode
+  (setq lsp-pyls-plugins-black-args '("--line-length" "80")))
+;; NOTE: try below if above doesn't seem to work?
+;; (after! format
+;; (setq-hook! 'python-mode-hook +format-with-lsp nil)
+;; (set-formatter! 'black '("black" "-q" "--line-length" "80" "-")))
