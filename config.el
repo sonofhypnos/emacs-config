@@ -1145,8 +1145,8 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 
 
-(after! ccls
 
+(after! ccls
   ;;function for fixing autocorrect (should be added as a hook at some point (though naively adding to c++-mode would trigger infinite loop))
 (defun t/c++-mode ()
   "FIXME: not actually sure what I used this for?"
@@ -1167,6 +1167,10 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;; (add-hook! c++-mode-hook
 ;;          (flycheck-select-checker 'c/c++-gcc))
 ) ;;FIXME: hope this fixes flycheck with c++ (actually this is terrible if I am not actually using this checker! (like with computergraphics!))
+
+
+(after! flycheck
+  (setq flycheck-checkers (delq 'python-mypy flycheck-checkers)))
 
 
 
