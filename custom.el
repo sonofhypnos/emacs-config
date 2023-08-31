@@ -12,12 +12,18 @@
  '(jdee-db-requested-breakpoint-face-colors (cons "#073642" "#859900"))
  '(jdee-db-spec-breakpoint-face-colors (cons "#073642" "#56697A"))
  '(objed-cursor-color "#dc322f")
+ '(org-agenda-files
+   '("~/repos/bachelorthesis-workspace-tassilo/bachelor_arbeit.org" "/home/tassilo/org-roam/projects.org" "/home/tassilo/org-roam/notes.org"))
  '(org-agenda-inhibit-startup nil)
+ '(org-refile-targets
+   ((t/org-inbox-file t/org-project-file t/org-someday-maybe-file t/org-archive-file t/journal-file)
+    :maxlevel . 3))
  '(pdf-view-midnight-colors (cons "#839496" "#002b36"))
  '(rustic-ansi-faces
    ["#002b36" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
  '(safe-local-variable-values
-   '((org-refile-targets)
+   '((eval setenv "PYTHONPATH" "~/repos/bachelorthesis-workspace-tassilo/code/")
+     (org-refile-targets)
      (org-download-delete-image-after-download)
      (org-download-method . directory)
      (org-download-heading-lvl . 0)
