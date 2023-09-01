@@ -1500,3 +1500,5 @@ by default."
 
 (use-package! elisp-lint
   :commands elisp-lint-buffer)
+
+(load-file "emacs-hm-env.el")
