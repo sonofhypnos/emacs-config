@@ -1430,8 +1430,6 @@ by default."
 ;;     (kbd "C SPC") #'ein:worksheet-execute-cell-and-goto-next)
 ;;   )
 
-(after! tex
-  (hs-minor-mode)) ;add folding for blocks
 
 
 ;; RefTeX settings
@@ -1445,12 +1443,14 @@ by default."
 ;;   (setq-default TeX-PDF-mode t))
 
 (after! tex
+
   (setq +latex-viewers '(zathura))
 ;; (setq reftex-default-bibliography "/your/bib/file.bib")
   (add-hook! 'TeX-mode-hook
         (setq TeX-save-query nil
                 TeX-show-compilation nil
                 bibtex-files '("/home/tassilo/repos/bachelorthesis-workspace-tassilo/thesis/BachelorArbeit.bib"))
+   (add-hook! 'tex-mode-hook (hs-minor-mode))
     ;; (let ((makefile-path (concat default-directory "Makefile")))
     ;;   (when (file-exists-p makefile-path)
     ;;     (set (make-local-variable 'TeX-command) "make")
