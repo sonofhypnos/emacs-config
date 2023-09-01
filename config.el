@@ -1285,43 +1285,43 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 
 ; TODO figure out how to make i3-mode actually work (keybinds don't seem to be stolen from i3 (though not sure did not really get both to use the same keybinds at the same time))
-(after! i3-mode
-  (setq i3-flavor 'i3
-        i3-config-file "~/.config/regolith/i3/config")
-
-  ;below disabled (because distracting)
-        ;; (setq i3-bindings
-        ;; '((?\C-l . "focus right")
-        ;;         (?\C-h . "focus left")
-        ;;         (?\C-k . "focus up")
-        ;;         (?\C-j . "focus down")))
-        ;; (defun i3--key-binding-config ()
-        ;; "Append STR with the key bindings settings according to `i3-bindings' in i3 configuration format. Return the appended string"
-        ; FIXME disabled the thing that changes keybinds
-
-        ;; (with-temp-buffer
-        ;; (let ((key-binding-string "\n"))
-        ;; (dolist (binding i3-bindings)
-        ;;         (let* ((mod (--> (car binding)
-        ;;                 (event-modifiers it)
-        ;;                 (-map 'symbol-name it)
-        ;;                 (-map 's-capitalize it)
-        ;;                 (s-join "+" it)))
-        ;;         (key (-> (car binding)
-        ;;                         event-basic-type vector (key-description nil)))
-        ;;         (script (if (eq i3-flavor 'sway) "sway-call" "i3-call"))
-        ;;         (cmd (concat script " "
-        ;;                         (cdr binding) " "
-        ;;                         (-> (car binding) vector key-description))))
-        ;;         (setq key-binding-string
-        ;;                 (concat key-binding-string
-        ;;                         "bindsym " mod "+" key " exec --no-startup-id " cmd "\n"))))
-        ;; (insert key-binding-string))
-        ;; (buffer-string)))
-
-
-        ;; (add-to-list 'i3-extra-config #'i3--key-binding-config)
-        )
+;;(after! i3-mode
+;;  (setq i3-flavor 'i3
+;;        i3-config-file "~/.config/regolith/i3/config")
+;;
+;;  ;below disabled (because distracting)
+;;        ;; (setq i3-bindings
+;;        ;; '((?\C-l . "focus right")
+;;        ;;         (?\C-h . "focus left")
+;;        ;;         (?\C-k . "focus up")
+;;        ;;         (?\C-j . "focus down")))
+;;        ;; (defun i3--key-binding-config ()
+;;        ;; "Append STR with the key bindings settings according to `i3-bindings' in i3 configuration format. Return the appended string"
+;;        ; FIXME disabled the thing that changes keybinds
+;;
+;;        ;; (with-temp-buffer
+;;        ;; (let ((key-binding-string "\n"))
+;;        ;; (dolist (binding i3-bindings)
+;;        ;;         (let* ((mod (--> (car binding)
+;;        ;;                 (event-modifiers it)
+;;        ;;                 (-map 'symbol-name it)
+;;        ;;                 (-map 's-capitalize it)
+;;        ;;                 (s-join "+" it)))
+;;        ;;         (key (-> (car binding)
+;;        ;;                         event-basic-type vector (key-description nil)))
+;;        ;;         (script (if (eq i3-flavor 'sway) "sway-call" "i3-call"))
+;;        ;;         (cmd (concat script " "
+;;        ;;                         (cdr binding) " "
+;;        ;;                         (-> (car binding) vector key-description))))
+;;        ;;         (setq key-binding-string
+;;        ;;                 (concat key-binding-string
+;;        ;;                         "bindsym " mod "+" key " exec --no-startup-id " cmd "\n"))))
+;;        ;; (insert key-binding-string))
+;;        ;; (buffer-string)))
+;;
+;;
+;;        ;; (add-to-list 'i3-extra-config #'i3--key-binding-config)
+;;        )
 
 
 (after! tramp
