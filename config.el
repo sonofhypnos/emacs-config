@@ -1430,13 +1430,9 @@ by default."
 ;;     (kbd "C SPC") #'ein:worksheet-execute-cell-and-goto-next)
 ;;   )
 
-;; ;; AUCTeX settings
-;; (after! tex
-;;   (setq TeX-auto-save t)
-;;   (setq TeX-parse-self t)
-;;   (setq-default TeX-master nil)
-;;   (setq TeX-command-extra-options "-shell-escape")
-;;   (add-hook! 'TeX-mode-hook (setq-local fill-column 120)))
+(after! tex
+  (hs-minor-mode)) ;add folding for blocks
+
 
 ;; RefTeX settings
 (after! reftex
