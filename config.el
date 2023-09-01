@@ -1463,3 +1463,6 @@ by default."
 ;; (after! format
 ;; (setq-hook! 'python-mode-hook +format-with-lsp nil)
 ;; (set-formatter! 'black '("black" "-q" "--line-length" "80" "-")))
+(after! tree-sitter
+;; adding latex mode to treesitter NOTE: this can be removed once latex mode is merged into main branch of treesitter.
+  (cl-pushnew '(latex-mode . latex) tree-sitter-major-mode-language-alist :test #'equal))

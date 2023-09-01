@@ -87,6 +87,16 @@
 
 
 (package! ob-prolog)
+
+;;; FIXME: below makes tree-sitter unpinned because I don't have the patience
+;;; for new shiny things to get merged on their own.
+(package! tree-sitter-langs
+  :recipe (:host github
+           :repo "ubolonton/tree-sitter-langs"
+           :files ("*.el" "src" "Cargo.*")
+           :includes (some-submodule another-submodule)))
+
+
 ;;(package! activity-watch-mode) maybe add again when debugged
 
 ;; If the package you are trying to install does not contain a PACKAGENAME.el
