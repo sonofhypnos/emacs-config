@@ -1495,3 +1495,8 @@ by default."
                       it
                       (fboundp '+fold/toggle)
                       #'+fold/toggle))
+
+(setq c-default-style "k&r")
+
+(use-package! elisp-lint
+  :commands elisp-lint-buffer)
