@@ -1466,3 +1466,25 @@ by default."
 (after! tree-sitter
 ;; adding latex mode to treesitter NOTE: this can be removed once latex mode is merged into main branch of treesitter.
   (cl-pushnew '(latex-mode . latex) tree-sitter-major-mode-language-alist :test #'equal))
+;;Own custom version of mapping at ~/.emacs.d/modules/config/default/+evil-bindings.el
+(map!
+      :m [tab] (cmds! (and (modulep! :editor snippets)
+                           (evil-visual-state-p)
+                           (or (eq evil-visual-selection 'line)
+                               (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
+                      #'yas-insert-snippet
+                      ;; Fixes #4548: without this, this tab keybind overrides
+                      ;; mode-local ones for modes that don't have an evil
+                      ;; keybinding scheme or users who don't have :editor (evil
+                      ;; +everywhere) enabled.
+                      (or (doom-lookup-key
+                           [tab]
+                           (list (evil-get-auxiliary-keymap (current-local-map) evil-state)
+                                 (current-local-map)))
+                          (doom-lookup-key
+                           (kbd "TAB")
+                           (list (evil-get-auxiliary-keymap (current-local-map) evil-state)))
+                          (doom-lookup-key (kbd "TAB") (list (current-local-map))))
+                      it
+                      (fboundp '+fold/toggle)
+                      #'+fold/toggle))
