@@ -1463,9 +1463,16 @@ by default."
 ;; (after! format
 ;; (setq-hook! 'python-mode-hook +format-with-lsp nil)
 ;; (set-formatter! 'black '("black" "-q" "--line-length" "80" "-")))
+
+(after! vimish-fold
+  (map! :map vimish-fold-mode-map
+        :mode normal
+        :desc "Fold with avy" "z f" #'vimish-fold-avy))
+
 (after! tree-sitter
-;; adding latex mode to treesitter NOTE: this can be removed once latex mode is merged into main branch of treesitter.
+  ;; adding latex mode to treesitter NOTE: this can be removed once latex mode is merged into main branch of treesitter.
   (cl-pushnew '(latex-mode . latex) tree-sitter-major-mode-language-alist :test #'equal))
+
 ;;Own custom version of mapping at ~/.emacs.d/modules/config/default/+evil-bindings.el
 (map!
       :m [tab] (cmds! (and (modulep! :editor snippets)
