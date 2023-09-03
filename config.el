@@ -18,7 +18,7 @@
         t/fzi (concat org-directory "fzi_assistant_job.org"))
 
 
-;; configure haskell to support renaming stuff
+;configure haskell to support renaming stuff
 (after! lsp-haskell
   (add-hook 'lsp-after-initialize-hook
             #'(lambda ()
@@ -321,9 +321,8 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
         "<f9>"   #'anki-editor-push-tree
         :localleader
         :prefix "m"
-        :prefix "s"
+        :prefix "s")
         ;; TODO figure out how to define keybinds based on file?
-        :desc "tassilo's refile" "r" #'t/org-refile)
   ;; enable sound:
   (setq org-clock-play-sound t)
   (setq org-tag-persistent-alist '(("continue?") ("@unterwegs") ("anki" . ?a) ("logbook")
@@ -426,7 +425,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   (setq org-export-with-tasks nil
         org-refile-use-cache t) ; FIXME: this line might cause trouble, but testing it, because refile was unbearably slow
 
-        
+
 
 
   ;; (defun mdlinks-to-orglinks ()
@@ -530,7 +529,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
     (start-file-process "preview_blogentry" "*preview_blog_entry*" "~/repos/lazyblorg/preview_blogentry.sh" (buffer-file-name (buffer-base-buffer)))))
 
 (use-package! org-roam
-  :defer-incrementally t ;did the after org thing trigger something
+  :defer-incrementally t              ;did the after org thing trigger something
   :config
   (map! (
          :map org-roam-mode-map
@@ -703,6 +702,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
     "enable completion in org-mode"
     (setq completion-ignore-case t))
   (add-hook 'org-mode-hook #'completion-ignore-case-enable)
+  )
 
 (use-package! websocket
   :after org-roam)
@@ -730,7 +730,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
    citar-bibliography '("~/repos/bibliography/zotLib.bib")
    citar-library-paths '("~/Zotero/storage/") ; TODO I should probably set this to an exported thing
    citar-notes-path `(,(concat org-directory "lit/")))) ; TODO figure out how to fix this?
-  
+
 
 (use-package! org-download
   :after org
@@ -837,7 +837,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (use-package! nyan-mode
   :hook (doom-modeline-mode . nyan-mode))
 
-(menu-bar-mode 1) 
+(menu-bar-mode 1)
 
 ;; custom functions
 (defun t/random-phrase ()
@@ -897,7 +897,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
                  "g++ -std=gnu++17 -Og -g -Wall -Wextra -Wconversion -fsanitize=address -fsanitize=undefined "
                  (buffer-file-name)
                  "&& cat 1.in | ./a.out | diff 1.out -")))
-  (flycheck-select-checker 'c/c++-gcc)) ;;FIXME: hope this fixes flycheck with c++ 
+  (flycheck-select-checker 'c/c++-gcc)) ;;FIXME: hope this fixes flycheck with c++
 
 
 ;; FIXME figure out how to make the python-mypy thing work. Just installing mypy didn't work, but might have been impatient.
@@ -958,38 +958,6 @@ by default."
 (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
 
 
-                                        ; TODO create keybinds for ein mode
-                                        ; NOTE example:
-;; (after! ein-notebook
-;;   (set-popup-rule! "^\\*ein:" :ignore t)
-
-;;   (defun +ein-buffer-p (buf)
-;;     (or (memq buf (ein:notebook-opened-buffers))
-;;         (memq buf (mapcar #'ein:notebooklist-get-buffer (ein:notebooklist-keys)))))
-;;   (add-to-list 'doom-real-buffer-functions #'+ein-buffer-p nil #'eq)
-;;   (map! :map ein:notebook-mode-map
-;;         "M-s" #'ein:notebook-save-notebook-command-km
-;;         :map ein:notebooklist-mode-map
-;;         "o" #'ein:notebook-open-km))
-
-
-;; (after! ein-notebook
-;; (map! :map ein:notebook-mode-map
-;;       ; ; FIXME figure out how to have this binding only for this mode!
-
-;;       :leader
-;;       :prefix "f"
-;;       :desc "save-notebook" "s" #'ein:notebook-save-notebook-command
-;;         )
-;; )
-;;
-;; (after! ein
-;;   (evil-define-key* 'normal ein:ipdb-mode-map
-;;     (kbd "C SPC") #'ein:worksheet-execute-cell-and-goto-next)
-;;   )
-
-
-
 ;; RefTeX settings
 (after! reftex
   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
@@ -1048,8 +1016,8 @@ by default."
 
 (setq c-default-style "k&r")
 
-(use-package! elisp-lint
-  :commands elisp-lint-buffer)
+;;(use-package! elisp-lint
+;;  :commands elisp-lint-buffer)
 
 
-(load-file "emacs-hm-env.el")
+;; (load-file "emacs-hm-env.el")
