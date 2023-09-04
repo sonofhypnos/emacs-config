@@ -897,7 +897,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
                  "g++ -std=gnu++17 -Og -g -Wall -Wextra -Wconversion -fsanitize=address -fsanitize=undefined "
                  (buffer-file-name)
                  "&& cat 1.in | ./a.out | diff 1.out -")))
-  (flycheck-select-checker 'c/c++-gcc)) ;;FIXME: hope this fixes flycheck with c++
+  (add-hook! 'c-mode-hook (flycheck-select-checker 'c/c++-gcc))) ;;FIXME: hope this fixes flycheck with c++
 
 
 ;; FIXME figure out how to make the python-mypy thing work. Just installing mypy didn't work, but might have been impatient.
@@ -958,12 +958,13 @@ by default."
 (add-hook 'ediff-keymap-setup-hook 'add-d-to-ediff-mode-map)
 
 
-;; RefTeX settings
-(after! reftex
-  (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-  (setq reftex-plug-into-AUCTeX t))
+;; ;; RefTeX settings
+;; (after! reftex
+;;   (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+;;   (setq reftex-plug-into-AUCTeX t))
 
 (after! tex
+  (setq +latex-enable-unicode-math nil)
   (setq +latex-viewers '(zathura))
   ;; (setq reftex-default-bibliography "/your/bib/file.bib")
   (add-hook! 'TeX-mode-hook
