@@ -17,7 +17,6 @@
   :recipe (:host github
            :repo "ChillarAnand/real-auto-save")) ;; not sure whether this helps with anything?
 
-(package! org-wild-notifier)
 ;autocompletion
 (package! company-tabnine
   :recipe (:host github :repo "TommyX12/company-tabnine"))
@@ -33,18 +32,13 @@
 
 
 ;degugging
-(package! lxd-tramp)
+;; (package! lxd-tramp) #needed this when I was still using lxd
 (package! benchmark-init)
 
 ;not really used
+(package! org-wild-notifier)
 (package! zotxt)
 (package! org-ref)
-(package! org-noter)
-;; (package! org-roam-bibtex
-;;  :recipe (:host github :repo "org-roam/org-roam-bibtex"))
-(package! org-pdftools
-  :recipe (:host github
-           :repo "fuxialexander/org-pdftools"))
 (package! md-roam
   :recipe (:host github
            :repo "nobiot/md-roam"))
@@ -53,11 +47,6 @@
 (package! org-ql)
 (package! org-roam-ui :recipe (:host github :repo "org-roam/org-roam-ui" :files ("*.el" "out")))
 (package! htmlize) ;not sure why this was added?
-;; (package! format-all)
-;;         ;tracking
-;;         (package! wakatime-mode)
-;;(package! pdf-tools)
-(package! org-noter-pdftools)
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
 
