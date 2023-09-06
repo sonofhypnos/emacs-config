@@ -18,7 +18,7 @@
 (doom! :input
 
        :completion
-       (company)           ; the ultimate code completion backend
+       company ;trying if without child          ; the ultimate code completion backend
        ;;(helm + fuzzy)      ; the *other* search engine for love and life
        ;ido               ; the other *other* search engine...
        ;ivy               ; a search engine for love and life
@@ -29,20 +29,20 @@
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
        doom-quit         ; DOOM quit-message prompts when you quit Emacs
-       ; removed because slow: emoji
+       ; removed because SLOW: emoji
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
        ;;indent-guides     ; highlighted indent columns
-       ;;ligatures         ; ligatures and symbols to make your code pretty again
-       ;;minimap           ; show a map of the code on the side
+       ;;ligatures        ;NOTE: slow!
+       ;;minimap           ; NOTE: slow!
        modeline          ; snazzy, Atom-inspired modeline, plus API
        nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       treemacs          ; a project drawer, like neotree but cooler
-       ;;unicode           ; extended unicode support for various languages
+       ;; treemacs  ;NOTE no one needs this with ranger plugin
+       ;; unicode         ;NOTE: slow!
        vc-gutter         ; vcs diff in the fringe
        vi-tilde-fringe   ; fringe tildes to mark beyond EOB
        workspaces        ; tab emulation, persistence & separate workspaces
@@ -53,10 +53,13 @@
        fold              ; (nigh) universal code folding
        (format +onsave)  ; automated prettiness
        ;;god               ; run Emacs commands without modifier keys
-       lispy             ; vim for lisp, for people who don't like vim
+       ;; lispy #NOTE: This package is potentially great, but there is weird
+       ;; things happening with evil bindings (like jk not escaping insert mode
+       ;; anymore, which is why we disable this)
+
        ;;multiple-cursors  ; editing in many places at once
        ;;objed             ; text object editing for the innocent
-       parinfer          ; turn lisp into python, sort of
+       ;;parinfer; Didn't work well for me.
        ;;rotate-text       ; cycle region at point between text candidates
        snippets          ; my elves. They type so I don't have to
        ;;word-wrap         ; soft wrapping with language-aware indent
@@ -132,7 +135,7 @@
        ;;idris             ; a language you can depend on
        ;;json              ; At least it ain't XML
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
-       ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       javascript        ; all(hope(abandon(ye(who(enter(here))))))
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex +lsp +fold +latexmk)            ; writing papers in Emacs has never been so fun
@@ -186,8 +189,8 @@
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
-       (default +bindings +smartparens)
+       (default +bindings +smartparens))
        ;; prompts (FIXME this is were I tried to to make my own package work.
        ;; Not sure what kind of messes this caused, but at least doctor was
        ;; annoyed so I uncommented this line again)
-)
+

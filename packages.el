@@ -25,6 +25,9 @@
 (package! hydra)
 
 
+;; own
+;; (package! fatebook)
+
 ;lols
 (package! nyan-mode)
 
