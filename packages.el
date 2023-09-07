@@ -27,6 +27,9 @@
 
 ;; own
 ;; (package! fatebook)
+(package! fatebook
+  :recipe (:host github
+           :repo "sonofhypnos/fatebook.el"))
 
 ;lols
 (package! nyan-mode)
