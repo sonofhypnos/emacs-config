@@ -1019,6 +1019,9 @@ by default."
 
 (setq c-default-style "k&r")
 
+(use-package! fatebook
+  :defer-incrementally t)
+
 ;;(use-package! elisp-lint
 ;;  :commands elisp-lint-buffer)
 
