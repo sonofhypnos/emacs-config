@@ -72,7 +72,7 @@
     (warn "Do not use use-package without ")))
 
 ;; Check if langtool is detected if necessary
-(use-package langtool
+(use-package! langtool
   :defer-incrementally t
   :config
   (setq langtool-language-tool-jar "~/repos/languagetool/LanguageTool-5.6-stable/languagetool.jar")
