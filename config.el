@@ -199,6 +199,17 @@
                                  (file+olp+datetree +org-capture-journal-file)
                                  "* %U %?\n%i\n" :prepend t)))
 
+  ;; create default apps
+  (defun my/open-with-zathura (path)
+    (start-process "zathura" "*zathura*" "zathura" path))
+  (defun my/open-with-firefox (path)
+    (start-process "firefox" "*firefox*" "firefox" path))
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . my/open-with-zathura))
+  (add-to-list 'org-file-apps '("\\.md\\'" . my/open-with-firefox))
+  (add-to-list 'org-file-apps '("\\.html\\'" . my/open-with-firefox))
+
+
+
   ;; org refile hydras
   (defun my/refile (file headline &optional arg)
     "Refile to a specific location.
