@@ -983,8 +983,8 @@ by default."
   (add-hook! 'TeX-mode-hook
     (setq TeX-save-query nil
           TeX-show-compilation nil
-          bibtex-files '("/home/tassilo/repos/bachelorthesis-workspace-tassilo/thesis/BachelorArbeit.bib"))
-    (add-hook! 'tex-mode-hook (hs-minor-mode))))
+          bibtex-files '("/home/tassilo/repos/bachelorthesis-workspace-tassilo/thesis/BachelorArbeit.bib")))
+  (add-hook! 'TeX-mode-hook #'hs-minor-mode))
 
 (after! vimish-fold
   (map! :map vimish-fold-mode-map
