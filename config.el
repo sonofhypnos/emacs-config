@@ -979,12 +979,12 @@ by default."
 (after! tex
   (setq +latex-enable-unicode-math nil)
   (setq +latex-viewers '(zathura))
-  ;; (setq reftex-default-bibliography "/your/bib/file.bib")
   (add-hook! 'TeX-mode-hook
     (setq TeX-save-query nil
           TeX-show-compilation nil
           bibtex-files '("/home/tassilo/repos/bachelorthesis-workspace-tassilo/thesis/BachelorArbeit.bib")))
-  (add-hook! 'TeX-mode-hook #'hs-minor-mode))
+  (add-hook! 'TeX-mode-hook #'hs-minor-mode)
+  (add-hook! 'LaTeX-mode-hook #'outline-minor-mode))
 
 (after! vimish-fold
   (map! :map vimish-fold-mode-map
@@ -993,7 +993,7 @@ by default."
 
 (after! tree-sitter
   ;; adding latex mode to treesitter NOTE: this can be removed once latex mode is merged into main branch of treesitter.
-  (cl-pushnew '(latex-mode . latex) tree-sitter-major-mode-language-alist :test #'equal))
+  (cl-pushnew '(LaTeX-mode . latex) tree-sitter-major-mode-language-alist :test #'equal))
 
 
 (map! (:when (modulep! :tools lookup)

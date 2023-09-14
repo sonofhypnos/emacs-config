@@ -1,0 +1,4 @@
+# key: cit
+# name: citation needed
+# --
+\\parencite{${1:CITATION_NEEDED}} $0
