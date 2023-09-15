@@ -18,6 +18,11 @@
         t/fzi (concat org-directory "fzi_assistant_job.org"))
 
 
+(after! dired-x
+(setq dired-guess-shell-alist-user
+      (list
+       (list "\\.pdf\\'" "zathura"))))
+
 ;configure haskell to support renaming stuff
 (after! lsp-haskell
   (add-hook 'lsp-after-initialize-hook
@@ -200,13 +205,9 @@
                                  "* %U %?\n%i\n" :prepend t)))
 
   ;; create default apps
-  (defun my/open-with-zathura (path)
-    (start-process "zathura" "*zathura*" "zathura" path))
-  (defun my/open-with-firefox (path)
-    (start-process "firefox" "*firefox*" "firefox" path))
-  (add-to-list 'org-file-apps '("\\.pdf\\'" . my/open-with-zathura))
-  (add-to-list 'org-file-apps '("\\.md\\'" . my/open-with-firefox))
-  (add-to-list 'org-file-apps '("\\.html\\'" . my/open-with-firefox))
+  (add-to-list 'org-file-apps '("\\.pdf\\'" . "zathura %s"))
+  (add-to-list 'org-file-apps '("\\.md\\'" . "firefox %s"))
+  (add-to-list 'org-file-apps '("\\.html\\'" . "firefox %s"))
 
 
 
@@ -675,7 +676,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   (setq org-roam-capture-ref-templates
         '(
           ("r" "ref" plain "%?" :target
-           (file+head "${slug}.org" "${title}")
+           (file+head "${slug}.org" "#+title: ${title}\n")
            :unnarrowed t
            :jump-to-captured t)))
 
