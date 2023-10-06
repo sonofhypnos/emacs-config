@@ -154,6 +154,22 @@
 ;;   (anki-editor-reset-cloze-number))
 
 (after! org
+
+  (defun org-todo-block-highlight ()
+    (interactive)
+    (font-lock-add-keywords
+     nil
+     '(("\\({{TODO}}\\)[^\0]*?\\({{/TODO}}\\)"
+        (1 '(:background "yellow" :weight bold) prepend)
+        (2 '(:background "yellow" :weight bold) prepend)
+        (0 '(:background "yellow") prepend)))
+     'append)
+    ;; Ensure prettified symbols get the background color
+    ;; (let ((bg-color (face-attribute 'hl-line :background)))
+    ;;   (set-face-attribute 'prettify-symbols nil :background bg-color))
+    )
+
+  (add-hook 'org-mode-hook 'org-todo-block-highlight)
   ;;trying to speed up org by disabeling this:
   (setq org-agenda-ignore-properties '(effort appt category))
   (setq org-refile-targets
@@ -714,7 +730,9 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
         (org-show-properties)
       (org-hide-properties)))
 
-  (add-hook 'org-roam-mode-hook #'org-hide-properties)
+  ;; (add-hook 'org-roam-mode-hook #'org-hide-properties)
+  ;; NOTE: above disabled because org-hide-properties
+  ;; is annoying and costs performance. I don't want it by default
 
   (defun completion-ignore-case-enable ()
     "enable completion in org-mode"
