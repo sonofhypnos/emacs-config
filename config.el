@@ -154,22 +154,6 @@
 ;;   (anki-editor-reset-cloze-number))
 
 (after! org
-
-  (defun org-todo-block-highlight ()
-    (interactive)
-    (font-lock-add-keywords
-     nil
-     '(("\\({{TODO}}\\)[^\0]*?\\({{/TODO}}\\)"
-        (1 '(:background "yellow" :weight bold) prepend)
-        (2 '(:background "yellow" :weight bold) prepend)
-        (0 '(:background "yellow") prepend)))
-     'append)
-    ;; Ensure prettified symbols get the background color
-    ;; (let ((bg-color (face-attribute 'hl-line :background)))
-    ;;   (set-face-attribute 'prettify-symbols nil :background bg-color))
-    )
-
-  (add-hook 'org-mode-hook 'org-todo-block-highlight)
   ;;trying to speed up org by disabeling this:
   (setq org-agenda-ignore-properties '(effort appt category))
   (setq org-refile-targets
