@@ -687,7 +687,11 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
 
   (setq +org-roam-open-buffer-on-find-file nil)
-  (setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned performance optimization in the manual. I have enough memory anyways
+
+  ;; (setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned
+  ;; performance optimization in the manual. According to measurements I did on
+  ;; my machine this is actually making things worse if you already use a
+  ;; reasonable value
 
 
   (defun org-hide-properties ()
