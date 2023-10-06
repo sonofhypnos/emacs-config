@@ -106,21 +106,8 @@
       (with-temp-buffer (write-file ispell-local)))))
 
 
-
-
-
-(map! :after anki-editor
-      :map org-mode-map
-      "<f12>"  #'anki-editor-cloze-region-dont-incr
-      "<f11>"  #'anki-editor-cloze-region-auto-incr
-      "<f10>"  #'anki-editor-reset-cloze-number
-      "<f9>"   #'anki-editor-push-tree)
-
-(use-package! anki-editor
-  :after org-roam
-  :defer-incrementally t
-
-  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+(after! anki-editor
+  ;; :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
   :config
   (setq-default anki-editor-use-math-jax t)
@@ -150,6 +137,14 @@
     (interactive)
     (anki-editor-push-notes '(4))
     (anki-editor-reset-cloze-number))
+  (map! :map org-mode-map
+        ;;Key-maps have to be set after function definitions!
+        "<f12>"  #'anki-editor-cloze-region-dont-incr
+        "<f11>"  #'anki-editor-cloze-region-auto-incr
+        "<f10>"  #'anki-editor-reset-cloze-number
+        "<f9>"   #'anki-editor-push-tree)
+  (add-hook org-capture-after-finalize-hook #'anki-editor-reset-cloze-number)
+
   ;; Initialize
   (anki-editor-reset-cloze-number))
 
@@ -166,6 +161,12 @@
           (t/writing-ideas :maxlevel . 1)
           (t/fzi :maxlevel . 1)))
 
+  (defun tassilo/enable-anki-editor-mode ()
+    (when (org-capture-get :anki)
+      (anki-editor-mode)))
+
+  (add-hook 'org-capture-mode-hook 'tassilo/enable-anki-editor-mode)
+
 
   (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
         org-capture-templates `(
@@ -180,11 +181,13 @@
                                 ("A" "Anki cloze"
                                  entry
                                  (file+headline org-my-anki-file "Dispatch Shelf")
-                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x")
+                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"
+                                 :anki t)
                                 ("T" "Anki type"
                                  entry
                                  (file+headline org-my-anki-file "Dispatch Shelf")
-                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x")
+                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"
+                                 :anki t)
 
                                 ("L" "Protocol Link" entry
                                  (file+headline +org-capture-notes-file "Inbox")
