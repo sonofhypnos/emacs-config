@@ -5,7 +5,6 @@
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 (package! openwith)
-(unpin! org-roam)
 (package! org-download
   :recipe (:host github
            :repo "abo-abo/org-download"))
