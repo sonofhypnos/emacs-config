@@ -545,6 +545,10 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (use-package! org-roam
   :defer-incrementally t              ;did the after org thing trigger something
   :config
+
+
+
+  (setq org-roam-node-default-sort 'file-atime) ; list files by last access not modifiy time!
   (map! (
          :map org-roam-mode-map
          :localleader
