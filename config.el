@@ -786,9 +786,6 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 (define-and-bind-quoted-text-object "code" "ℝ" "\\#\\+BEGIN_SRC" "\\#\\+END_SRC")
 (define-and-bind-quoted-text-object "code2" "Π" "\\#\\+begin_src" "\\#\\+end_src")
 
-(after! pdf-tools
-  (add-hook! 'pdf-tools-enabled-hook))
-
 (global-set-key (kbd "C-c g") 'org-recoll-search)
 (global-set-key (kbd "C-c u") 'org-recoll-update-index)
 
