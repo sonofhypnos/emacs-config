@@ -98,6 +98,8 @@
   (ispell-hunspell-add-multi-dic "de_DE,en_GB,en_US")
   ;; For saving words to the personal dictionary, don't infer it from
   ;; the locale, otherwise it would save to ~/.hunspell_de_DE.
+  ;; The personal dictionary file has to exist, otherwise hunspell will
+  ;; silently not use it.
   (let ((ispell-local "~/.hunspell_personal"))
     (setq ispell-personal-dictionary "~/.hunspell_personal")
     (unless (file-exists-p ispell-local)
@@ -106,8 +108,6 @@
 
 
 
-;; The personal dictionary file has to exist, otherwise hunspell will
-;; silently not use it.
 
 (map! :after anki-editor
       :map org-mode-map
