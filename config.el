@@ -1,6 +1,7 @@
 ;;; config.el -*- lexical-binding: t; -*-
 ;;;
 ;; TODO Sprinkle in documentation from the org-file
+;; dkdkdk
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
@@ -19,17 +20,17 @@
 
 
 (after! dired-x
-(setq dired-guess-shell-alist-user
-      (list
-       (list "\\.pdf\\'" "zathura"))))
+  (setq dired-guess-shell-alist-user
+        (list
+         (list "\\.pdf\\'" "zathura"))))
 
-;configure haskell to support renaming stuff
+                                        ;configure haskell to support renaming stuff
 (after! lsp-haskell
   (add-hook 'lsp-after-initialize-hook
             #'(lambda ()
                 (lsp--set-configuration
                  '(:haskell (:plugin (:rename (:config (:crossModule t)))))))))
-                 
+
 ;;go where refile takes you:
 (defun +org-search ()
   (interactive)
@@ -53,18 +54,18 @@
 (defsubst curry (function &rest arguments)
   (lexical-let ((function function)
                 (arguments arguments))
-    (lambda (&rest more) (apply function (append arguments more)))))
+               (lambda (&rest more) (apply function (append arguments more)))))
 
 (defsubst rcurry (function &rest arguments)
   (lexical-let ((function function)
                 (arguments arguments))
-    (lambda (&rest more) (apply function (append more arguments)))))
+               (lambda (&rest more) (apply function (append more arguments)))))
 
 (defsubst compose (function &rest more-functions)
   (cl-reduce (lambda (f g)
                (lexical-let ((f f) (g g))
-                 (lambda (&rest arguments)
-                   (funcall f (apply g arguments)))))
+                            (lambda (&rest arguments)
+                              (funcall f (apply g arguments)))))
              more-functions
              :initial-value function))
 
@@ -105,7 +106,7 @@
 
 
 
-  
+
 ;; The personal dictionary file has to exist, otherwise hunspell will
 ;; silently not use it.
 
@@ -181,7 +182,7 @@
           (t/journal-file :maxlevel . 1)
           (t/writing-ideas :maxlevel . 1)
           (t/fzi :maxlevel . 1)))
-          
+
 
   (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
         org-capture-templates `(
@@ -311,7 +312,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
     ;;TODO: add something to add org-roam links to headings
     ("i" (org-roam-node-insert) "org-roam-node-insert")
     ("q" nil "cancel"))
-    
+
 
   (defhydra t/define-projects-hydra (:foreign-keys run)
     "Refile"
@@ -352,7 +353,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
         :localleader
         :prefix "m"
         :prefix "s")
-        ;; TODO figure out how to define keybinds based on file?
+  ;; TODO figure out how to define keybinds based on file?
   ;; enable sound:
   (setq org-clock-play-sound t)
   (setq org-tag-persistent-alist '(("continue?") ("@unterwegs") ("anki" . ?a) ("logbook")
@@ -396,7 +397,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
            "[??](C)"                    ; Confusion marker in notes
            "|"
            "[?](w)")                     ; Task is being held up or paused
-           
+
           (sequence
            "PRO(p)"                     ; Pro in pro-con list
            "CON(c)"
@@ -431,10 +432,10 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 
           ("l" "Show Leo's TODOs that are currently due."
            ((tags-todo "+leo")))))
-            ;; (org-agenda-overriding-header "Leo's TODOs that are currently due")
-            ;; (org-agenda-time-grid nil)
-            ;; (org-deadline-warning-days 0)
-            
+  ;; (org-agenda-overriding-header "Leo's TODOs that are currently due")
+  ;; (org-agenda-time-grid nil)
+  ;; (org-deadline-warning-days 0)
+
 
   ;; TODO add filter for only todos that are due and that are for leo
   ;; NOTE example custom commands:
@@ -662,7 +663,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
                      (cons "Suppose you knew that you were going to die instantly (but painlessly) in exactly 7 days. What would you spend your last week doing?" (cons 1 1))
                      (cons "If you could plan one nearly perfect (but still actually realistic) day for yourself, what would you spend that day doing? Describe that day, from when you wake up until you go to sleep." (cons 1 1))
                      (cons "When is the soonest that you can treat yourself to this perfect day, or to another day that you'll really enjoy and remember?" (cons 1 1))))
-                     
+
 
 
 
@@ -681,7 +682,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
         `(
           ("Journal" "daily" plain "%T\n%?\n"
            :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))))
-          
+
 
   ;; Might wanna just want to go with default template here.
   ;; (setq org-roam-capture-templates
@@ -700,7 +701,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
            :unnarrowed t
            :jump-to-captured t)))
 
-        
+
 
   (setq +org-roam-open-buffer-on-find-file nil)
   (setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned performance optimization in the manual. I have enough memory anyways
@@ -738,7 +739,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
     "enable completion in org-mode"
     (setq completion-ignore-case t))
   (add-hook 'org-mode-hook #'completion-ignore-case-enable))
-  
+
 
 (use-package! websocket
   :after org-roam)
@@ -1028,26 +1029,26 @@ by default."
         :leader :desc "window management" :r "C-k" #'+evil/window-move-down))
 ;;Own custom version of mapping at ~/.emacs.d/modules/config/default/+evil-bindings.el
 (map!
-        :m [tab] (cmds! (and (modulep! :editor snippets)
-                         (evil-visual-state-p)
-                         (or (eq evil-visual-selection 'line)
-                             (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
-                        #'yas-insert-snippet
-                        ;; Fixes #4548: without this, this tab keybind overrides
-                        ;; mode-local ones for modes that don't have an evil
-                        ;; keybinding scheme or users who don't have :editor (evil
-                        ;; +everywhere) enabled.
-                        (or (doom-lookup-key
-                             [tab]
-                             (list (evil-get-auxiliary-keymap (current-local-map) evil-state)
-                                   (current-local-map)))
-                         (doom-lookup-key
-                          (kbd "TAB")
-                          (list (evil-get-auxiliary-keymap (current-local-map) evil-state)))
-                         (doom-lookup-key (kbd "TAB") (list (current-local-map))))
-                        it
-                        (fboundp '+fold/toggle)
-                        #'+fold/toggle))
+ :m [tab] (cmds! (and (modulep! :editor snippets)
+                      (evil-visual-state-p)
+                      (or (eq evil-visual-selection 'line)
+                          (not (memq (char-after) (list ?\( ?\[ ?\{ ?\} ?\] ?\))))))
+                 #'yas-insert-snippet
+                 ;; Fixes #4548: without this, this tab keybind overrides
+                 ;; mode-local ones for modes that don't have an evil
+                 ;; keybinding scheme or users who don't have :editor (evil
+                 ;; +everywhere) enabled.
+                 (or (doom-lookup-key
+                      [tab]
+                      (list (evil-get-auxiliary-keymap (current-local-map) evil-state)
+                            (current-local-map)))
+                     (doom-lookup-key
+                      (kbd "TAB")
+                      (list (evil-get-auxiliary-keymap (current-local-map) evil-state)))
+                     (doom-lookup-key (kbd "TAB") (list (current-local-map))))
+                 it
+                 (fboundp '+fold/toggle)
+                 #'+fold/toggle))
 
 (setq c-default-style "k&r")
 
