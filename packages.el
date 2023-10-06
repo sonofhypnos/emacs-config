@@ -8,8 +8,6 @@
 (package! org-download
   :recipe (:host github
            :repo "abo-abo/org-download"))
-(package! org-roam
-  :recipe (:host github :repo "org-roam/org-roam"))
 (package! anki-editor)
 (package! real-auto-save
   :recipe (:host github
