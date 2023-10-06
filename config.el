@@ -1,7 +1,6 @@
 ;;; config.el -*- lexical-binding: t; -*-
 ;;;
 ;; TODO Sprinkle in documentation from the org-file
-;; dkdkdk
 (setq user-full-name "Tassilo Neubauer"
       user-mail-address "tassilo.neubauer@gmail.com")
 
@@ -1056,8 +1055,21 @@ by default."
   :defer-incrementally t
   :commands (fatebook-create-question))
 
+
 ;;(use-package! elisp-lint
 ;;  :commands elisp-lint-buffer)
 
 
+(after! projectile
+  (defun remove-project-from-cache (project-path)
+    "Function to remove projects that are not in `known projects' from projectiles cache."
+    (let ((projectile-cache-file "~/.emacs.d/.local/cache/projectile.cache")
+          cache-data)
+      (when (file-exists-p projectile-cache-file)
+        (with-temp-buffer
+          (insert-file-contents projectile-cache-file)
+          (setq cache-data (read (current-buffer))))
+        (remhash project-path cache-data)
+        (with-temp-file projectile-cache-file
+          (print cache-data (current-buffer)))))))
 ;; (load-file "emacs-hm-env.el")
