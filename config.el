@@ -965,8 +965,6 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
 ;;trying things to improve latency issues:
 (setq lsp-print-performance t)
 
-(setq garbage-collection-messages t)
-
 ;; TODO remap every keybind that uses öäü?
 
 (use-package! copilot
