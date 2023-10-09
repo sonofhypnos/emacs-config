@@ -669,26 +669,6 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
           ("Journal" "daily" plain "%T\n%?\n"
            :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))))
 
-
-  ;; Might wanna just want to go with default template here.
-  ;; (setq org-roam-capture-templates
-  ;;       '(("d" "default" plain
-  ;;          "%?"
-  ;;          :if-new (file+head "${slug}.org"
-  ;;                             "#+title: ${title}\n#+created: %<%y-%m-%d %H:%M>\n* Next\n* Related\n")
-  ;;          :immediate-finish t
-  ;;          :unnarrowed t)))
-
-
-  (setq org-roam-capture-ref-templates
-        '(
-          ("r" "ref" plain "%?" :target
-           (file+head "${slug}.org" "#+title: ${title}\n")
-           :unnarrowed t
-           :jump-to-captured t)))
-
-
-
   (setq +org-roam-open-buffer-on-find-file nil)
 
   ;; (setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned
