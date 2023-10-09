@@ -119,7 +119,14 @@
   (let ((ispell-local "~/.hunspell_personal"))
     (setq ispell-personal-dictionary "~/.hunspell_personal")
     (unless (file-exists-p ispell-local)
-      (with-temp-buffer (write-file ispell-local)))))
+      (with-temp-buffer (write-file ispell-local))))
+
+
+  ;; NOTE: Added because of "Starting 'Look' process..." message in the message buffer which is annoying
+  ;; see: https://github.com/company-mode/company-mode/issues/912
+  (advice-add 'ispell-lookup-words :around
+              (lambda (orig &rest args)
+                (shut-up (apply orig args)))))
 
 
 (after! anki-editor
