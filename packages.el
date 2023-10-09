@@ -1,7 +1,7 @@
 ;; -*- no-byte-compile: t; -*-
 ;;; $DOOMDIR/packages.el
 
-;org
+;;org
 (package! copilot
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 (package! openwith)
@@ -13,7 +13,7 @@
   :recipe (:host github
            :repo "ChillarAnand/real-auto-save")) ;; not sure whether this helps with anything?
 
-;autocompletion
+;;autocompletion
 (package! company-tabnine
   :recipe (:host github :repo "TommyX12/company-tabnine"))
 ;;find virtualenvs in the project root
@@ -27,17 +27,17 @@
   :recipe (:host github
            :repo "sonofhypnos/fatebook.el"))
 
-;lols
+;;lols
 (package! nyan-mode)
 
-;gitlab and github
+;;gitlab and github
 
 
-;degugging
+;;degugging
 ;; (package! lxd-tramp) #needed this when I was still using lxd
 (package! benchmark-init)
 
-;not really used
+;;not really used
 (package! org-wild-notifier)
 (package! zotxt)
 (package! org-ref)
@@ -54,9 +54,9 @@
 
 ;;testing out
 (package! org-fc
-	:recipe (:host github
-		:repo "l3kn/org-fc"
-               :files (:defaults "awk" "*.org"))) ;flashcards for org trying whether this has better
+  :recipe (:host github
+	   :repo "l3kn/org-fc"
+           :files (:defaults "awk" "*.org"))) ;flashcards for org trying whether this has better
 (package! i3-mode
   :recipe (:host github
            :repo "junyi-hou/i3-mode"
@@ -86,6 +86,7 @@
            :repo "ubolonton/tree-sitter-langs"
            :files ("*.el" "src" "Cargo.*")
            :includes (some-submodule another-submodule)))
+
 
 
 ;;(package! activity-watch-mode) maybe add again when debugged
