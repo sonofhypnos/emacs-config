@@ -569,13 +569,96 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
     (interactive)
     (start-file-process "preview_blogentry" "*preview_blog_entry*" "~/repos/lazyblorg/preview_blogentry.sh" (buffer-file-name (buffer-base-buffer)))))
 
+
 (use-package! org-roam
   :defer-incrementally t              ;did the after org thing trigger something
   :config
 
+  (defun t/org-roam-node-read--completions (&optional filter-fn sort-fn)
+    "Return an alist for node completion.
+The car is the displayed title or alias for the node, and the cdr
+is the `org-roam-node'.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+
+SORT-FN is a function to sort nodes. See `org-roam-node-read-sort-by-file-mtime'
+for an example sort function.
+The displayed title is formatted according to `org-roam-node-display-template'."
+    (let* ((rows (org-roam-db-query
+                  [:select [id nodes:file pos nodes:title files:atime]
+                   :from nodes
+                   :left-join files
+                   :on (= nodes:file files:file)
+                   ]))
+           (nodes (cl-loop for row in rows
+                           collect (pcase-let* ((`(,id ,file ,pos ,title ,atime) row)
+                                                (node (org-roam-node-create :id id
+                                                                            :file file
+                                                                            :file-atime atime
+                                                                            :point pos
+                                                                            :title title)))
+                                     (cons
+                                      (concat title
+                                              (propertize id 'invisible t))
+                                      id))))
+           ;; (sort-fn (or sort-fn
+           ;;              (when org-roam-node-default-sort
+           ;;                (intern (concat "org-roam-node-read-sort-by-"
+           ;;                                (symbol-name org-roam-node-default-sort))))))
+           ;; (sorted-nodes (if sort-fn (seq-sort sort-fn nodes)
+           ;;                 nodes))
+           )
+      sorted-nodes))
+  (defun t/org-roam-node-read (&optional initial-input filter-fn sort-fn require-match prompt)
+    "Read and return an `org-roam-node'.
+INITIAL-INPUT is the initial minibuffer prompt value.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+SORT-FN is a function to sort nodes. See `org-roam-node-read-sort-by-file-mtime'
+for an example sort function.
+If REQUIRE-MATCH, the minibuffer prompt will require a match.
+PROMPT is a string to show at the beginning of the mini-buffer, defaulting to \"Node: \""
+    ;;TODO: add sort-function
+    (let* ((nodes (t/org-roam-node-read--completions filter-fn sort-fn))
+           (prompt (or prompt "Node: "))
+           (node (completing-read
+                  prompt
+                  (lambda (string pred action)
+                    (if (eq action 'metadata)
+                        `(metadata
+                          ;; Preserve sorting in the completion UI if a sort-fn is used
+                          ,@(when sort-fn
+                              '((display-sort-function . identity)
+                                (cycle-sort-function . identity)))
+                          (annotation-function
+                           . ,(lambda (title)
+                                (funcall org-roam-node-annotation-function
+                                         (get-text-property 0 'node title))))
+                          (category . org-roam-node))
+                      (complete-with-action action nodes string pred)))
+                  nil require-match initial-input 'org-roam-node-history)))
+      (or (cdr (assoc node nodes))
+          (org-roam-node-create :title node))))
+  (cl-defun org-roam-node-find (&optional other-window initial-input filter-fn pred &key templates)
+    "Find and open an Org-roam node by its title or alias.
+INITIAL-INPUT is the initial input for the prompt.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+If OTHER-WINDOW, visit the NODE in another window.
+The TEMPLATES, if provided, override the list of capture templates (see
+`org-roam-capture-'.)"
+    (interactive current-prefix-arg)
+    (let ((org-roam-node-display-template "${title:*}")
+          (node (t/org-roam-node-read initial-input filter-fn pred)))
+      (if (org-roam-node-file node)
+          (org-roam-node-visit node other-window)
+        (org-roam-capture-
+         :node node
+         :templates templates
+         :props '(:finalize find-file)))))
 
 
-  (setq org-roam-node-default-sort 'file-atime) ; list files by last access not modifiy time!
+
   (map! (
          :map org-roam-mode-map
          :localleader
