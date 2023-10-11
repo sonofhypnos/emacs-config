@@ -42,10 +42,11 @@
 ;; default in doom is to low. Not sure where all the memory is going
 ;; NOTE: gcmh is a package that does some neat things to avoid garbage collection.
 ;; NOTE: This is not the regular garbage collection threshold!
-;; (setq gcmh-high-cons-threshold (*  100 1024 1024)) ;; Increasing the value for gc-collection is actually not recommended longterm. Doing it while idle is not actually working for me, because it hangs way too long!
+(setq gcmh-high-cons-threshold (*  16 1024 1024)) ;; Increasing the value for gc-collection is actually not recommended longterm. Doing it while idle is not actually working for me, because it hangs way too long!
+
 
 ;; (setq gcmh-low-cons-threshold (* 100 1024 1024)) ;; value if not in emacs. This might solve our issue.
-(setq gcmh-verbose t) ;Keeping this on until we have figured out issues.
+;;(setq gcmh-verbose t) ;Keeping this on until we have figured out issues.
 ;; NOTE: you also made a note under garbage collection
 ;; NOTE: more on gcmh: https://akrl.sdf.org/
 ;;TODO: figure out if gcmh is causing issues
@@ -53,9 +54,9 @@
   (setq gc-message
         (concat (format-time-string "[%F %T.%3N %Z] ")
                 (format "GC-elapsed: %f\n" gc-elapsed)))
-  (message "%s" gc-message)
+  ;; (message "%s" gc-message)
 
-  (write-region (format "%s" gc-message) nil "~/gc-logs.txt" 'append))
+  (write-region (format "%s" gc-message) nil "~/gc-logs.txt" 'append :no-message))
 (add-hook 'post-gc-hook 'print-gc-elapsed)
 
 (after! forge
@@ -69,18 +70,18 @@
 (defsubst curry (function &rest arguments)
   (lexical-let ((function function)
                 (arguments arguments))
-               (lambda (&rest more) (apply function (append arguments more)))))
+    (lambda (&rest more) (apply function (append arguments more)))))
 
 (defsubst rcurry (function &rest arguments)
   (lexical-let ((function function)
                 (arguments arguments))
-               (lambda (&rest more) (apply function (append more arguments)))))
+    (lambda (&rest more) (apply function (append more arguments)))))
 
 (defsubst compose (function &rest more-functions)
   (cl-reduce (lambda (f g)
                (lexical-let ((f f) (g g))
-                            (lambda (&rest arguments)
-                              (funcall f (apply g arguments)))))
+                 (lambda (&rest arguments)
+                   (funcall f (apply g arguments)))))
              more-functions
              :initial-value function))
 
