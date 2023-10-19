@@ -574,7 +574,8 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   :defer-incrementally t              ;did the after org thing trigger something
   :config
 
-  (defun t/org-roam-node-read--completions (&optional filter-fn sort-fn)
+
+  (defun t/org-roam-node-read--completions (&rest _)
     "Return an alist for node completion.
 The car is the displayed title or alias for the node, and the cdr
 is the `org-roam-node'.
@@ -600,15 +601,10 @@ The displayed title is formatted according to `org-roam-node-display-template'."
                                      (cons
                                       (concat title
                                               (propertize id 'invisible t))
-                                      id))))
-           ;; (sort-fn (or sort-fn
-           ;;              (when org-roam-node-default-sort
-           ;;                (intern (concat "org-roam-node-read-sort-by-"
-           ;;                                (symbol-name org-roam-node-default-sort))))))
-           ;; (sorted-nodes (if sort-fn (seq-sort sort-fn nodes)
-           ;;                 nodes))
+                                      node))))
+
            )
-      sorted-nodes))
+      (seq-sort #'org-roam-node-read-sort-by-file-atime nodes)))
   (defun t/org-roam-node-read (&optional initial-input filter-fn sort-fn require-match prompt)
     "Read and return an `org-roam-node'.
 INITIAL-INPUT is the initial minibuffer prompt value.
@@ -817,6 +813,11 @@ The TEMPLATES, if provided, override the list of capture templates (see
     (setq completion-ignore-case t))
   (add-hook 'org-mode-hook #'completion-ignore-case-enable))
 
+
+(after! org-roam
+  (map! :leader
+        (:prefix ("n" . "notes")
+         :desc "Org Roam Node Find" "r f" #'t/org-roam-node-find)))
 
 (use-package! websocket
   :after org-roam)
