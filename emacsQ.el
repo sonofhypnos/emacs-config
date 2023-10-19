@@ -6,6 +6,10 @@
 (require 'magit-section "~/.emacs.d/.local/straight/repos/magit/lisp/magit-section.el")
 (add-to-list 'load-path "~/.emacs.d/.local/straight/repos/evil/")
 (add-to-list 'load-path "~/.emacs.d/.local/straight/repos/org-roam/")
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(package-initialize)
+
 (add-to-list 'load-path "~/.emacs.d/.local/straight/repos/vertico/")
 
 (setq org-roam-directory "~/org-roam/"
@@ -23,6 +27,9 @@
 (require 'vertico)
 (evil-mode 1)
 (vertico-mode 1)
+(package-initialize)
+(setq comp-speed 2)
+(setq package-native-compile t)
 ;; (setq evil-default-state 'normal)
 ;;Once you have tried just regular evil, you can also use doom evil by first
 ;;
