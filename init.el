@@ -20,8 +20,8 @@
        :completion
        company ;trying if without child          ; the ultimate code completion backend
        ;;(helm + fuzzy)      ; the *other* search engine for love and life
-       ;ido               ; the other *other* search engine...
-       ;ivy               ; a search engine for love and life
+       ;;ido               ; the other *other* search engine...
+       ;;ivy               ; a search engine for love and life
        vertico
 
        :ui
@@ -29,7 +29,7 @@
        doom              ; what makes DOOM look the way it does
        doom-dashboard    ; a nifty splash screen for Emacs
        doom-quit         ; DOOM quit-message prompts when you quit Emacs
-       ; removed because SLOW: emoji
+       ;; removed because SLOW: emoji
        ;;fill-column       ; a `fill-column' indicator
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
        ;;hydra
@@ -190,7 +190,6 @@
 
        :config
        (default +bindings +smartparens))
-       ;; prompts (FIXME this is were I tried to to make my own package work.
-       ;; Not sure what kind of messes this caused, but at least doctor was
-       ;; annoyed so I uncommented this line again)
-
+;; prompts (FIXME this is were I tried to to make my own package work.
+;; Not sure what kind of messes this caused, but at least doctor was
+;; annoyed so I uncommented this line again)
