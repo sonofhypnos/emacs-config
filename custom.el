@@ -22,7 +22,7 @@
  '(rustic-ansi-faces
    ["#002b36" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
  '(safe-local-variable-values
-   '((eval setenv "PYTHONPATH" "~/repos/bachelorthesis-workspace-tassilo/code/")
+   '(
      (org-refile-targets)
      (org-download-delete-image-after-download)
      (org-download-method . directory)
@@ -54,7 +54,6 @@
     (cons 360 "#405A61")))
  '(vc-annotate-very-old-color nil)
  '(warning-suppress-types '((defvaralias))))
-;; not sure this is the right place to set this.
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
