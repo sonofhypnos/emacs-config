@@ -5,17 +5,17 @@
       user-mail-address "tassilo.neubauer@gmail.com")
 
 (setq   org-directory "~/org-roam/"
-        org-roam-directory "~/org-roam/"
+        org-roam-directory (file-truename "~/org-roam/org-roam/")
         projectile-project-search-path '("~/repos" "~/Dropbox/")
         org-fc-diretories '(org-directory)
         org-archive-location (concat org-directory ".archive/%s::")
         t/org-inbox-file (concat org-directory "notes.org")
         t/org-project-file (concat org-directory "projects.org")
         t/org-someday-maybe-file (concat org-directory "someday_maybe.org")
-        t/org-archive-file (concat org-directory "archive.org")
+        t/org-archive-file (concat org-directory "org-roam/archive.org")
         t/journal-file (concat org-directory "journal.org")
-        t/writing-ideas (concat org-directory "20210508185546-things_to_write_about.org")
-        t/fzi (concat org-directory "fzi_assistant_job.org"))
+        t/writing-ideas (concat org-directory "org-roam/20210508185546-things_to_write_about.org")
+        t/fzi (concat org-directory "org-roam/fzi_assistant_job.org"))
 
 
 (after! dired-x
@@ -626,7 +626,7 @@ PROMPT is a string to show at the beginning of the mini-buffer, defaulting to \"
                   nil require-match initial-input 'org-roam-node-history)))
       (or (cdr (assoc node nodes))
           (org-roam-node-create :title node))))
-  (cl-defun org-roam-node-find (&optional other-window initial-input filter-fn pred &key templates)
+  (cl-defun t/org-roam-node-find (&optional other-window initial-input filter-fn pred &key templates)
     "Find and open an Org-roam node by its title or alias.
 INITIAL-INPUT is the initial input for the prompt.
 FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
