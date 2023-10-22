@@ -765,7 +765,7 @@ The TEMPLATES, if provided, override the list of capture templates (see
 
   (setq +org-roam-open-buffer-on-find-file nil)
 
-  ;; (setq org-roam-db-gc-threshold most-positive-fixnum) ;; Mentioned
+  (setq org-roam-db-gc-threshold (*  16 1024 1024)) ;; Mentioned
   ;; performance optimization in the manual. According to measurements I did on
   ;; my machine this is actually making things worse if you already use a
   ;; reasonable value
