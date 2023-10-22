@@ -131,7 +131,7 @@
 
 
 (after! anki-editor
-  ;; :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
   :config
   (setq-default anki-editor-use-math-jax t)
@@ -184,14 +184,7 @@
           (t/journal-file :maxlevel . 1)
           (t/writing-ideas :maxlevel . 1)
           (t/fzi :maxlevel . 1)))
-
-  (defun tassilo/enable-anki-editor-mode ()
-    (when (org-capture-get :anki)
-      (anki-editor-mode)))
-
-  (add-hook 'org-capture-mode-hook 'tassilo/enable-anki-editor-mode)
-
-
+  (add-hook 'org-capture-mode-hook #'anki-editor-mode)
   (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
         org-capture-templates `(
                                 ("l" "Link" entry (file+headline +org-capture-notes-file "Links")
@@ -205,13 +198,11 @@
                                 ("A" "Anki cloze"
                                  entry
                                  (file+headline org-my-anki-file "Dispatch Shelf")
-                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"
-                                 :anki t)
+                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x")
                                 ("T" "Anki type"
                                  entry
                                  (file+headline org-my-anki-file "Dispatch Shelf")
-                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x"
-                                 :anki t)
+                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x")
 
                                 ("L" "Protocol Link" entry
                                  (file+headline +org-capture-notes-file "Inbox")
