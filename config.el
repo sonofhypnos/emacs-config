@@ -131,7 +131,7 @@
 
 
 (after! anki-editor
-  :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
+  ;; :hook (org-capture-after-finalize . anki-editor-reset-cloze-number) ; Reset cloze-number after each capture.
 
   :config
   (setq-default anki-editor-use-math-jax t)
@@ -167,14 +167,17 @@
         "<f11>"  #'anki-editor-cloze-region-auto-incr
         "<f10>"  #'anki-editor-reset-cloze-number
         "<f9>"   #'anki-editor-push-tree)
-  (add-hook org-capture-after-finalize-hook #'anki-editor-reset-cloze-number)
+  ;; (add-hook org-capture-after-finalize-hook #'anki-editor-reset-cloze-number)
 
   ;; Initialize
   (anki-editor-reset-cloze-number))
 
 (after! org
-  ;;trying to speed up org by disabeling this:
-  (setq org-agenda-ignore-properties '(effort appt category))
+  ;;trying to speed up org by disabeling this org-agenda-ignore-properties
+  (setq org-agenda-ignore-properties '(effort appt category)
+        org-pomodoro-start-sound "/home/tassilo/.emacs.d/.local/straight/build-29.1/org-pomodoro/resources/tick.wav"
+        org-pomodoro-long-break-sound ""
+        org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/sonar.ogg")
   (setq org-refile-targets
         '((nil :maxlevel . 3)
           (t/org-inbox-file :maxlevel . 3)
@@ -655,7 +658,10 @@ The TEMPLATES, if provided, override the list of capture templates (see
 
   (setq daily-template
         (concat
-         "#+title: %<%Y-%m-%d>\n* [/] Do Today (FDT)\n* [/] Maybe Do Today"
+         "#+title: %<%Y-%m-%d>\n* [/] Do Today (FDT)\n* [/] Do Today in break time"
+         "\n - [ ] drink water"
+         "\n - [ ] prepare food"
+         "\n - [ ] go for a run with barbells"
          "\n* Morgenroutine"
          "\n - [ ] Kalender angesehen"
          "\n - [ ] Start tracking"
