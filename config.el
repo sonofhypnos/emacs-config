@@ -177,7 +177,10 @@
   (setq org-agenda-ignore-properties '(effort appt category)
         org-pomodoro-start-sound "/home/tassilo/.emacs.d/.local/straight/build-29.1/org-pomodoro/resources/tick.wav"
         org-pomodoro-long-break-sound ""
-        org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/sonar.ogg")
+        org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/sonar.ogg"
+        org-pomodoro-keep-killed-pomodoro-time t
+        org-pomodoro-manual-break t
+        )
   (setq org-refile-targets
         '((nil :maxlevel . 3)
           (t/org-inbox-file :maxlevel . 3)
