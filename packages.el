@@ -37,6 +37,12 @@
 ;; (package! lxd-tramp) #needed this when I was still using lxd
 (package! benchmark-init)
 
+;;lean
+(package! lean4-mode :recipe
+  (:host github
+   :repo "leanprover/lean4-mode"
+   :files ("*.el" "data")))
+
 ;;not really used
 (package! org-wild-notifier)
 (package! zotxt)
@@ -51,6 +57,7 @@
 (package! htmlize) ;not sure why this was added?
 (package! mathpix.el
   :recipe (:host github :repo "jethrokuan/mathpix.el"))
+
 
 ;;testing out
 (package! org-fc
