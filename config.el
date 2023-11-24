@@ -35,8 +35,8 @@
   (interactive)
   (org-refile '(4)))
 
-(custom-set-variables '(org-agenda-files '("~/org-roam/projects.org" "~/org-roam/notes.org"))
-                      '(org-refile-targets ((t/org-inbox-file t/org-project-file t/org-someday-maybe-file t/org-archive-file t/journal-file) :maxlevel . 3))) ;not sure about benefits of custom-set-variables
+;; (custom-set-variables '(org-agenda-files '("~/org-roam/projects.org" "~/org-roam/notes.org"))
+;;                       '(org-refile-targets ('(t/org-inbox-file t/org-project-file t/org-someday-maybe-file) :maxlevel . 2))) ;not sure about benefits of custom-set-variables
 
 
 ;; default in doom is to low. Not sure where all the memory is going
@@ -182,50 +182,50 @@
         org-pomodoro-manual-break t
         )
   (setq org-refile-targets
-        '((nil :maxlevel . 3)
-          (t/org-inbox-file :maxlevel . 3)
-          (t/org-project-file :maxlevel . 5)
-          (t/org-someday-maybe-file :maxlevel . 5)
-          (t/org-archive-file :maxlevel . 3)
-          (t/journal-file :maxlevel . 1)
-          (t/writing-ideas :maxlevel . 1)
-          (t/fzi :maxlevel . 1)))
+        `(;; (nil :maxlevel . 3)
+          ;; (,t/org-inbox-file :maxlevel . 3)
+          (,t/org-project-file :maxlevel . 3)
+          (,t/org-someday-maybe-file :maxlevel . 1)
+          (,t/writing-ideas :maxlevel . 1)))
   (add-hook 'org-capture-mode-hook #'anki-editor-mode)
+  ;; FIXME something is messing with capture and clipboard (possibly i3?) (something about clipboard look for other clipboard managers)
+
   (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
         org-capture-templates `(
-                                ("l" "Link" entry (file+headline +org-capture-notes-file "Links")
+                                ("l" "Link" entry (file+headline ,+org-capture-notes-file "Links")
                                  "* [[%:link][%:description]]\n %?\n \n %i\n%T"
                                  :immediate-finish t)
-                                ("a" "Anki basic"
-                                 entry
-                                 (file+headline org-my-anki-file "Dispatch Shelf")
-                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n")
-
+                                ;; ("a" "Anki basic"
+                                ;;  entry
+                                ;;  (file+headline ,org-my-anki-file "Dispatch Shelf")
+                                ;;  "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Basic\n:ANKI_DECK: .main\n:END:\n** Front\n%?\n** Back\n%x\n")
                                 ("A" "Anki cloze"
                                  entry
-                                 (file+headline org-my-anki-file "Dispatch Shelf")
+                                 (file+headline ,org-my-anki-file "Dispatch Shelf")
                                  "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x")
-                                ("T" "Anki type"
-                                 entry
-                                 (file+headline org-my-anki-file "Dispatch Shelf")
-                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x")
-
+                                ;; ("T" "Anki type"
+                                ;;  entry
+                                ;;  (file+headline ,org-my-anki-file "Dispatch Shelf")
+                                ;;  "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE:1typing\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%x")
                                 ("L" "Protocol Link" entry
-                                 (file+headline +org-capture-notes-file "Inbox")
+                                 (file+headline ,+org-capture-notes-file "Inbox")
                                  "* [[%:link][%:description]] \n \n \n%i \n %T"
                                  :prepend t)
-                                ("S" "Todo Protocoll" entry
-                                 (file+headline +org-capture-notes-file "Inbox")
-                                 "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
-                                 :prepend t)
-                                ("t" "Personal todo" entry
-                                 (file+headline +org-capture-notes-file "Todos")
-                                 "* [ ] %?\n%i\n" :prepend t)
-                                ("n" "Personal notes" entry
-                                 (file+headline +org-capture-notes-file "Inbox")
+                                ;; ("S" "Todo Protocoll" entry
+                                ;;  (file+headline ,+org-capture-notes-file "Inbox")
+                                ;;  "* [[%:link][% \"%:description\"]] \n \n* TODO %? %i \n %T"
+                                ;;  :prepend t)
+                                ;; ("t" "Personal todo" entry
+                                ;;  (file+headline ,+org-capture-notes-file "Todos")
+                                ;;  "* [ ] %?\n%i\n" :prepend t)
+                                ("t" "Personal notes productivity system" entry
+                                 (file+headline ,+org-capture-notes-file "Inbox")
+                                 "* TODO %u %?\n%i\n" :prepend t)
+                                ("n" "no date" entry
+                                 (file+headline ,+org-capture-notes-file "Inbox")
                                  "* %u %?\n%i\n" :prepend t)
                                 ("j" "Journal" entry
-                                 (file+olp+datetree +org-capture-journal-file)
+                                 (file+olp+datetree ,+org-capture-journal-file)
                                  "* %U %?\n%i\n" :prepend t)))
 
   ;; create default apps
@@ -364,10 +364,11 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   ;; enable sound:
   (setq org-clock-play-sound t)
   (setq org-tag-persistent-alist '(("continue?") ("@unterwegs") ("anki" . ?a) ("logbook")
-                                   ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?p) ("FVP" . ?f) ("university")
-                                   ("Effort") ("COLUMNS") ("low_energy") ("kein_Datum") ("Fokus") ("leo")
-                                   ("Brainstorm" . ?b) ("@pc" . ?p) ("uni" . ?u) ("Computergrafik") ("laughing") ("projekt")
+                                   ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?w) ("FVP" . ?f)
+                                   ("Effort") ("COLUMNS") ("low_energy") ("kein_datum") ("Fokus") ("leo")
+                                   ("Brainstorm" . ?b) ("@pc" . ?p) ("projekt") ("@research" . ?r)
                                    ("@zuhause" . ?z)))
+  ;;@research is high distraction @pc variant
 
   (setq org-track-ordered-property-with-tag nil
         org-log-into-drawer nil)
@@ -427,8 +428,9 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   ;; (setq org-stuck-projects
   ;;       '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODE")))
 
-  (setq org-agenda-custom-commands
-        '(("n" "Agenda and all TODOs")
+  (setq calendar-week-start-day 1 ;sets monday as start of the week
+        org-agenda-custom-commands
+        '(;; ("n" "Agenda and all TODOs")
           ("z" "Zuordnen" ;; Zuordnen is for selecting tags
            ((agenda "")
             (tags-todo "")))
@@ -436,7 +438,16 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
           ("d" "Date view")             ;selects dates
                                         ; ; TODO Add priority view
                                         ; TODO customize stuck projects
-
+          ("u" "Untagged tasks"
+           tags-todo "-TAGS={.+}/!")
+          ("n" "Unscheduled and Undated Tasks"
+           ((todo ""
+                  ((org-agenda-skip-function
+                    '(or (org-agenda-skip-entry-if 'scheduled 'deadline)
+                         (org-agenda-skip-entry-if 'regexp ":kein_datum:")
+                         (org-agenda-skip-entry-if 'regexp ":projekt:")
+                         (org-agenda-skip-entry-if 'regexp ":project:")
+                         (org-agenda-skip-entry-if 'todo 'done)))))))
           ("l" "Show Leo's TODOs that are currently due."
            ((tags-todo "+leo")))))
   ;; (org-agenda-overriding-header "Leo's TODOs that are currently due")
@@ -461,7 +472,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   ;;         ("hp" tags "+home+Peter")
   ;;         ("hk" tags "+home+Kim")))
   (setq org-export-with-tasks nil
-        org-refile-use-cache t) ; FIXME: this line might cause trouble, but testing it, because refile was unbearably slow
+        org-refile-use-cache nil) ; FIXME: trying out not caching refile as I reduced refile file amount
 
 
 
