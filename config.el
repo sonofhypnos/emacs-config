@@ -1147,7 +1147,10 @@ by default."
 
 (use-package! fatebook
   :defer-incrementally t
+
   :commands (fatebook-create-question))
+(after! fatebook
+  (setq fatebook-debug t))
 
 
 ;;(use-package! elisp-lint
