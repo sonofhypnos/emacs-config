@@ -435,9 +435,80 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   ;; (setq org-stuck-projects
   ;;       '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODE")))
 
+  (defvar prot-org-custom-daily-agenda
+    ;; NOTE 2021-12-08: Specifying a match like the following does not
+    ;; work.
+    ;;
+    ;; tags-todo "+PRIORITY=\"A\""
+    ;;
+    ;; So we match everything and then skip entries with
+    ;; `org-agenda-skip-function'.
+    `((tags-todo "*"
+       ((org-agenda-skip-function `(or (org-agenda-skip-if nil '(timestamp))
+                                       ;; (org-agenda-skip-entry-if
+                                       ;;  'notregexp ,(format "\\[#%s\\]" (char-to-string org-priority-highest)))
+                                       (org-agenda-skip-entry-if 'scheduled 'deadline)
+                                       (org-agenda-skip-entry-if 'regexp ":project:")
+                                       (org-agenda-skip-entry-if 'regexp ":kein_datum:")))
+        (org-agenda-block-separator nil)
+
+        (org-agenda-overriding-header "Important tasks without a date\n")))
+      (agenda "" ((org-agenda-time-grid nil)
+                  (org-agenda-start-on-weekday nil)
+                  (org-agenda-span 1)
+                  (org-agenda-show-all-dates nil)
+                  (org-scheduled-past-days 365)
+                  ;; Excludes today's scheduled items
+                  (org-scheduled-delay-days 1)
+                  (org-agenda-block-separator nil)
+                  (org-agenda-entry-types '(:scheduled))
+                  (org-agenda-skip-function '(or (org-agenda-skip-entry-if 'todo 'done)
+
+                                                 (org-agenda-skip-entry-if 'regexp "TRAIN")
+                                                 (org-agenda-skip-entry-if 'regexp ":project:")
+                                                 ))
+                  (org-agenda-category-filter "-habit")
+                  (org-agenda-day-face-function (lambda (date) 'org-agenda-date))
+                  (org-agenda-format-date "")
+                  (org-agenda-overriding-header "\nPending scheduled tasks")))
+      (agenda "" ((org-agenda-span 1)
+                  (org-deadline-warning-days 0)
+                  (org-agenda-block-separator nil)
+                  (org-scheduled-past-days 0)
+
+                  ;; We don't need the `org-agenda-date-today'
+                  ;; highlight because that only has a practical
+                  ;; utility in multi-day views.
+                  (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":project:"))
+                  (org-agenda-day-face-function (lambda (date) 'org-agenda-date))
+                  (org-agenda-format-date "%A %-e %B %Y")
+                  (org-agenda-overriding-header "\nToday's agenda\n")))
+      (agenda "" ((org-agenda-start-on-weekday nil)
+                  (org-agenda-start-day nil)
+                  (org-agenda-start-day "+1d")
+                  (org-agenda-span 3)
+                  (org-deadline-warning-days 0)
+                  (org-agenda-block-separator nil)
+                  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+
+                  (org-agenda-skip-function '(org-agenda-skip-entry-if 'regexp ":project:"))
+                  (org-agenda-overriding-header "\nNext three days\n")))
+      (agenda "" ((org-agenda-time-grid nil)
+                  (org-agenda-start-on-weekday nil)
+                  ;; We don't want to replicate the previous section's
+                  ;; three days, so we start counting from the day after.
+                  (org-agenda-start-day "+4d")
+                  (org-agenda-span 14)
+                  (org-agenda-show-all-dates nil)
+                  (org-deadline-warning-days 0)
+                  (org-agenda-block-separator nil)
+                  (org-agenda-entry-types '(:deadline))
+                  (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                  (org-agenda-overriding-header "\nUpcoming deadlines (+14d)\n"))))
+    "Custom agenda for use in `org-agenda-custom-commands'.")
   (setq calendar-week-start-day 1 ;sets monday as start of the week
         org-agenda-custom-commands
-        '(;; ("n" "Agenda and all TODOs")
+        `(;; ("n" "Agenda and all TODOs")
           ("z" "Zuordnen" ;; Zuordnen is for selecting tags
            ((agenda "")
             (tags-todo "")))
@@ -450,11 +521,15 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
           ("n" "Unscheduled and Undated Tasks"
            ((todo ""
                   ((org-agenda-skip-function
-                    '(or (org-agenda-skip-entry-if 'scheduled 'deadline)
+                    '(or (org-agenda-skip-entry-if 'scheduled 'deadline) ;;skip scheduled or deadline
                          (org-agenda-skip-entry-if 'regexp ":kein_datum:")
                          (org-agenda-skip-entry-if 'regexp ":projekt:")
                          (org-agenda-skip-entry-if 'regexp ":project:")
                          (org-agenda-skip-entry-if 'todo 'done)))))))
+          ("A" "Daily agenda and top priority tasks"
+           ,prot-org-custom-daily-agenda
+           ((org-agenda-fontify-priorities nil)
+            (org-agenda-dim-blocked-tasks nil)))
           ("l" "Show Leo's TODOs that are currently due."
            ((tags-todo "+leo")))))
   ;; (org-agenda-overriding-header "Leo's TODOs that are currently due")
