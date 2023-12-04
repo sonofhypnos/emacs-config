@@ -182,13 +182,15 @@
         org-pomodoro-manual-break t
         org-agenda-start-day nil
         )
+
+  ;; TODO: use different evil-undo-system? (redo instead of undo-fu)
+
   (setq org-refile-targets
         `(;; (nil :maxlevel . 3)
           ;; (,t/org-inbox-file :maxlevel . 3)
           (,t/org-project-file :maxlevel . 3)
           (,t/org-someday-maybe-file :maxlevel . 1)
           (,t/writing-ideas :maxlevel . 1)))
-  (add-hook 'org-capture-mode-hook #'anki-editor-mode)
   ;; FIXME something is messing with capture and clipboard (possibly i3?) (something about clipboard look for other clipboard managers)
 
   (setq org-my-anki-file (concat org-roam-directory "anki-stuff.org")
