@@ -205,7 +205,11 @@
                                 ("A" "Anki cloze"
                                  entry
                                  (file+headline ,org-my-anki-file "Dispatch Shelf")
-                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x")
+                                 ;; NOTE: we are trying to use %(my-command-here above)
+                                 "* %<%y-%m-%d %H:%M>   %^g\n:PROPERTIES:\n:ANKI_NOTE_TYPE: Cloze\n:ANKI_DECK: .main\n:END:\n** Text\n%?\n** Extra\n%f\n%x"
+                                 )
+                                ;; TODO: try to enable anki-editor mode only when using the anki template (below doesn't work)
+                                ;; %(anki-editor-mode)
                                 ;; ("T" "Anki type"
                                 ;;  entry
                                 ;;  (file+headline ,org-my-anki-file "Dispatch Shelf")
