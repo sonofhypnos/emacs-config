@@ -373,7 +373,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   (setq org-tag-persistent-alist '(("continue?") ("@unterwegs") ("anki" . ?a) ("logbook")
                                    ("high_energy") ("IS_RECURRING" . ?R) ("pause" . ?w) ("FVP" . ?f)
                                    ("Effort") ("COLUMNS") ("low_energy") ("kein_datum") ("Fokus") ("leo")
-                                   ("Brainstorm" . ?b) ("@pc" . ?p) ("projekt") ("@research" . ?r)
+                                   ("Brainstorm" . ?b) ("@pc" . ?p) ("project") ("@research" . ?r)
                                    ("@zuhause" . ?z)))
   ;;@research is high distraction @pc variant
 
