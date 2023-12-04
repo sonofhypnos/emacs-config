@@ -180,6 +180,7 @@
         org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/sonar.ogg"
         org-pomodoro-keep-killed-pomodoro-time t
         org-pomodoro-manual-break t
+        org-agenda-start-day nil
         )
   (setq org-refile-targets
         `(;; (nil :maxlevel . 3)
