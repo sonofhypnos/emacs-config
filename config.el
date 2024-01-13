@@ -175,12 +175,14 @@
 (after! org
   ;;trying to speed up org by disabeling this org-agenda-ignore-properties
   (setq org-agenda-ignore-properties '(effort appt category)
+        org-enforce-todo-dependencies t ;; Enforces todo-dependencies
         org-pomodoro-start-sound "/home/tassilo/.emacs.d/.local/straight/build-29.1/org-pomodoro/resources/tick.wav"
         org-pomodoro-long-break-sound ""
         org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/sonar.ogg"
         org-pomodoro-keep-killed-pomodoro-time t
         org-pomodoro-manual-break t
         org-agenda-start-day nil
+        org-stuck-projects '("+project/+LEVEL=2" ("NEXT" "TODO"))
         )
 
   ;; TODO: use different evil-undo-system? (redo instead of undo-fu)
@@ -434,7 +436,14 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   ;; org-agenda filters:
   ;; (setq org-stuck-projects
   ;;       '("+PROJECT/-MAYBE-DONE" ("NEXT" "TODE")))
-
+  ;;
+  (defun my-skip-project-level-2 ()
+    "Skip entries that are at level 2 and have the 'project' tag."
+    (let ((subtree-end (save-excursion (org-end-of-subtree t)))
+          (tags (org-get-tags-at)))
+      (if (and (= (org-current-level) 2) (member "project" tags))
+          subtree-end
+        nil)))
   (defvar prot-org-custom-daily-agenda
     ;; NOTE 2021-12-08: Specifying a match like the following does not
     ;; work.
@@ -443,16 +452,20 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
     ;;
     ;; So we match everything and then skip entries with
     ;; `org-agenda-skip-function'.
+
     `((tags-todo "*"
+       ;;-project+LEVEL=2
        ((org-agenda-skip-function `(or (org-agenda-skip-if nil '(timestamp))
                                        ;; (org-agenda-skip-entry-if
                                        ;;  'notregexp ,(format "\\[#%s\\]" (char-to-string org-priority-highest)))
                                        (org-agenda-skip-entry-if 'scheduled 'deadline)
-                                       (org-agenda-skip-entry-if 'regexp ":project:")
-                                       (org-agenda-skip-entry-if 'regexp ":kein_datum:")))
-        (org-agenda-block-separator nil)
+                                       ;; (org-agenda-skip-entry-if 'todo "-project")
+                                       (org-agenda-skip-entry-if 'regexp ":kein_datum:"
+                                                                 )
+                                       (my-skip-project-level-2))))
+       (org-agenda-block-separator nil)
 
-        (org-agenda-overriding-header "Important tasks without a date\n")))
+       (org-agenda-overriding-header "Important tasks without a date\n"))
       (agenda "" ((org-agenda-time-grid nil)
                   (org-agenda-start-on-weekday nil)
                   (org-agenda-span 1)
@@ -470,6 +483,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
                   (org-agenda-category-filter "-habit")
                   (org-agenda-day-face-function (lambda (date) 'org-agenda-date))
                   (org-agenda-format-date "")
+                  (org-agenda-dim-blocked-tasks t) ;; NOTE: hide task that is blocked
                   (org-agenda-overriding-header "\nPending scheduled tasks")))
       (agenda "" ((org-agenda-span 1)
                   (org-deadline-warning-days 0)
@@ -532,6 +546,7 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
             (org-agenda-dim-blocked-tasks nil)))
           ("l" "Show Leo's TODOs that are currently due."
            ((tags-todo "+leo")))))
+
   ;; (org-agenda-overriding-header "Leo's TODOs that are currently due")
   ;; (org-agenda-time-grid nil)
   ;; (org-deadline-warning-days 0)
