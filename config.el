@@ -1124,7 +1124,7 @@ The TEMPLATES, if provided, override the list of capture templates (see
 (after! flycheck
   (setq flycheck-checkers (delq 'python-mypy flycheck-checkers)))
 
-(after! dap
+(after! dap-mode
   (setq dap-python-debugger 'debugpy))
 
 (after! tramp (setq tramp-terminal-type "tramp")) ;fixing hangs because tramp does not understand the shell prompt:
