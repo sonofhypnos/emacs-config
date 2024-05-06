@@ -1240,12 +1240,15 @@ by default."
 
   :commands (fatebook-create-question))
 (after! fatebook
-  (setq fatebook-debug t))
+  (setq fatebook-debug t
+        fatebook-tags '("weekly-goals")))
 
 
 ;;(use-package! elisp-lint
 ;;  :commands elisp-lint-buffer)
 
+(defun t/print (x)
+  (message "%s" (prin1-to-string x)))
 
 (after! projectile
   (defun remove-project-from-cache (project-path)
