@@ -27,6 +27,10 @@
   :recipe (:host github
            :repo "sonofhypnos/fatebook.el"))
 
+(package! pylsp-rope
+  :recipe (:host github
+           :repo "sonofhypnos/pylsp-rope.el"))
+
 ;;lols
 (package! nyan-mode)
 

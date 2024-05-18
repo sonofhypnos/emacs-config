@@ -1019,7 +1019,14 @@ The TEMPLATES, if provided, override the list of capture templates (see
   (setq-default delete-by-moving-to-trash t))
 
 (after! lsp
-  (setq lsp-pyls-plugins-black-args '("--line-length" "80")))
+  (setq lsp-pyls-plugins-black-args '("--line-length" "80"))
+  (lsp-register-client
+   (make-lsp-client :new-connection (lsp-tramp-connection "pylsp")
+                    :major-modes '(python-mode)
+                    :remote? t
+                    :server-id 'pyls-remote)))
+
+
 
 (use-package! term ;;was something up with term?
   :after org
@@ -1027,8 +1034,6 @@ The TEMPLATES, if provided, override the list of capture templates (see
   (setq explicit-shell-file-name "zsh")
   (setq explicit-zsh-args '())          ; I don't know what this is for?
   (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
-
-
 
 ;;this is required for benchmark-init to stop complaining
 (cl-letf (((symbol-function 'define-obsolete-function-alias) #'defalias))
@@ -1124,7 +1129,7 @@ The TEMPLATES, if provided, override the list of capture templates (see
 (after! flycheck
   (setq flycheck-checkers (delq 'python-mypy flycheck-checkers)))
 
-(after! dap-mode
+(after! dap
   (setq dap-python-debugger 'debugpy))
 
 (after! tramp (setq tramp-terminal-type "tramp")) ;fixing hangs because tramp does not understand the shell prompt:
