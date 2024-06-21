@@ -17,6 +17,8 @@
         t/writing-ideas (concat org-directory "org-roam/20210508185546-things_to_write_about.org")
         t/fzi (concat org-directory "org-roam/fzi_assistant_job.org"))
 
+;; (setq doom-theme 'doom-one-light)
+
 
 (after! dired-x
   (setq dired-guess-shell-alist-user
@@ -929,6 +931,7 @@ The TEMPLATES, if provided, override the list of capture templates (see
 
 (use-package! websocket
   :after org-roam)
+
 
 (use-package! org-roam-ui
   :after org-roam
