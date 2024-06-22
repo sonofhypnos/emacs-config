@@ -19,6 +19,24 @@
 
 ;; (setq doom-theme 'doom-one-light)
 
+(defun t/copy-all-buffers-to-clipboard ()
+  "Copy contents of all open buffers to clipboard."
+  (interactive)
+  (let ((buffer-contents ""))
+    (save-excursion
+      (dolist (buffer (buffer-list))
+        (with-current-buffer buffer
+          (when (buffer-file-name)
+            (setq buffer-contents
+                  (concat buffer-contents
+                          (format "%s:\n%s\n\n"
+                                  (buffer-name)
+                                  (buffer-substring-no-properties
+                                   (point-min) (point-max))))))))
+      (if (string= buffer-contents "")
+          (message "No file buffers found.")
+        (kill-new buffer-contents)
+        (message "All buffer contents copied to clipboard.")))))
 
 (after! dired-x
   (setq dired-guess-shell-alist-user
