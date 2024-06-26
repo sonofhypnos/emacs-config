@@ -1289,3 +1289,9 @@ by default."
         (with-temp-file projectile-cache-file
           (print cache-data (current-buffer)))))))
 ;; (load-file "emacs-hm-env.el")
+
+
+;; Add settings for javascript indentation
+(setq-hook! '(js2-mode-hook rjsx-mode-hook)
+  js-indent-level 2
+  js2-basic-offset 2)
