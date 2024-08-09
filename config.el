@@ -1295,3 +1295,20 @@ by default."
 (setq-hook! '(js2-mode-hook rjsx-mode-hook)
   js-indent-level 2
   js2-basic-offset 2)
+
+
+(use-package! multi-magit
+  :after magit
+  :config
+  (setq multi-magit-selected-repositories
+        '("/home/tassilo/repos/boostx/boost-x-frontend"
+          "/home/tassilo/repos/boostx/boostx-server"
+          "/home/tassilo/repos/boostx/boostx-chatbot"))
+  (setq magit-repository-directories '(("/home/tassilo/repos/boostx" . 1)))
+
+  (global-set-key (kbd "C-x G") 'multi-magit-status)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'multi-magit-insert-repos-overview
+                          nil t)
+
+  (setq multi-magit-refresh-status-buffer t))

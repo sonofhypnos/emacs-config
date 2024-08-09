@@ -34,6 +34,13 @@
 ;;lols
 (package! nyan-mode)
 
+
+;; multi-magit (for managing related git repos)
+(package! multi-magit
+  :recipe (:host github
+           :repo "luismbo/multi-magit"))
+
+
 ;;gitlab and github
 
 
