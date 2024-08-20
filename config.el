@@ -1301,10 +1301,10 @@ by default."
   :after magit
   :config
   (setq multi-magit-selected-repositories
-        '("/home/tassilo/repos/boostx/boost-x-frontend"
-          "/home/tassilo/repos/boostx/boostx-server"
-          "/home/tassilo/repos/boostx/boostx-chatbot"))
-  (setq magit-repository-directories '(("/home/tassilo/repos/boostx" . 1)))
+        '("/home/tassilo/.dotfiles"
+          "/home/tassilo/.doom.d"))
+  (setq magit-repository-directories '("/home/tassilo/.dotfiles"
+                                       "/home/tassilo/.doom.d"))
 
   (global-set-key (kbd "C-x G") 'multi-magit-status)
   (magit-add-section-hook 'magit-status-sections-hook
