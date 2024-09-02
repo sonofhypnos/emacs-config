@@ -1303,7 +1303,8 @@ by default."
   (setq multi-magit-selected-repositories
         '("/home/tassilo/.dotfiles"
           "/home/tassilo/.doom.d"))
-  (setq magit-repository-directories '("/home/tassilo/.dotfiles"
+  (setq magit-repository-directories '("/home/tassilo/repos/thoughts"
+                                       "/home/tassilo/.dotfiles"
                                        "/home/tassilo/.doom.d"))
 
   (global-set-key (kbd "C-x G") 'multi-magit-status)
