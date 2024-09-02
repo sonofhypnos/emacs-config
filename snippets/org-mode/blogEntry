@@ -3,11 +3,11 @@
 # --
 
 
-* TODO ${1:Title} :blog:
+* TODO `(read-string "Title:")` :blog:
 #+TODO: TODO(b!) WAIT(w@/!) | DONE(d!) CANCELED(c@)
 #+PROPERTY: LOG_INTO_DRAWER LOGBOOK
 :PROPERTIES:
-:ID: ${2:this is id}
+:ID: ${1:unique-blog-id}
 :CREATED: [`(english-format-time-string "%Y-%02m-%02d%3a %02H:%02M")`]
 :END:
 :LOGBOOK:
