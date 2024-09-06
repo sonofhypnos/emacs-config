@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: BlogpostEntry
+# key: entryBlog
+# --
+---
+title: ${1:Title}
+tags: ${2:hidden}
+id: ${3:unique-identifier}
+date: `(format-time-string "%Y-%m-%d")`
+---
+
+$0
