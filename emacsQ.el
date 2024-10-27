@@ -1,21 +1,25 @@
 ;;; ../.dotfiles/doom.d/emacsQ.el -*- lexical-binding: t; -*-
+;;; NOTE: to use this file run:
+;;; "emacs -Q -l ~/.doom.d/emacsQ.el
 
 (add-to-list 'load-path "~/.emacs.d/.local/straight/repos/dash.el/")
 (add-to-list 'load-path "~/.emacs.d/.local/straight/repos/emacsql/")
 (add-to-list 'load-path "~/.emacs.d/.local/straight/repos/compat/")
 (require 'magit-section "~/.emacs.d/.local/straight/repos/magit/lisp/magit-section.el")
 (add-to-list 'load-path "~/.emacs.d/.local/straight/repos/evil/")
-(add-to-list 'load-path "~/.emacs.d/.local/straight/repos/org-roam/")
+(add-to-list 'load-path "~/.emacs.d/.local/straight/repos/tramp/")
+;; (add-to-list 'load-path "~/.emacs.d/.local/straight/repos/org-roam/")
+(add-to-list 'load-path "~/.emacs.d/.local/straight/repos/vertico/")
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
 
-(add-to-list 'load-path "~/.emacs.d/.local/straight/repos/vertico/")
 
-(setq org-roam-directory "~/org-roam/"
-      org-roam-db-location "~/.emacs.d/.local/cache/org-roam.db"
-      garbage-collection-messages t
-      )
+
+;; (setq org-roam-directory "~/org-roam/"
+;;       org-roam-db-location "~/.emacs.d/.local/cache/org-roam.db"
+;;       garbage-collection-messages t
+;;       )
 
 
 
@@ -23,8 +27,9 @@
 ;; ;; (add-to-list 'load-path "~/.emacs.d/evil")
 ;; (require 'magit-section)
 (require 'evil)
-(require 'org-roam)
+;; (require 'org-roam)
 (require 'vertico)
+(require 'tramp)
 (evil-mode 1)
 (vertico-mode 1)
 (package-initialize)
