@@ -1153,7 +1153,55 @@ The TEMPLATES, if provided, override the list of capture templates (see
 (after! dap
   (setq dap-python-debugger 'debugpy))
 
-(after! tramp (setq tramp-terminal-type "tramp")) ;fixing hangs because tramp does not understand the shell prompt:
+(after! tramp
+  (setq tramp-terminal-type "tramp") ;fixing hangs because tramp does not understand the shell prompt:
+
+  (defun tramp-check-for-regexp (proc regexp)
+    "Check, whether REGEXP is contained in process buffer of PROC.
+Erase echoed commands if exists."
+                                        ; supposedly, according to stack
+                                        ; overflow this fixes problems with
+                                        ; magit being slow in combination with
+                                        ; tramp:
+                                        ; https://emacs.stackexchange.com/questions/33845/magit-with-tramp-is-slow
+    (with-current-buffer (process-buffer proc)
+      (if (> (point-max) 1000)
+          (progn
+            (goto-char (point-max))
+            (ignore-errors (re-search-backward regexp (- (point-max) 1000) t)))
+        (progn
+          (goto-char (point-min))
+
+          ;; Check whether we need to remove echo output.
+          (when (and (tramp-get-connection-property proc "check-remote-echo" nil)
+                     (re-search-forward tramp-echoed-echo-mark-regexp nil t))
+            (let ((begin (match-beginning 0)))
+              (when (re-search-forward tramp-echoed-echo-mark-regexp nil t)
+                ;; Discard echo from remote output.
+                (tramp-set-connection-property proc "check-remote-echo" nil)
+                (tramp-message proc 5 "echo-mark found")
+                (forward-line 1)
+                (delete-region begin (point))
+                (goto-char (point-min)))))
+
+          (when (or (not (tramp-get-connection-property proc "check-remote-echo" nil))
+                    ;; Sometimes, the echo string is suppressed on the remote side.
+                    (not (string-equal
+                          (tramp-compat-funcall
+                           'substring-no-properties tramp-echo-mark-marker
+                           0 (min tramp-echo-mark-marker-length (1- (point-max))))
+                          (tramp-compat-funcall
+                           'buffer-substring-no-properties
+                           (point-min)
+                           (min (+ (point-min) tramp-echo-mark-marker-length)
+                                (point-max))))))
+            ;; No echo to be handled, now we can look for the regexp.
+            ;; Sometimes, lines are much to long, and we run into a "Stack
+            ;; overflow in regexp matcher".  For example, //DIRED// lines of
+            ;; directory listings with some thousand files.  Therefore, we
+            ;; look from the end.
+            (goto-char (point-max))
+            (ignore-errors (re-search-backward regexp nil t))))))))
 
 
 ;;helpful for not saving secret stuff on disk
