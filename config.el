@@ -806,7 +806,7 @@ The TEMPLATES, if provided, override the list of capture templates (see
          "\n - [ ] Review daily list"
          "\n - [ ] review timetracking"
          "\n - [ ] Schedule the day for tomorrow (paper)"
-         "\n - [ ] Do active questions (use t/random-prompt)"
+         "\n - [ ] Do active questions (use t/random-phrase)"
          "\n - [ ] Answer Journal Questions (paper)"
          "\n - [ ] Use Zahnseide" ;; check how much this gets done
          "\n* Inbox"
