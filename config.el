@@ -1355,7 +1355,9 @@ by default."
   :config
   (setq multi-magit-selected-repositories
         '("/home/tassilo/.dotfiles"
-          "/home/tassilo/.doom.d"))
+          "/home/tassilo/.doom.d"
+          "/home/tassilo/repos/thoughts"))
+
   (setq magit-repository-directories '("/home/tassilo/repos/thoughts"
                                        "/home/tassilo/.dotfiles"
                                        "/home/tassilo/.doom.d"))
