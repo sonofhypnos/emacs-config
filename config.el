@@ -200,6 +200,7 @@
         org-pomodoro-long-break-sound ""
         org-pomodoro-finished-sound "/usr/share/sounds/gnome/default/alerts/sonar.ogg"
         org-pomodoro-keep-killed-pomodoro-time t
+        org-display-remote-images-allow-all t
         org-pomodoro-manual-break t
         org-agenda-start-day nil
         org-stuck-projects '("+project/+LEVEL=2" ("NEXT" "TODO"))
