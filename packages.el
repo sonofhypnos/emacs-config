@@ -2,8 +2,6 @@
 ;;; $DOOMDIR/packages.el
 
 ;;org
-(package! copilot
-  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 (package! openwith)
 (package! org-download
   :recipe (:host github
@@ -12,6 +10,14 @@
 (package! real-auto-save
   :recipe (:host github
            :repo "ChillarAnand/real-auto-save")) ;; not sure whether this helps with anything?
+
+
+;; AI completion
+(package! copilot
+  :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
+(package! gptel)
+;; (package! elisa) (only works with >=emacs29.2)
+
 
 ;;autocompletion
 (package! company-tabnine
