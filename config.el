@@ -62,7 +62,7 @@
 ;; default in doom is to low. Not sure where all the memory is going
 ;; NOTE: gcmh is a package that does some neat things to avoid garbage collection.
 ;; NOTE: This is not the regular garbage collection threshold!
-(setq gcmh-high-cons-threshold (*  16 1024 1024)) ;; Increasing the value for gc-collection is actually not recommended longterm. Doing it while idle is not actually working for me, because it hangs way too long!
+(setq gcmh-high-cons-threshold (*  16 1024 1024)) ;; According to hlissner 16Mb is the sweet spot: https://github.com/doomemacs/doomemacs/issues/3108
 
 
 ;; (setq gcmh-low-cons-threshold (* 100 1024 1024)) ;; value if not in emacs. This might solve our issue.
@@ -779,7 +779,49 @@ The TEMPLATES, if provided, override the list of capture templates (see
          :templates templates
          :props '(:finalize find-file)))))
 
-
+  (cl-defun t/org-roam-node-insert (&optional filter-fn &key templates info)
+    "Find an Org-roam node and insert (where the point is) an \"id:\" link to it.
+FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
+and when nil is returned the node will be filtered out.
+The TEMPLATES, if provided, override the list of capture templates (see
+`org-roam-capture-'.)
+The INFO, if provided, is passed to the underlying `org-roam-capture-'."
+    (interactive)
+    (unwind-protect
+        ;; Group functions together to avoid inconsistent state on quit
+        (atomic-change-group
+          (let* (region-text
+                 beg end
+                 (_ (when (region-active-p)
+                      (setq beg (set-marker (make-marker) (region-beginning)))
+                      (setq end (set-marker (make-marker) (region-end)))
+                      (setq region-text (org-link-display-format (buffer-substring-no-properties beg end)))))
+                 (node (t/org-roam-node-read region-text filter-fn))
+                 (description (or region-text
+                                  (org-roam-node-formatted node))))
+            (if (org-roam-node-id node)
+                (progn
+                  (when region-text
+                    (delete-region beg end)
+                    (set-marker beg nil)
+                    (set-marker end nil))
+                  (let ((id (org-roam-node-id node)))
+                    (insert (org-link-make-string
+                             (concat "id:" id)
+                             description))
+                    (run-hook-with-args 'org-roam-post-node-insert-hook
+                                        id
+                                        description)))
+              (org-roam-capture-
+               :node node
+               :info info
+               :templates templates
+               :props (append
+                       (when (and beg end)
+                         (list :region (cons beg end)))
+                       (list :link-description description
+                             :finalize 'insert-link))))))
+      (deactivate-mark)))
 
   (map! (
          :map org-roam-mode-map
@@ -948,7 +990,8 @@ The TEMPLATES, if provided, override the list of capture templates (see
 (after! org-roam
   (map! :leader
         (:prefix ("n" . "notes")
-         :desc "Org Roam Node Find" "r f" #'t/org-roam-node-find)))
+         :desc "Org Roam Node Find" "r f" #'t/org-roam-node-find
+         :desc "Org Roam Node insert" "r i" #'t/org-roam-node-insert)))
 
 (use-package! websocket
   :after org-roam)
