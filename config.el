@@ -701,46 +701,60 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   :config
 
 
-  (defun t/org-roam-node-read--completions (&rest _)
-    "Return an alist for node completion.
+  (defun t/org-roam-node-read--completions (&optional filter-fn sort-fn)
+    "Return an alist for node completion with support for aliases.
 The car is the displayed title or alias for the node, and the cdr
-is the `org-roam-node'.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
+is the `org-roam-node'."
+    (let ((entries '())
+          (nodes-cache (make-hash-table :test 'equal)))
 
-SORT-FN is a function to sort nodes. See `org-roam-node-read-sort-by-file-mtime'
-for an example sort function.
-The displayed title is formatted according to `org-roam-node-display-template'."
-    (let* ((rows (org-roam-db-query
-                  [:select [id nodes:file pos nodes:title files:atime]
-                   :from nodes
-                   :left-join files
-                   :on (= nodes:file files:file)
-                   ]))
-           (nodes (cl-loop for row in rows
-                           collect (pcase-let* ((`(,id ,file ,pos ,title ,atime) row)
-                                                (node (org-roam-node-create :id id
-                                                                            :file file
-                                                                            :file-atime atime
-                                                                            :point pos
-                                                                            :title title)))
-                                     (cons
-                                      (concat title
-                                              (propertize id 'invisible t))
-                                      node))))
+      ;; First pass: add entries for all nodes with their titles
+      (let* ((node-rows (org-roam-db-query
+                         [:select [nodes:id nodes:file nodes:pos nodes:title files:atime]
+                          :from nodes
+                          :left-join files
+                          :on (= nodes:file files:file)])))
+        (dolist (row node-rows)
+          (pcase-let* ((`(,id ,file ,pos ,title ,atime) row)
+                       (node (org-roam-node-create :id id
+                                                   :file file
+                                                   :file-atime atime
+                                                   :point pos
+                                                   :title title)))
+            ;; Cache the node for later use with aliases
+            (puthash id node nodes-cache)
+            ;; Add the main title entry
+            (push (cons (concat title (propertize id 'invisible t)) node) entries))))
 
-           )
-      (seq-sort #'org-roam-node-read-sort-by-file-atime nodes)))
+      ;; Second pass: add entries for all aliases
+      (let* ((alias-rows (org-roam-db-query
+                          [:select [node_id alias]
+                           :from aliases])))
+        (dolist (row alias-rows)
+          (pcase-let* ((`(,id ,alias) row)
+                       (node (gethash id nodes-cache)))
+            (when node  ; Ensure the node exists in our cache
+              (push (cons (concat alias (propertize id 'invisible t)) node) entries)))))
+
+      ;; Apply filter if provided
+      (when filter-fn
+        (setq entries (cl-remove-if-not
+                       (lambda (entry) (funcall filter-fn (cdr entry)))
+                       entries)))
+
+      ;; Apply sorting
+      (if sort-fn
+          (seq-sort sort-fn entries)
+        (seq-sort #'org-roam-node-read-sort-by-file-atime entries))))
+
   (defun t/org-roam-node-read (&optional initial-input filter-fn sort-fn require-match prompt)
     "Read and return an `org-roam-node'.
 INITIAL-INPUT is the initial minibuffer prompt value.
 FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
 and when nil is returned the node will be filtered out.
-SORT-FN is a function to sort nodes. See `org-roam-node-read-sort-by-file-mtime'
-for an example sort function.
+SORT-FN is a function to sort nodes.
 If REQUIRE-MATCH, the minibuffer prompt will require a match.
 PROMPT is a string to show at the beginning of the mini-buffer, defaulting to \"Node: \""
-    ;;TODO: add sort-function
     (let* ((nodes (t/org-roam-node-read--completions filter-fn sort-fn))
            (prompt (or prompt "Node: "))
            (node (completing-read
@@ -755,12 +769,13 @@ PROMPT is a string to show at the beginning of the mini-buffer, defaulting to \"
                           (annotation-function
                            . ,(lambda (title)
                                 (funcall org-roam-node-annotation-function
-                                         (get-text-property 0 'node title))))
+                                         (cdr (assoc title nodes)))))
                           (category . org-roam-node))
                       (complete-with-action action nodes string pred)))
                   nil require-match initial-input 'org-roam-node-history)))
       (or (cdr (assoc node nodes))
           (org-roam-node-create :title node))))
+
   (cl-defun t/org-roam-node-find (&optional other-window initial-input filter-fn pred &key templates)
     "Find and open an Org-roam node by its title or alias.
 INITIAL-INPUT is the initial input for the prompt.
