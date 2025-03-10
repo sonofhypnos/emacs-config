@@ -700,313 +700,279 @@ KEYANDHEADLINE should be a list of cons cells of the form (\"key\" . \"headline\
   :defer-incrementally t              ;did the after org thing trigger something
   :config
 
+  (cl-defstruct (org-roam-node (:constructor org-roam-node-create)
+                               (:constructor org-roam-node-create-from-db
+                                             (title aliases                    ; 2
+                                                    id file file-title level todo     ; 5
+                                                    point priority scheduled deadline properties ;;5
+                                                    olp file-atime file-mtime tags refs)) ;;5
+                               (:copier nil)))
+  (defvar org-roam-gt--retrieve-nodes-query "
+SELECT
+  title,
+  aliases,
 
-  (defun t/org-roam-node-read--completions (&optional filter-fn sort-fn)
-    "Return an alist for node completion with support for aliases.
-The car is the displayed title or alias for the node, and the cdr
-is the `org-roam-node'."
-    (let ((entries '())
-          (nodes-cache (make-hash-table :test 'equal)))
+  id,
+  file,
+  filetitle,
+  \"level\",
+  todo,
 
-      ;; First pass: add entries for all nodes with their titles
-      (let* ((node-rows (org-roam-db-query
-                         [:select [nodes:id nodes:file nodes:pos nodes:title files:atime]
-                          :from nodes
-                          :left-join files
-                          :on (= nodes:file files:file)])))
-        (dolist (row node-rows)
-          (pcase-let* ((`(,id ,file ,pos ,title ,atime) row)
-                       (node (org-roam-node-create :id id
-                                                   :file file
-                                                   :file-atime atime
-                                                   :point pos
-                                                   :title title)))
-            ;; Cache the node for later use with aliases
-            (puthash id node nodes-cache)
-            ;; Add the main title entry
-            (push (cons (concat title (propertize id 'invisible t)) node) entries))))
+  pos,
+  priority ,
+  scheduled ,
+  deadline ,
+  properties ,
 
-      ;; Second pass: add entries for all aliases
-      (let* ((alias-rows (org-roam-db-query
-                          [:select [node_id alias]
-                           :from aliases])))
-        (dolist (row alias-rows)
-          (pcase-let* ((`(,id ,alias) row)
-                       (node (gethash id nodes-cache)))
-            (when node  ; Ensure the node exists in our cache
-              (push (cons (concat alias (propertize id 'invisible t)) node) entries)))))
+  olp,
+  atime,
+  mtime,
+  '(' || group_concat(tags, ' ') || ')' as tags,
+  refs
+FROM
+  (
+  SELECT
+    id,
+    file,
+    filetitle,
+    \"level\",
+    todo,
+    pos,
+    priority ,
+    scheduled ,
+    deadline ,
+    title,
+    properties ,
+    olp,
+    atime,
+    mtime,
+    tags,
+    '(' || group_concat(aliases, ' ') || ')' as aliases,
+    refs
+  FROM
+    (
+    SELECT
+      nodes.id as id,
+      nodes.file as file,
+      nodes.\"level\" as \"level\",
+      nodes.todo as todo,
+      nodes.pos as pos,
+      nodes.priority as priority,
+      nodes.scheduled as scheduled,
+      nodes.deadline as deadline,
+      nodes.title as title,
+      nodes.properties as properties,
+      nodes.olp as olp,
+      files.atime as atime,
+      files.mtime as mtime,
+      files.title as filetitle,
+      tags.tag as tags,
+      aliases.alias as aliases,
+      '(' || group_concat(RTRIM (refs.\"type\", '\"') || ':' || LTRIM(refs.ref, '\"'), ' ') || ')' as refs
+    FROM nodes
+    LEFT JOIN files ON files.file = nodes.file
+    LEFT JOIN tags ON tags.node_id = nodes.id
+    LEFT JOIN aliases ON aliases.node_id = nodes.id
+    LEFT JOIN refs ON refs.node_id = nodes.id
+    GROUP BY nodes.id, tags.tag, aliases.alias )
+  GROUP BY id, tags )
+GROUP BY id
+"
+    "SQLite Query to use for retrieving all the nodes from the database."
+    )
 
-      ;; Apply filter if provided
-      (when filter-fn
-        (setq entries (cl-remove-if-not
-                       (lambda (entry) (funcall filter-fn (cdr entry)))
-                       entries)))
 
-      ;; Apply sorting
-      (if sort-fn
-          (seq-sort sort-fn entries)
-        (seq-sort #'org-roam-node-read-sort-by-file-atime entries))))
+  (defun org-roam-node-list (&optional sort-by-mtime)
+    "Return all nodes stored in the database as a list of org-roam-node's.
 
-  (defun t/org-roam-node-read (&optional initial-input filter-fn sort-fn require-match prompt)
-    "Read and return an `org-roam-node'.
-INITIAL-INPUT is the initial minibuffer prompt value.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
-SORT-FN is a function to sort nodes.
-If REQUIRE-MATCH, the minibuffer prompt will require a match.
-PROMPT is a string to show at the beginning of the mini-buffer, defaulting to \"Node: \""
-    (let* ((nodes (t/org-roam-node-read--completions filter-fn sort-fn))
-           (prompt (or prompt "Node: "))
-           (node (completing-read
-                  prompt
-                  (lambda (string pred action)
-                    (if (eq action 'metadata)
-                        `(metadata
-                          ;; Preserve sorting in the completion UI if a sort-fn is used
-                          ,@(when sort-fn
-                              '((display-sort-function . identity)
-                                (cycle-sort-function . identity)))
-                          (annotation-function
-                           . ,(lambda (title)
-                                (funcall org-roam-node-annotation-function
-                                         (cdr (assoc title nodes)))))
-                          (category . org-roam-node))
-                      (complete-with-action action nodes string pred)))
-                  nil require-match initial-input 'org-roam-node-history)))
-      (or (cdr (assoc node nodes))
-          (org-roam-node-create :title node))))
-
-  (cl-defun t/org-roam-node-find (&optional other-window initial-input filter-fn pred &key templates)
-    "Find and open an Org-roam node by its title or alias.
-INITIAL-INPUT is the initial input for the prompt.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
-If OTHER-WINDOW, visit the NODE in another window.
-The TEMPLATES, if provided, override the list of capture templates (see
-`org-roam-capture-'.)"
-    (interactive current-prefix-arg)
-    (let ((org-roam-node-display-template "${title:*}")
-          (node (t/org-roam-node-read initial-input filter-fn pred)))
-      (if (org-roam-node-file node)
-          (org-roam-node-visit node other-window)
-        (org-roam-capture-
-         :node node
-         :templates templates
-         :props '(:finalize find-file)))))
-
-  (cl-defun t/org-roam-node-insert (&optional filter-fn &key templates info)
-    "Find an Org-roam node and insert (where the point is) an \"id:\" link to it.
-FILTER-FN is a function to filter out nodes: it takes an `org-roam-node',
-and when nil is returned the node will be filtered out.
-The TEMPLATES, if provided, override the list of capture templates (see
-`org-roam-capture-'.)
-The INFO, if provided, is passed to the underlying `org-roam-capture-'."
-    (interactive)
-    (unwind-protect
-        ;; Group functions together to avoid inconsistent state on quit
-        (atomic-change-group
-          (let* (region-text
-                 beg end
-                 (_ (when (region-active-p)
-                      (setq beg (set-marker (make-marker) (region-beginning)))
-                      (setq end (set-marker (make-marker) (region-end)))
-                      (setq region-text (org-link-display-format (buffer-substring-no-properties beg end)))))
-                 (node (t/org-roam-node-read region-text filter-fn))
-                 (description (or region-text
-                                  (org-roam-node-formatted node))))
-            (if (org-roam-node-id node)
-                (progn
-                  (when region-text
-                    (delete-region beg end)
-                    (set-marker beg nil)
-                    (set-marker end nil))
-                  (let ((id (org-roam-node-id node)))
-                    (insert (org-link-make-string
-                             (concat "id:" id)
-                             description))
-                    (run-hook-with-args 'org-roam-post-node-insert-hook
-                                        id
-                                        description)))
-              (org-roam-capture-
-               :node node
-               :info info
-               :templates templates
-               :props (append
-                       (when (and beg end)
-                         (list :region (cons beg end)))
-                       (list :link-description description
-                             :finalize 'insert-link))))))
-      (deactivate-mark)))
-
-  (map! (
-         :map org-roam-mode-map
-         :localleader
-         :prefix "m"
-         :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
-         :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree)) ;FIXME: these shortcuts do not seem to be evaluated at the right time!
-
-  (setq daily-template
-        (concat
-         "#+title: %<%Y-%m-%d>\n* [/] Do Today (FDT)"
-         ;; disabled the below for now, since they are never used
-         ;; "\n* [/] Do Today in break time"
-         ;; "\n - [ ] drink water"
-         ;; "\n - [ ] prepare food"
-         ;; "\n - [ ] go for a run with barbells"
-         ;; "\n* Morgenroutine"
-         ;; "\n - [ ] Kalender angesehen"
-         ;; "\n - [ ] Start tracking"
-         ;; "\n - [ ] Medis genommen"
-         ;; "\n - [ ] Ziele gesetzt"
-         ;; "\n - [ ] Review Anki"
-         ;; "\n - [ ] Brush Teeth"
-         "\n* Evening Routine"
-         "\n - [ ] Review daily list"
-         "\n - [ ] review timetracking"
-         "\n - [ ] Schedule the day for tomorrow (paper)"
-         "\n - [ ] Do active questions (use t/random-phrase)"
-         "\n - [ ] Answer Journal Questions (paper)"
-         "\n - [ ] Use Zahnseide" ;; check how much this gets done
-         "\n* Inbox"
-         "\n* Journal"
-         "\n* Evening Journal"
-         "\n** What did you achieve today?"
-         "\n** What are you grateful for?"
-         "\n** What worried you today?"
-         "\n** What else is on your mind?"))
-
-  (defvar t/phrases (list
-                     (cons "What subtle things did you notice today?" (cons 1 1))
-                     (cons "What meaningfull or important thing should you tell a particular person that you havent't said to them yet?" (cons 1 1))
-                     (cons "Think about things you like about other people" (cons 1 1))
-                     (cons "If you could go back in time and change one thing about your past, what would it be?" (cons 1 1))
-                     (cons "What did I do today that was fun?" (cons 1 1))
-                     (cons "What would you do, if you knew you could not fail?" (cons 1 1))
-                     (cons "Write a 'thank you' letter to someone" (cons 1 1))
-                     (cons "If you could have dinner with anyone currently alive, who would it be?" (cons 1 1))
-                     (cons "What are you looking forward to the most?" (cons 1 1))
-                     (cons "What surprised you today?" (cons 1 1))
-                     (cons "What did I notice today?" (cons 1 1))
-                     (cons "What is the most outrageous thing you did recently?" (cons 1 1))
-                     (cons "Which experience are you the most thankfull for? Why?" (cons 1 1))
-                     (cons "What’s a brave thing you did last week?" (cons 1 1))
-                     (cons "When was I at peace today?" (cons 1 1))
-                     (cons "What have been your biggest mistakes recently? What have you learned from them?" (cons 1 1))
-                     (cons "How did you feel connected to others today?" (cons 1 1))
-                     (cons "What was something playfull you did today?" (cons 1 1))
-                     (cons "What battles have you fought and overcome in your life?" (cons 1 1))
-                     (cons "How would you like to spend your spare time?" (cons 1 1))
-                     (cons "What would you do if money were no object?" (cons 1 1))
-                     (cons "What’s your secret desire?" (cons 1 1))
-                     (cons "What made me feel energized today?" (cons 1 1))
-                     (cons "What opportunity presented itself today?" (cons 1 1))
-                     (cons "What made me appreciate my city, state or country today?" (cons 1 1))
-                     (cons "Who was I happy to meet with, chat with, or run into today?" (cons 1 1))
-                     (cons "How was I able to help others today" (cons 1 1))
-                     (cons "What compliments did I receive today?" (cons 1 1))
-                     (cons "What problem was I able to resolve today?" (cons 1 1))
-                     (cons "What was one small victory I had today?" (cons 1 1))
-                     (cons "How did you feel, when you woke up today?" (cons 1 1))
-                     (cons "What has did you accomplish today?" (cons 1 1))
-                     (cons "What was the biggest turning point in your life, and how did that experience change you?" (cons 1 1))
-                     (cons "What simple pleasure did I enjoy today?" (cons 1 1))
-                     (cons "What could you do to bring more of what really excites you into your life?" (cons 1 1))
-                     (cons "Summarized in just a few sentences, what is your life's story?" (cons 1 1))
-                     (cons "What would you like the next chapter of this story to be?" (cons 1 1))
-                     (cons "What would you say is the greatest accomplishment of your life so far? Brag for a minute." (cons 1 1))
-                     (cons "What do you want to make sure you do, achieve, or experience before you're gone?" (cons 1 1))
-                     (cons "In recent years, what's the biggest lesson you've learned about yourself?" (cons 1 1))
-                     (cons "Who inspires you most, and why do you find them inspiring?" (cons 1 1))
-                     (cons "What was the biggest turning point in your life, and how did that experience change you?" (cons 1 1))
-                     (cons "What are you taking for granted that you want to remember to be grateful for?" (cons 1 1))
-                     (cons "Think for a moment about the biggest problem right now in your life. If that problem was happening to a close friend instead of to you, what would you say to comfort or advise that friend?" (cons 1 1))
-                     (cons "What meaningful or important thing should you tell a particular person that you haven't said to them yet?" (cons 1 1))
-                     (cons "When are you going to tell this person this meaningful or important thing?" (cons 1 1))
-                     (cons "What's one of the best days you've had in your entire life? Describe what happened that day." (cons 1 1))
-                     (cons "What in your life that you have the power to change is most limiting your long-term happiness?" (cons 1 1))
-                     (cons "What could you start doing now to address what you said is most limiting your happiness?" (cons 1 1))
-                     (cons "If you had to have roughly the same work day, 5 days a week, for the next 10 years, what activities would you ideally want this work day to consist of?" (cons 1 1))
-                     (cons "What can you do to make your current job closer to this ideal, or to help you get a job that is closer to this ideal?" (cons 1 1))
-                     (cons "What is the most important thing that you know you really should do but which you have trouble getting yourself to do?" (cons 1 1))
-                     (cons "What could you do now to make it more likely that you actually do this important thing?" (cons 1 1))
-                     (cons "What do you think is holding you back from achieving more in your life than you've achieved so far?" (cons 1 1))
-                     (cons "What could you start doing now that would help address what you said is holding you back in life?" (cons 1 1))
-                     (cons "In your opinion, what is the purpose or meaning of life?" (cons 1 1))
-                     (cons "How is the best version of yourself different from the way you sometimes behave?" (cons 1 1))
-                     (cons "What has kept you hopeful in life's most challenging moments?" (cons 1 1))
-                     (cons "During what period of your life were you the happiest, and why were you so happy then?" (cons 1 1))
-                     (cons "Imagine that you received a message from a version of yourself five years in the future. What warnings would the message give you, and what advice would it offer about how best to achieve your goals?" (cons 1 1))
-                     (cons "If you knew for a fact that you were going to die exactly 10 years from now, how would you change your current behavior?" (cons 1 1))
-                     (cons "Suppose you knew that you were going to die instantly (but painlessly) in exactly 7 days. What would you spend your last week doing?" (cons 1 1))
-                     (cons "If you could plan one nearly perfect (but still actually realistic) day for yourself, what would you spend that day doing? Describe that day, from when you wake up until you go to sleep." (cons 1 1))
-                     (cons "When is the soonest that you can treat yourself to this perfect day, or to another day that you'll really enjoy and remember?" (cons 1 1))))
+If SORT-BY-MTIME then order by mtime in descending order.
+"
+    (let* (
+           (order-by (if sort-by-mtime
+                         "order by mtime desc"
+                       ""))
+           (rows (org-roam-db-query
+                  (format "%s\n%s"
+                          org-roam-gt--retrieve-nodes-query
+                          order-by))))
+      (mapcan
+       (lambda (row)
+         (let (
+               (all-titles (cons (car row) (nth 1 row)))
+               )
+           (mapcar (lambda (temp-title)
+                     (apply 'org-roam-node-create-from-db (cons temp-title (cdr row))))
+                   all-titles)
+           ))
+       rows)
+      )))
 
 
 
 
-  (setq desktop-globals-to-save
-        '(desktop-missing-file-warning
-          tags-file-name
-          tags-table-list
-          search-ring
-          regexp-search-ring
-          register-alist
-          file-name-history
-          t/phrases))
+(map! (
+       :map org-roam-mode-map
+       :localleader
+       :prefix "m"
+       :desc "org-roam-dailies-goto-today" "t" #'org-roam-dailies-goto-today
+       :desc "org-roam-extract-subtree" "x" #'org-roam-extract-subtree)) ;FIXME: these shortcuts do not seem to be evaluated at the right time!
 
-  (setq org-roam-dailies-directory "daily/")
-  (setq org-roam-dailies-capture-templates
-        `(
-          ("Journal" "daily" plain "%T\n%?\n"
-           :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))))
+(setq daily-template
+      (concat
+       "#+title: %<%Y-%m-%d>\n* [/] Do Today (FDT)"
+       ;; disabled the below for now, since they are never used
+       ;; "\n* [/] Do Today in break time"
+       ;; "\n - [ ] drink water"
+       ;; "\n - [ ] prepare food"
+       ;; "\n - [ ] go for a run with barbells"
+       ;; "\n* Morgenroutine"
+       ;; "\n - [ ] Kalender angesehen"
+       ;; "\n - [ ] Start tracking"
+       ;; "\n - [ ] Medis genommen"
+       ;; "\n - [ ] Ziele gesetzt"
+       ;; "\n - [ ] Review Anki"
+       ;; "\n - [ ] Brush Teeth"
+       "\n* Evening Routine"
+       "\n - [ ] Review daily list"
+       "\n - [ ] review timetracking"
+       "\n - [ ] Schedule the day for tomorrow (paper)"
+       "\n - [ ] Do active questions (use t/random-phrase)"
+       "\n - [ ] Answer Journal Questions (paper)"
+       "\n - [ ] Use Zahnseide" ;; check how much this gets done
+       "\n* Inbox"
+       "\n* Journal"
+       "\n* Evening Journal"
+       "\n** What did you achieve today?"
+       "\n** What are you grateful for?"
+       "\n** What worried you today?"
+       "\n** What else is on your mind?"))
 
-  (setq +org-roam-open-buffer-on-find-file nil)
+(defvar t/phrases (list
+                   (cons "What subtle things did you notice today?" (cons 1 1))
+                   (cons "What meaningfull or important thing should you tell a particular person that you havent't said to them yet?" (cons 1 1))
+                   (cons "Think about things you like about other people" (cons 1 1))
+                   (cons "If you could go back in time and change one thing about your past, what would it be?" (cons 1 1))
+                   (cons "What did I do today that was fun?" (cons 1 1))
+                   (cons "What would you do, if you knew you could not fail?" (cons 1 1))
+                   (cons "Write a 'thank you' letter to someone" (cons 1 1))
+                   (cons "If you could have dinner with anyone currently alive, who would it be?" (cons 1 1))
+                   (cons "What are you looking forward to the most?" (cons 1 1))
+                   (cons "What surprised you today?" (cons 1 1))
+                   (cons "What did I notice today?" (cons 1 1))
+                   (cons "What is the most outrageous thing you did recently?" (cons 1 1))
+                   (cons "Which experience are you the most thankfull for? Why?" (cons 1 1))
+                   (cons "What’s a brave thing you did last week?" (cons 1 1))
+                   (cons "When was I at peace today?" (cons 1 1))
+                   (cons "What have been your biggest mistakes recently? What have you learned from them?" (cons 1 1))
+                   (cons "How did you feel connected to others today?" (cons 1 1))
+                   (cons "What was something playfull you did today?" (cons 1 1))
+                   (cons "What battles have you fought and overcome in your life?" (cons 1 1))
+                   (cons "How would you like to spend your spare time?" (cons 1 1))
+                   (cons "What would you do if money were no object?" (cons 1 1))
+                   (cons "What’s your secret desire?" (cons 1 1))
+                   (cons "What made me feel energized today?" (cons 1 1))
+                   (cons "What opportunity presented itself today?" (cons 1 1))
+                   (cons "What made me appreciate my city, state or country today?" (cons 1 1))
+                   (cons "Who was I happy to meet with, chat with, or run into today?" (cons 1 1))
+                   (cons "How was I able to help others today" (cons 1 1))
+                   (cons "What compliments did I receive today?" (cons 1 1))
+                   (cons "What problem was I able to resolve today?" (cons 1 1))
+                   (cons "What was one small victory I had today?" (cons 1 1))
+                   (cons "How did you feel, when you woke up today?" (cons 1 1))
+                   (cons "What has did you accomplish today?" (cons 1 1))
+                   (cons "What was the biggest turning point in your life, and how did that experience change you?" (cons 1 1))
+                   (cons "What simple pleasure did I enjoy today?" (cons 1 1))
+                   (cons "What could you do to bring more of what really excites you into your life?" (cons 1 1))
+                   (cons "Summarized in just a few sentences, what is your life's story?" (cons 1 1))
+                   (cons "What would you like the next chapter of this story to be?" (cons 1 1))
+                   (cons "What would you say is the greatest accomplishment of your life so far? Brag for a minute." (cons 1 1))
+                   (cons "What do you want to make sure you do, achieve, or experience before you're gone?" (cons 1 1))
+                   (cons "In recent years, what's the biggest lesson you've learned about yourself?" (cons 1 1))
+                   (cons "Who inspires you most, and why do you find them inspiring?" (cons 1 1))
+                   (cons "What was the biggest turning point in your life, and how did that experience change you?" (cons 1 1))
+                   (cons "What are you taking for granted that you want to remember to be grateful for?" (cons 1 1))
+                   (cons "Think for a moment about the biggest problem right now in your life. If that problem was happening to a close friend instead of to you, what would you say to comfort or advise that friend?" (cons 1 1))
+                   (cons "What meaningful or important thing should you tell a particular person that you haven't said to them yet?" (cons 1 1))
+                   (cons "When are you going to tell this person this meaningful or important thing?" (cons 1 1))
+                   (cons "What's one of the best days you've had in your entire life? Describe what happened that day." (cons 1 1))
+                   (cons "What in your life that you have the power to change is most limiting your long-term happiness?" (cons 1 1))
+                   (cons "What could you start doing now to address what you said is most limiting your happiness?" (cons 1 1))
+                   (cons "If you had to have roughly the same work day, 5 days a week, for the next 10 years, what activities would you ideally want this work day to consist of?" (cons 1 1))
+                   (cons "What can you do to make your current job closer to this ideal, or to help you get a job that is closer to this ideal?" (cons 1 1))
+                   (cons "What is the most important thing that you know you really should do but which you have trouble getting yourself to do?" (cons 1 1))
+                   (cons "What could you do now to make it more likely that you actually do this important thing?" (cons 1 1))
+                   (cons "What do you think is holding you back from achieving more in your life than you've achieved so far?" (cons 1 1))
+                   (cons "What could you start doing now that would help address what you said is holding you back in life?" (cons 1 1))
+                   (cons "In your opinion, what is the purpose or meaning of life?" (cons 1 1))
+                   (cons "How is the best version of yourself different from the way you sometimes behave?" (cons 1 1))
+                   (cons "What has kept you hopeful in life's most challenging moments?" (cons 1 1))
+                   (cons "During what period of your life were you the happiest, and why were you so happy then?" (cons 1 1))
+                   (cons "Imagine that you received a message from a version of yourself five years in the future. What warnings would the message give you, and what advice would it offer about how best to achieve your goals?" (cons 1 1))
+                   (cons "If you knew for a fact that you were going to die exactly 10 years from now, how would you change your current behavior?" (cons 1 1))
+                   (cons "Suppose you knew that you were going to die instantly (but painlessly) in exactly 7 days. What would you spend your last week doing?" (cons 1 1))
+                   (cons "If you could plan one nearly perfect (but still actually realistic) day for yourself, what would you spend that day doing? Describe that day, from when you wake up until you go to sleep." (cons 1 1))
+                   (cons "When is the soonest that you can treat yourself to this perfect day, or to another day that you'll really enjoy and remember?" (cons 1 1))))
 
-  (setq org-roam-db-gc-threshold (*  16 1024 1024)) ;; Mentioned
-  ;; performance optimization in the manual. According to measurements I did on
-  ;; my machine this is actually making things worse if you already use a
-  ;; reasonable value
 
 
-  (defun org-hide-properties ()
-    "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
-    (interactive)
-    (save-excursion
-      (goto-char (point-min))
-      (while (re-search-forward
-              "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:" nil t)
-        (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
-          (overlay-put ov_this 'display "")
-          (overlay-put ov_this 'hidden-prop-drawer t))))
-    (put 'org-toggle-properties-hide-state 'state 'hidden))
 
-  (defun org-show-properties ()
-    "Show all org-mode property drawers hidden by org-hide-properties."
-    (interactive)
-    (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
-    (put 'org-toggle-properties-hide-state 'state 'shown))
-  (defun org-toggle-properties ()
-    "Toggle visibility of property drawers."
-    (interactive)
-    (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
-        (org-show-properties)
-      (org-hide-properties)))
+(setq desktop-globals-to-save
+      '(desktop-missing-file-warning
+        tags-file-name
+        tags-table-list
+        search-ring
+        regexp-search-ring
+        register-alist
+        file-name-history
+        t/phrases))
 
-  ;; (add-hook 'org-roam-mode-hook #'org-hide-properties)
-  ;; NOTE: above disabled because org-hide-properties
-  ;; is annoying and costs performance. I don't want it by default
+(setq org-roam-dailies-directory "daily/")
+(setq org-roam-dailies-capture-templates
+      `(
+        ("Journal" "daily" plain "%T\n%?\n"
+         :if-new (file+head+olp "%<%Y-%m-%d>.org" ,daily-template ("Journal")))))
 
-  (defun completion-ignore-case-enable ()
-    "enable completion in org-mode"
-    (setq completion-ignore-case t))
-  (add-hook 'org-mode-hook #'completion-ignore-case-enable))
+(setq +org-roam-open-buffer-on-find-file nil)
+
+(setq org-roam-db-gc-threshold (*  16 1024 1024)) ;; Mentioned
+;; performance optimization in the manual. According to measurements I did on
+;; my machine this is actually making things worse if you already use a
+;; reasonable value
 
 
-(after! org-roam
-  (map! :leader
-        (:prefix ("n" . "notes")
-         :desc "Org Roam Node Find" "r f" #'t/org-roam-node-find
-         :desc "Org Roam Node insert" "r i" #'t/org-roam-node-insert)))
+(defun org-hide-properties ()
+  "Hide all org-mode headline property drawers in buffer. Could be slow if it has a lot of overlays."
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (while (re-search-forward
+            "^ *:properties:\n\\( *:.+?:.*\n\\)+ *:end:" nil t)
+      (let ((ov_this (make-overlay (match-beginning 0) (match-end 0))))
+        (overlay-put ov_this 'display "")
+        (overlay-put ov_this 'hidden-prop-drawer t))))
+  (put 'org-toggle-properties-hide-state 'state 'hidden))
+
+(defun org-show-properties ()
+  "Show all org-mode property drawers hidden by org-hide-properties."
+  (interactive)
+  (remove-overlays (point-min) (point-max) 'hidden-prop-drawer t)
+  (put 'org-toggle-properties-hide-state 'state 'shown))
+(defun org-toggle-properties ()
+  "Toggle visibility of property drawers."
+  (interactive)
+  (if (eq (get 'org-toggle-properties-hide-state 'state) 'hidden)
+      (org-show-properties)
+    (org-hide-properties)))
+
+;; (add-hook 'org-roam-mode-hook #'org-hide-properties)
+;; NOTE: above disabled because org-hide-properties
+;; is annoying and costs performance. I don't want it by default
+
+(defun completion-ignore-case-enable ()
+  "enable completion in org-mode"
+  (setq completion-ignore-case t))
+(add-hook 'org-mode-hook #'completion-ignore-case-enable))
+
 
 (use-package! websocket
   :after org-roam)
