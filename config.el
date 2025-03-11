@@ -781,37 +781,6 @@ GROUP BY id
     "SQLite Query to use for retrieving all the nodes from the database."
     )
 
-
-  (defun org-roam-node-list (&optional sort-by-mtime)
-    "Return all nodes stored in the database as a list of org-roam-node's.
-
-If SORT-BY-MTIME then order by mtime in descending order.
-"
-    (let* (
-           (order-by (if sort-by-mtime
-                         "order by mtime desc"
-                       ""))
-           (rows (org-roam-db-query
-                  (format "%s\n%s"
-                          org-roam-gt--retrieve-nodes-query
-                          order-by))))
-      (mapcan
-       (lambda (row)
-         (let (
-               (all-titles (cons (car row) (nth 1 row)))
-               )
-           (mapcar (lambda (temp-title)
-                     (apply 'org-roam-node-create-from-db (cons temp-title (cdr row))))
-                   all-titles)
-           ))
-       rows)
-      ))
-
-
-
-
-
-
   (map! (
          :map org-roam-mode-map
          :localleader
