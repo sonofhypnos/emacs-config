@@ -714,19 +714,19 @@ SELECT
 
   id,
   file,
-  filetitle AS \"file-title\",
+  filetitle,
   \"level\",
   todo,
 
-  pos AS \"point\",
-  priority,
-  scheduled,
-  deadline,
-  properties,
+  pos,
+  priority ,
+  scheduled ,
+  deadline ,
+  properties ,
 
   olp,
-  atime AS \"file-atime\",
-  mtime AS \"file-mtime\",
+  atime,
+  mtime,
   '(' || group_concat(tags, ' ') || ')' as tags,
   refs
 FROM
