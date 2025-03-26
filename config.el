@@ -1043,7 +1043,8 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   (map! :leader
         :map org-mode-map
         :prefix "d"
-        :desc "org-screenshot" "d" #'org-download-screenshot)
+        :desc "org-screenshot" "d" #'org-download-screenshot
+        :desc "org-insert-clipboard-image" "c" #'org-download-clipboard)
   (add-hook 'dired-mode-hook 'org-download-enable)
   (setq org-image-actual-width nil))
 
