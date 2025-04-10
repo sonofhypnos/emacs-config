@@ -157,7 +157,9 @@
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;purescript        ; javascript, but functional
-       (python +lsp)           ; beautiful is better than ugly
+       (python +lsp +pyright +poetry) ; Adding +pyright, so that this is used for lsp. (pyright is supposedly most up to date as of 2025-04-06).
+                                        ; NOTE we are adding poetry, so that poetry envs are recognized when we open such a python file
+
        ;; qt               ; the 'cutest' gui framework ever
        ;;racket            ; a DSL for DSLs
        ;;raku              ; the artist formerly known as perl6
