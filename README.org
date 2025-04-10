@@ -1,3 +1,8 @@
 #+TITLE: Doom Configuration
 
 Welcome to my emacs configuration. I'd discourage to just fork this configuration (there are a lot of things rather specific to my workflow, so that would just be shooting yourself in the foot). Feel free to copy what seems useful to you though.
+
+* Installation
+Upon reinstalling this on your system, you should make sure that important dependencies for emacs are working. Those are:
+- ripgrep
+- python lsp servers
