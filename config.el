@@ -1032,7 +1032,7 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
   ;; once I understand that part I might uncomment this:
   ;; You may also set the respective note and library path variables as well for enhanced functionality:
   (setq!
-   citar-bibliography '("~/repos/bibliography/zotLib.bib")
+   citar-bibliography '("~/repos/bibliography/My Library.bib")
    citar-library-paths '("~/Zotero/storage/") ; TODO I should probably set this to an exported thing
    citar-notes-path `(,(concat org-directory "lit/")))) ; TODO figure out how to fix this?
 
