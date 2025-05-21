@@ -18,7 +18,6 @@
         t/fzi (concat org-directory "org-roam/fzi_assistant_job.org"))
 
 ;; (setq doom-theme 'doom-one-light)
-
 (defun t/copy-all-buffers-to-clipboard ()
   "Copy contents of all open buffers to clipboard."
   (interactive)
@@ -1429,14 +1428,3 @@ by default."
 
   (setq multi-magit-refresh-status-buffer t))
 
-(use-package! corsair
-  :after gptel
-  :config
-  (global-set-key (kbd "C-c g c") #'corsair-open-chat-buffer)                    ;; Open chat buffer
-  (global-set-key (kbd "C-c g a c") #'corsair-accumulate-file-path-and-contents) ;; Accumulate file path and contents
-  (global-set-key (kbd "C-c g a n") #'corsair-accumulate-file-name)              ;; Accumulate file name
-  (global-set-key (kbd "C-c g a v") #'corsair-accumulate-file-path)              ;; Accumulate file path
-  (global-set-key (kbd "C-c g a w") #'corsair-accumulate-selected-text)          ;; Accumulate selected text
-  (global-set-key (kbd "C-c g a D") #'corsair-drop-accumulated-buffer)           ;; Drop chat buffer
-  (global-set-key (kbd "C-c g f") #'corsair-insert-file-or-folder-contents)      ;; Insert file or folder contents
-  )
