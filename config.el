@@ -1428,3 +1428,5 @@ by default."
 
   (setq multi-magit-refresh-status-buffer t))
 
+(after! evil-escape
+  (setq evil-escape-key-sequence "jk"))
