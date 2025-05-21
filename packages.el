@@ -17,10 +17,11 @@
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 (package! gptel)
 ;; (package! elisa) (only works with >=emacs29.2)
-(package! corsair
-  (:host github
-   :repo "rob137/Corsair"
-   :files ("corsair.el")))
+; NOTE corsair is not working well with emacs 30
+;(package! corsair
+;  (:host github
+;   :repo "rob137/Corsair"
+;   :files ("corsair.el")))
 
 
 ;;autocompletion
