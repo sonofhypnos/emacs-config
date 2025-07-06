@@ -17,11 +17,11 @@
   :recipe (:host github :repo "zerolfx/copilot.el" :files ("*.el" "dist")))
 (package! gptel)
 ;; (package! elisa) (only works with >=emacs29.2)
-; NOTE corsair is not working well with emacs 30
-;(package! corsair
-;  (:host github
-;   :repo "rob137/Corsair"
-;   :files ("corsair.el")))
+                                        ; NOTE corsair is not working well with emacs 30
+                                        ;(package! corsair
+                                        ;  (:host github
+                                        ;   :repo "rob137/Corsair"
+                                        ;   :files ("corsair.el")))
 
 
 ;;autocompletion
@@ -91,6 +91,9 @@
            :repo "junyi-hou/i3-mode"
            :files ("i3-mode.el" "i3-call" "sway-call")))
 
+(package! tochemfig ;; enables chemical drawings
+  :recipe (:host github :repo "gicrisf/tochemfig"))
+
 (package! org-remark
   :recipe (:host github
            :repo "nobiot/org-remark"))
@@ -107,6 +110,7 @@
 
 
 (package! ob-prolog)
+
 
 ;;; FIXME: below makes tree-sitter unpinned because I don't have the patience
 ;;; for new shiny things to get merged on their own.
