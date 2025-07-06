@@ -1430,3 +1430,6 @@ by default."
 
 (after! evil-escape
   (setq evil-escape-key-sequence "jk"))
+
+;; Configure path to the python virtualenv that has mol2chemfigPy3 installed
+(setq tochemfig-default-command "~/repos/.venvs/chemistry/bin/python -m mol2chemfigPy3")
