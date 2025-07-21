@@ -6,7 +6,7 @@
 
 (setq   org-directory "~/org-roam/"
         org-roam-directory (file-truename "~/org-roam/org-roam/")
-        projectile-project-search-path '("~/repos" "~/Dropbox/")
+        projectile-project-search-path '("~/repos" "~/Dropbox/" "~/repos/e184")
         org-fc-diretories '(org-directory)
         org-archive-location (concat org-directory ".archive/%s::")
         t/org-inbox-file (concat org-directory "notes.org")
