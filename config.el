@@ -211,7 +211,7 @@
         `(;; (nil :maxlevel . 3)
           ;; (,t/org-inbox-file :maxlevel . 3)
           (,t/org-project-file :maxlevel . 3)
-          (,t/org-someday-maybe-file :maxlevel . 1)
+          (,t/org-someday-maybe-file :maxlevel . 3)
           (,t/writing-ideas :maxlevel . 1)))
   ;; FIXME something is messing with capture and clipboard (possibly i3?) (something about clipboard look for other clipboard managers)
 
