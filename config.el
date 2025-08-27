@@ -1433,3 +1433,144 @@ by default."
 
 ;; Configure path to the python virtualenv that has mol2chemfigPy3 installed
 (setq tochemfig-default-command "~/repos/.venvs/chemistry/bin/python -m mol2chemfigPy3")
+
+;; Palindrome related config
+(defgroup palindrome-highlight nil
+  "Highlight palindromes in the current buffer."
+  :group 'convenience) 
+
+(defface palindrome-highlight-face
+  '((t :inherit highlight :underline t))
+  "Face used to highlight palindromes."
+  :group 'palindrome-highlight) 
+
+(defcustom palindrome-highlight-min-length 8
+  "Minimum palindrome length to highlight."
+  :type 'integer :group 'palindrome-highlight) 
+
+(defcustom palindrome-highlight-max-length 64
+  "Maximum palindrome length to test (cap for performance)."
+  :type 'integer :group 'palindrome-highlight)
+
+(defcustom palindrome-highlight-reverse-complement t
+  "If non-nil, highlight reverse-complement palindromes (DNA, IUPAC-aware).
+If nil, highlight literal palindromes (string equals its reverse)."
+  :type 'boolean :group 'palindrome-highlight)
+
+(defcustom palindrome-highlight-max-overlays-per-line 12
+  "Limit overlays per line to avoid UI slowdown."
+  :type 'integer :group 'palindrome-highlight)
+
+;; --- IUPAC mapping for reverse-complement checks ---
+(defconst palindrome--iupac-comp
+  '((?A . ?T) (?T . ?A) (?C . ?G) (?G . ?C)
+    (?R . ?Y) (?Y . ?R) (?S . ?S) (?W . ?W)
+    (?K . ?M) (?M . ?K) (?B . ?V) (?V . ?B)
+    (?D . ?H) (?H . ?D) (?N . ?N)
+    (?a . ?t) (?t . ?a) (?c . ?g) (?g . ?c)
+    (?r . ?y) (?y . ?r) (?s . ?s) (?w . ?w)
+    (?k . ?m) (?m . ?k) (?b . ?v) (?v . ?b)
+    (?d . ?h) (?h . ?d) (?n . ?n))
+  "IUPAC reverse-complement mapping (upper/lower), fall through to identity.")
+
+(defun palindrome--comp (ch)
+  (or (cdr (assq ch palindrome--iupac-comp)) ch))
+
+(defun palindrome--rc-equal-p (s beg end)
+  "Return non-nil if substring S[beg..end) equals its reverse complement."
+  (let* ((i 0)
+         (j (1- (- end beg)))
+         (ok t))
+    (while (and ok (<= i j))
+      (let* ((ci (aref s (+ beg i)))
+             (cj (aref s (+ beg j))))
+        (setq ok (eq (palindrome--comp ci) cj)))
+      (setq i (1+ i) j (1- j)))
+    ok))
+
+(defun palindrome--literal-equal-p (s beg end)
+  "Return non-nil if substring S[beg..end) equals its reverse (literal palindrome)."
+  (let* ((i 0)
+         (j (1- (- end beg)))
+         (ok true))
+    (while (and ok (<= i j))
+      (setq ok (eq (aref s (+ beg i)) (aref s (+ beg j))))
+      (setq i (1+ i) j (1- j)))
+    ok))
+
+(defun palindrome--remove-overlays (beg end)
+  (remove-overlays beg end 'palindrome-highlight t))
+
+(defun palindrome--make-overlay (beg end)
+  (let ((ov (make-overlay beg end nil t t)))
+    (overlay-put ov 'palindrome-highlight t)
+    (overlay-put ov 'face 'palindrome-highlight-face)
+    ov))
+
+(defun palindrome--scan-line (bol eol)
+  "Scan one line [BOL,EOL) for palindromes and place overlays."
+  (let* ((line (buffer-substring-no-properties bol eol))
+         (llen (length line))
+         (minlen (max 1 palindrome-highlight-min-length))
+         (maxlen (min palindrome-highlight-max-length llen))
+         (rc? palindrome-highlight-reverse-complement)
+         (mk 0))
+    (when (>= llen minlen)
+      (cl-loop for i from 0 to (- llen minlen) do
+               (when (< mk palindrome-highlight-max-overlays-per-line)
+                 (cl-loop for L from minlen to (min maxlen (- llen i)) do
+                          ;; quick boundary check to prune
+                          (let* ((left (aref line i))
+                                 (right (aref line (+ i L -1)))
+                                 (boundary-ok (if rc?
+                                                  (eq (palindrome--comp left) right)
+                                                (eq left right))))
+                            (when boundary-ok
+                              (when (funcall (if rc? #'palindrome--rc-equal-p #'palindrome--literal-equal-p)
+                                             line i (+ i L))
+                                (palindrome--make-overlay (+ bol i) (+ bol i L))
+                                (setq mk (1+ mk))
+                                ;; Optional: skip overlapping starts heavily
+                                ;; (setq L maxlen)  ;; uncomment to be greedier
+                                )))))))))
+
+(defun palindrome--jit (beg end)
+  "JIT fontification function; highlight palindromes in visible region."
+  (save-excursion
+    (save-restriction
+      (widen)
+      ;; clean old overlays in region
+      (palindrome--remove-overlays beg end)
+      ;; scan line by line for better locality
+      (goto-char beg)
+      (beginning-of-line)
+      (let ((pos (point)))
+        (while (< pos end)
+          (let ((bol pos)
+                (eol (progn (end-of-line) (point))))
+            (palindrome--scan-line bol eol)
+            (setq pos (min (1+ eol) (point-max)))
+            (goto-char pos)))))))
+
+;;;###autoload
+(define-minor-mode palindrome-highlight-mode
+  "Highlight palindromes (literal or reverse-complement) of length ≥ MIN."
+  :lighter " PalHL"
+  (if palindrome-highlight-mode
+      (progn
+        (jit-lock-register #'palindrome--jit)
+        (palindrome--jit (window-start) (window-end)))
+    (jit-lock-unregister #'palindrome--jit)
+    (palindrome--remove-overlays (point-min) (point-max))))
+
+;; convenience toggles
+(defun palindrome-highlight-toggle-rc ()
+  "Toggle reverse-complement mode and refresh highlighting."
+  (interactive)
+  (setq palindrome-highlight-reverse-complement
+        (not palindrome-highlight-reverse-complement))
+  (message "Palindrome RC mode: %s"
+           (if palindrome-highlight-reverse-complement "ON" "OFF"))
+  (when palindrome-highlight-mode
+    (palindrome--jit (point-min) (point-max))))
+
