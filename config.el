@@ -1289,16 +1289,35 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
 
 ;; TODO remap every keybind that uses öäü?
 
+;; FIXME: I am trying out copilot again, but it is likely that I will decide it
+;; is too annoying again
+;; (use-package! copilot
+;;   ;; :hook (prog-mode . copilot-mode) ;disabled because sometimes copilot is
+;;   ;; just annoying/leading me to do stupid things:
+;;   ;; use some more inconvenient keybind for copilot
+;;   :config
+;;   ;; The tab keybinds are used twice because there is apparently a subtle difference
+;;   ;; see: https://discourse.doomemacs.org/t/how-to-re-bind-keys/56 for more info
+;;   (evil-define-key* 'insert copilot-mode-map
+;;     (kbd "C-c SPC") #'copilot-accept-completion-by-word)
+;;   (evil-define-key* 'insert copilot-mode-map
+;;     (kbd "C-C RET") #'copilot-accept-completion))
 (use-package! copilot
-  ;; :hook (prog-mode . copilot-mode) ;disabled because sometimes copilot is just annoying/leading me to do stupid things:
-  ;; use some more inconvenient keybind for copilot
+  :hook (prog-mode . copilot-mode)
+  :bind (:map copilot-completion-map
+              ("<tab>" . 'copilot-accept-completion)
+              ("TAB" . 'copilot-accept-completion)
+              ("C-TAB" . 'copilot-accept-completion-by-word)
+              ("C-<tab>" . 'copilot-accept-completion-by-word)
+              ("C-n" . 'copilot-next-completion)
+              ("C-p" . 'copilot-previous-completion))
+
   :config
-  ;; The tab keybinds are used twice because there is apparently a subtle difference
-  ;; see: https://discourse.doomemacs.org/t/how-to-re-bind-keys/56 for more info
-  (evil-define-key* 'insert copilot-mode-map
-    (kbd "C-c SPC") #'copilot-accept-completion-by-word)
-  (evil-define-key* 'insert copilot-mode-map
-    (kbd "C-C RET") #'copilot-accept-completion))
+  (add-to-list 'copilot-indentation-alist '(prog-mode 2))
+  (add-to-list 'copilot-indentation-alist '(org-mode 2))
+  (add-to-list 'copilot-indentation-alist '(text-mode 2))
+  (add-to-list 'copilot-indentation-alist '(closure-mode 2))
+  (add-to-list 'copilot-indentation-alist '(emacs-lisp-mode 2)))
 
 
 (defun ediff-copy-both-to-C ()
