@@ -1044,8 +1044,11 @@ The INFO, if provided, is passed to the underlying `org-roam-capture-'."
         :prefix "d"
         :desc "org-screenshot" "d" #'org-download-screenshot
         :desc "org-insert-clipboard-image" "c" #'org-download-clipboard)
+
   (add-hook 'dired-mode-hook 'org-download-enable)
-  (setq org-image-actual-width nil))
+  (setq-default org-image-actual-width nil
+                org-download-image-dir "~/Pictures/org-images"
+                ))
 
 (defmacro define-and-bind-quoted-text-object (name key start-regex end-regex)
   (let ((inner-name (make-symbol (concat "evil-inner-" name)))
