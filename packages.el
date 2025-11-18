@@ -122,6 +122,8 @@
 
 
 
+(package! nextflow-mode :recipe (:host github :repo "emiller88/nextflow-mode"))
+
 ;;(package! activity-watch-mode) maybe add again when debugged
 
 ;; If the package you are trying to install does not contain a PACKAGENAME.el
