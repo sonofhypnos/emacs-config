@@ -82,6 +82,7 @@
 
 
 ;;testing out
+(package! snakemake-mode)
 (package! org-fc
   :recipe (:host github
 	   :repo "l3kn/org-fc"
